@@ -1,0 +1,245 @@
+<f:view contentType="text/html"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+
+   
+      <div class="ui-g">
+        <div class="ui-g-12 ui-md-4">
+             <p:outputLabel value="Tipo de Documento"/> 
+             <p:selectOneMenu autoWidth="false" disabled="true"
+                                 value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.nidTipoDoc}">
+                      <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+                     <f:selectItems value="#{tipoDocumentoAdministrado.entidades}"
+                                    var="itemTipo"
+                                    itemValue="#{itemTipo.nidTipoDocumento}"
+                                    itemLabel="#{itemTipo.txtDescripcion}"/>
+                  </p:selectOneMenu>
+        </div>
+        <div class="ui-g-12 ui-md-4">
+           <p:outputLabel value="Nro.Doc."/> 
+           <p:inputText      readonly="true"
+                             value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.nroDoc}"
+                             converter="mayusculaConvertidor" class="my"
+                             requiredMessage="Debe ingresar el número de documento"
+                             required="true" maxlength="#{(cursoInscripcionAdministrado.cursoInscripcion.persona.nidTipoDoc eq 1)?8:50}"
+               />
+        </div>
+      </div>   
+   
+        
+       <div class="ui-g">
+         <div class="ui-g-12 ui-md-4">
+               <p:outputLabel value="Apellido Paterno"/> 
+               <p:inputText value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.apePaterno}" maxlength="150"  readonly="true" />
+         </div>
+         <div class="ui-g-12 ui-md-4">
+             <p:outputLabel value="Apellido Materno"/> 
+             <p:inputText value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.apeMaterno}"  maxlength="150"  readonly="true" />
+         </div>
+         <div class="ui-g-12 ui-md-4">             
+             <p:outputLabel value="Nombres"/> 
+             <p:inputText value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.nombres}" maxlength="150"  readonly="true" />
+         </div>
+         
+    </div>  
+    <div class="ui-g">
+         <div class="ui-g-12 ui-md-4">
+               <p:outputLabel value="Sexo"/> 
+               <p:selectOneMenu  value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.sexo}" disabled="true"
+                                 autoWidth="false" >
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                    <f:selectItem itemLabel="HOMBRE" itemValue="H" />
+                    <f:selectItem itemLabel="MUJER" itemValue="M" />
+                </p:selectOneMenu>
+         </div>
+         <div class="ui-g-12 ui-md-4">
+             <p:outputLabel value="Teléfono"/> 
+             <p:inputText value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.telefono}"  maxlength="150"  readonly="true" />
+                          
+         </div>
+         <div class="ui-g-12 ui-md-4">             
+             <p:outputLabel value="Correo electrónico de contacto"/> 
+             <p:inputText value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.correo}" maxlength="150"  readonly="true" />
+         </div>
+         
+    </div>  
+    
+      <p:fieldset legend="Información de la Defensoría">     
+    <div class="ui-g">
+           <div class="ui-g-12 ui-md-4"> 
+                  <p:outputLabel value="Departamento"/> 
+                  <p:selectOneMenu value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.nidDepartamento}" autoWidth="false"
+                                   effect="fade" disabled="true">
+                         <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                         <f:selectItems value="#{cursoInscripcionAdministrado.obtenerDepartamentos()}" var="departamentoBus" 
+                                      itemLabel="#{departamentoBus.txtDescripcion}" itemValue="#{departamentoBus.nidDepartamento}" />
+                  </p:selectOneMenu>
+           </div>
+           <div class="ui-g-12 ui-md-4">
+                  <p:outputLabel value="Provincia"/> 
+                  <p:selectOneMenu value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.nidProvincia}" autoWidth="false"
+                        effect="fade" disabled="true" >
+                        <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{cursoInscripcionAdministrado.listaProvincias}" var="provinciaBus" 
+                                      itemLabel="#{provinciaBus.txtDescripcion}" itemValue="#{provinciaBus.nidProvincia}" />
+                  </p:selectOneMenu>                  
+            </div>   
+            <div class="ui-g-12 ui-md-4">
+                   <p:outputLabel value="Distrito"/> 
+                   <p:selectOneMenu value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.nidDistrito}" autoWidth="false"
+                        effect="fade"  disabled="true">
+                         <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                         <f:selectItems value="#{cursoInscripcionAdministrado.listaDistritos}" var="distritoBus" 
+                                      itemLabel="#{distritoBus.txtDescripcion}" itemValue="#{distritoBus.nidDistrito}" />
+                   </p:selectOneMenu>
+            </div>   
+    </div>   
+    <div class="ui-g">
+            <div class="ui-g-12 ui-md-4">
+                   <p:outputLabel value="Defensoría"/> 
+                   <p:selectOneMenu value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.defensoria.nidDna}" autoWidth="false"
+                        effect="fade"  disabled="true">
+                         <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                         <f:selectItems value="#{defensoriaAdministrado.obtenerDefensorias(cursoInscripcionAdministrado.cursoInscripcion.persona.nidDistrito)}" var="defensoriaBus" 
+                                        itemLabel="#{defensoriaBus.txtNombre}" itemValue="#{defensoriaBus.nidDna}" />
+                   </p:selectOneMenu>
+            </div>   
+    
+           <div class="ui-g-12 ui-md-4"> 
+                  <p:outputLabel value="Función que desempeña"/> 
+                  <p:selectOneMenu 
+                                 value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.funcion.nidCatalogo}"
+                                 autoWidth="false" disabled="true">
+                     <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                     <f:selectItems value="#{catalogoAdministrado.obtenerFunciones()}" var="funcionDna" 
+                                    itemLabel="#{funcionDna.txtNombre}" itemValue="#{funcionDna.nidCatalogo}" />
+
+                </p:selectOneMenu>
+           </div>
+    </div>
+  </p:fieldset>   
+   
+    <br/>
+    
+    <h2>Antecedentes</h2><br />
+    <div class="ui-g">
+        <div class="ui-g-12 ui-md-3">Antecedentes Penales</div>
+        <div class="ui-g-12 ui-md-9">#{cursoInscripcionAdministrado.cursoInscripcion.antPj}</div>
+    </div>       
+    <div class="ui-g">
+        <div class="ui-g-12 ui-md-3">Antecedentes Judiciales</div>
+        <div class="ui-g-12 ui-md-9">#{cursoInscripcionAdministrado.cursoInscripcion.antInpe}</div>
+    </div>       
+    <div class="ui-g">
+        <div class="ui-g-12 ui-md-3">Antecedentes Policiales</div>
+        <div class="ui-g-12 ui-md-9">#{cursoInscripcionAdministrado.cursoInscripcion.antPnp}</div>
+    </div>       
+            
+    <br /> 
+   
+    <p:outputPanel rendered="#{cursoInscripcionAdministrado.listaReq.size() gt 0}" > 
+    <h2>Documentos solicitados en los requisitos</h2><br />
+    <p:dataList value="#{cursoInscripcionAdministrado.listaReq}" rowIndexVar="indexReqArchivo"
+                emptyMessage="No existen requisitos para inscribirse en el curso" type="ordered" styleClass="bcdocum"
+                     var="reqfull">
+        <div class="ui-g">
+           <div class="ui-g-12"> 
+                 <p:commandLink  ajax="false" process="@this" immediate="true"
+                                 value='#{reqfull.get("nombre")}'>
+                      <p:fileDownload value="#{cursoInscripcionAdministrado.descargarRequisito(indexReqArchivo)}" />
+                 </p:commandLink>
+           </div>
+        </div>         
+        
+    </p:dataList>
+    </p:outputPanel>
+  
+    <br />
+    <p:outputPanel rendered="#{cursoInscripcionAdministrado.cursoInscripcion.estado gt 1}">
+        <h2>Evaluaciones</h2><br />
+    </p:outputPanel>
+    <p:outputPanel rendered="#{cursoInscripcionAdministrado.cursoInscripcion.obsObserva!=null}">
+        <p:fieldset legend="ESTADO DE LA SOLICITUD: OBSERVADA">
+            <div  class="ui-g">
+               <div class="ui-g-12">
+                   Fecha de Evaluación :  <h:outputText value="#{cursoInscripcionAdministrado.cursoInscripcion.fecObservacion}"  ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText>
+                </div>
+           </div>     
+           <div  class="ui-g">
+               <div class="ui-g-12">
+                   <p:inputTextarea rows="4" value="#{cursoInscripcionAdministrado.cursoInscripcion.obsObserva}" readonly="true"  />
+       
+                </div>
+               <p:outputPanel class="ui-g-12" rendered="#{cursoInscripcionAdministrado.cursoInscripcion.archivoObs!=null}">
+                     <p:commandLink ajax="false" process="@this" immediate="true" 
+                                    value="Descargar documento de observaciones" >
+                         <p:fileDownload value="#{cursoInscripcionAdministrado.descargarObs()}" />
+                      </p:commandLink>
+               </p:outputPanel>
+            </div>
+        </p:fieldset>
+    </p:outputPanel>
+
+
+    <p:outputPanel rendered="#{cursoInscripcionAdministrado.cursoInscripcion.obsRechazo!=null}">
+        <p:fieldset legend="ESTADO DE LA SOLICITUD: RECHAZADA">
+           <div  class="ui-g">
+               <div class="ui-g-12">
+                   Fecha de Evaluación :  <h:outputText value="#{cursoInscripcionAdministrado.cursoInscripcion.fecEvaluacion}"  ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText>
+                </div>
+           </div> 
+            <div  class="ui-g">
+               <div class="ui-g-12">
+                   <p:inputTextarea rows="4" value="#{cursoInscripcionAdministrado.cursoInscripcion.obsRechazo}" readonly="true"  />
+       
+                </div>
+               <p:outputPanel class="ui-g-12" rendered="#{cursoInscripcionAdministrado.cursoInscripcion.archivoRechazo!=null}">
+                     <p:commandLink ajax="false" process="@this" immediate="true" 
+                                    value="Descargar documento del rechazo" >
+                         <p:fileDownload value="#{cursoInscripcionAdministrado.descargarRechazo()}" />
+                      </p:commandLink>
+               </p:outputPanel>
+            </div>
+        </p:fieldset>
+    </p:outputPanel>
+    
+    
+    <p:outputPanel rendered="#{cursoInscripcionAdministrado.cursoInscripcion.estado eq 4}">
+        <p:fieldset legend="ESTADO DE LA SOLICITUD: APROBADA">
+             <div  class="ui-g">
+               <div class="ui-g-12">
+                   Fecha de Evaluación :  <h:outputText value="#{cursoInscripcionAdministrado.cursoInscripcion.fecEvaluacion}"  ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText>
+                </div>
+           </div> 
+           <div  class="ui-g">
+               <div class="ui-g-12">
+                     <p:commandLink ajax="false" process="@this" immediate="true" 
+                                    value="Descargar Oficio" >
+                         <p:fileDownload value="#{cursoInscripcionAdministrado.descargarOficio()}" />
+                     </p:commandLink>
+               </div>    
+            </div>
+        </p:fieldset>
+    </p:outputPanel>
+    
+    <p:outputPanel class="ui-g" rendered="#{cursoInscripcionAdministrado.cursoInscripcion.estado lt 3}">
+        <div class="ui-g-12 ui-md-3 ui-lg-2">
+            <p:commandButton value="Aprobar" process="@this"  oncomplete="PF('dialogoAprobar').show();" update="dialogoAprobar"
+                      title="Aprueba la preinscripción"/>	
+        </div>
+        <div class="ui-g-12 ui-md-3 ui-lg-2">
+            <p:commandButton value="Observar" process="@this" oncomplete="PF('dialogoObservar').show();" update="dialogoObservar"
+                      title="Observa la preinscripción"/>	
+        </div>
+        <div class="ui-g-12 ui-md-3 ui-lg-2">
+            <p:commandButton value="Rechazar" process="@this" oncomplete="PF('dialogoRechazar').show();" update="dialogoRechazar"
+                      title="Rechaza la preinscripción"/>	
+        </div>
+    </p:outputPanel>    
+
+                    
+</f:view>

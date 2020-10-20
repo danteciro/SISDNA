@@ -1,0 +1,150 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                template="/WEB-INF/templates/defaultExterno.xhtml">
+     <f:metadata>
+         <f:viewParam name="idc" value="#{cursoProgramacionAdministrado.nidCursoProgramacion}" required="false">
+         </f:viewParam>
+        <f:event type="preRenderView" listener="#{cursoProgramacionAdministrado.cargarCurso()}" />
+    </f:metadata>
+    <ui:define name="header">        
+    </ui:define>
+    <ui:define name="content" >
+        <ui:include src="/WEB-INF/templates/cargando.xhtml"/>
+    
+   
+    <div class="card">
+     <p:outputPanel rendered="#{cursoProgramacionAdministrado.msgError == null}" > 
+      <div class="ui-g">
+        <div class="ui-g-12 ui-md-3">
+            <a href="/sisdna-web/faces/cursos.xhtml" class="bcregresar">&lt; Regresar al Listado</a>
+        </div>
+       </div>     
+         
+         <h1 style="text-align: center;">#{cursoProgramacionAdministrado.cursoProgramacion.curso.nombre}</h1>
+      <br />
+      <p:growl id="mensajes" widgetVar="mensajes" showDetail="true" showSummary="false" 
+               life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true" severity="warn, info"/>
+    
+      <div class="ui-g">
+        <div class="ui-g-12 ui-md-4 ui-lg-3" style="padding-top: 16px;"> 
+            <p:graphicImage value="#{cursoAdministrado.verFotoParam(cursoProgramacionAdministrado.cursoProgramacion.curso.foto)}" 
+                            width="100%" height="100%" stream="false" />
+      
+        </div>
+         <div class="ui-g-12 ui-md-8 ui-lg-9 l24">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <b>Objetivo:</b> #{cursoProgramacionAdministrado.cursoProgramacion.curso.objetivo}
+                </div>
+            </div>
+
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-7">
+                   <b>Fecha: </b>
+                   <h:outputText value="#{cursoProgramacionAdministrado.cursoProgramacion.fechaIni}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                   </h:outputText> al 
+                   <h:outputText value="#{cursoProgramacionAdministrado.cursoProgramacion.fechaFin}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                   </h:outputText>
+                </div>
+                 <div class="ui-g-12 ui-md-5">
+                   <b>Nro. Horas Lectivas: </b>
+                   <h:outputText value="#{cursoProgramacionAdministrado.cursoProgramacion.curso.nroHoras}" />
+                </div>
+            </div>
+
+             <div class="ui-g">
+                <div class="ui-g-12">
+                    <b>Ciudad: </b>#{cursoProgramacionAdministrado.cursoProgramacion.ciudad}
+                </div>
+            </div>
+        </div>   
+      </div>
+      <p:fieldset legend="Requisitos" style="margin-top: 16px;" >
+        <h:form>  
+ 
+         <p:dataList value="#{cursoProgramacionAdministrado.obtenerRequisitos()}" 
+                     emptyMessage="No existen requisitos para inscribirse en el curso"
+                     var="cursoreq" type="ordered">
+             #{cursoreq['nombre']}  
+          
+             <p:commandLink ajax="false" process="@this" immediate="true" style="padding-left: 12px"
+                                value="Descargue aquí" 
+                                rendered="#{cursoreq['catalogo']!=null and cursoreq['catalogo']['archivo']!=null}" >
+                    <p:fileDownload value="#{catalogoAdministrado.descargar(cursoreq['catalogo'])}" />
+                  </p:commandLink>
+           
+        </p:dataList>
+         </h:form>  
+      </p:fieldset>  
+        
+      <p:fieldset legend="Documentos" style="margin-top: 16px; padding-top: 12px; padding-bottom: 12px;">
+        <h:form> 
+          <p:dataList value="#{cursoProgramacionAdministrado.cursoProgramacion.curso.listaDocum}" 
+                      emptyMessage="No existen documentos para mostrar" type="ordered" styleClass="bclist"
+                      var="cursodoc" rowIndexVar="index">
+             
+                <p:commandLink ajax="false" process="@this" immediate="true"
+                               value=" #{cursodoc.catalogo.txtNombre}"  >
+                    <p:fileDownload value="#{cursoProgramacionAdministrado.descargar(index)}" />
+                 </p:commandLink>
+         </p:dataList>
+         </h:form>      
+      </p:fieldset>  
+           <br />  
+
+       <h:form>     
+        <div class="ui-g">
+            <div class="ui-g-12 ui-md-3">
+                <p:commandButton value="Solicite inscripción" actionListener="#{cursoInscripcionAdministrado.nuevo(cursoProgramacionAdministrado.cursoProgramacion)}" 
+                                 process="@this" update=":formularioPrincipal" class="margin-left: -6px;"
+                          title="Solicita inscripción al curso"/>	
+            </div>
+        </div>      
+       </h:form>
+     
+        
+      <h:form id="formularioPrincipal">     
+        
+       <p:outputPanel rendered="#{cursoInscripcionAdministrado.registroExitoso}" class="mensajeResReg">
+           Confirmamos que su solicitud de inscripción y documentos que evidencian los requisitos han sido enviados. 
+           La DSLD se pondrá en contacto vía correo electrónico para confirmar si alcanzó la vacante al curso.
+       </p:outputPanel>    
+          
+        <p:outputPanel rendered="#{cursoInscripcionAdministrado.modo eq 1}">
+        
+        <h1>Inscripción al Curso</h1>
+  
+        <p:messages id="mensajes" autoUpdate="true" showDetail="false" closable="true" severity="error"  />
+ 
+        <ui:include src="capacitacion/solicitud/panelFormInsExterna.xhtml" />
+        
+        <p:outputPanel id="btnGuardarIns">
+        <div class="ui-g">
+            <div class="ui-g-12 ui-md-3">
+                <p:commandButton ajax="true" value="Enviar Solicitud de inscripción" actionListener="#{cursoInscripcionAdministrado.save()}" 
+                                 process="@form:formularioPrincipal" update="@form:formularioPrincipal" rendered="#{cursoInscripcionAdministrado.permiteIngreso}"
+                          title="Guarda los cambios">
+                </p:commandButton>	
+            </div>
+        </div>    
+        </p:outputPanel>
+        </p:outputPanel>
+       </h:form>
+      
+     </p:outputPanel>
+     <p:outputPanel rendered="#{cursoProgramacionAdministrado.msgError != null}" >        
+         <h3>#{cursoProgramacionAdministrado.msgError}</h3>
+     </p:outputPanel>    
+      
+    </div>
+   </ui:define>
+</ui:composition> 
+
+

@@ -1,0 +1,209 @@
+<f:view contentType="text/html"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <div class="ui-fluid">
+           <div class="ui-g">
+            <div class="ui-g-12">
+                <h3>#{acreditacionAdministrado.personaEquipoExterno.txtDocumento} - 
+                     #{acreditacionAdministrado.personaEquipoExterno.txtApellidoPaterno}
+                     #{acreditacionAdministrado.personaEquipoExterno.txtApellidoMaterno}
+                     #{acreditacionAdministrado.personaEquipoExterno.txtNombre1}
+                     #{acreditacionAdministrado.personaEquipoExterno.txtNombre2}
+                     #{acreditacionAdministrado.personaEquipoExterno.txtNombre3}
+                 </h3>   
+            </div>
+        </div>
+         <div class="ui-g">
+            <div class="ui-g-12">
+                <p:outputLabel value="Sexo:"/>#{acreditacionAdministrado.personaEquipoExterno.txtSexo} - 
+                <p:outputLabel value="Teléfono:"/>#{acreditacionAdministrado.personaEquipoExterno.txtTelefono} 
+            </div>
+        </div>    
+        <div class="ui-g">
+            <div class="ui-g-12">
+                #{acreditacionAdministrado.getNombreDepartamento()} - 
+                #{acreditacionAdministrado.getNombreProvincia()} - 
+                #{acreditacionAdministrado.getNombreDistrito()}
+            </div>
+        </div>    
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <p:outputLabel value="Función:"/> #{acreditacionAdministrado.personaEquipoExterno.personaEval.funcion.txtNombre} 
+            </div>
+        </div>    
+        <p:separator />
+        
+        
+        <div class="ui-g #{acreditacionAdministrado.personaEquipoExterno.personaEval.obsCorreo!=null?'panelObs':''}">
+            <div class="ui-g-12 ui-md-3">    
+                <p:outputLabel for="txtCorreoDna" value="Correo:"/> 
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:inputText id="txtCorreoDna" value="#{acreditacionAdministrado.personaEquipoExterno.txtCorreo}" 
+                             required="true" 
+                             requiredMessage="Ingrese el correo electrónico"
+                             validator="#{acreditacionAdministrado.validarCorreo}" maxlength="150">
+                    <p:ajax event="blur" update="@this"/>
+                </p:inputText>
+            </div>
+            <p:outputPanel rendered="#{acreditacionAdministrado.personaEquipoExterno.personaEval.obsCorreo!=null}">
+                #{acreditacionAdministrado.personaEquipoExterno.personaEval.obsCorreo}
+            </p:outputPanel>
+        </div>
+        <div class="ui-g #{acreditacionAdministrado.personaEquipoExterno.personaEval.obsDireccion!=null?'panelObs':''}">
+            <div class="ui-g-12 ui-md-3">    
+                <p:outputLabel for="txtDireccionDna" value="Dirección Domiciliaria:"/> 
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:inputText id="txtDireccionDna" value="#{acreditacionAdministrado.personaEquipoExterno.txtDireccion}" 
+                             maxlength="150"
+                             required="true" requiredMessage="Debe ingresar la dirección">
+                    <p:ajax event="blur" update="@this"/>
+                </p:inputText>
+            </div>
+            <p:outputPanel rendered="#{acreditacionAdministrado.personaEquipoExterno.personaEval.obsDireccion!=null}">
+                #{acreditacionAdministrado.personaEquipoExterno.personaEval.obsDireccion}
+            </p:outputPanel>
+        </div>
+        <div class="ui-g #{acreditacionAdministrado.personaEquipoExterno.personaEval.obsInstruccion!=null?'panelObs':''}">
+            <div class="ui-g-12 ui-md-3">    
+                <p:outputLabel for="txtInstruccion" value="Grado de Instrucción:"/> 
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:selectOneMenu id="txtInstruccion" autoWidth="false"
+                                 value="#{acreditacionAdministrado.personaEquipoExterno.nidInstruccion}">
+                     <p:ajax update="@this"/>
+                     <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                     <f:selectItems value="#{acreditacionAdministrado.obtenerGradoInstruccion()}" var="instruccion" 
+                                    itemLabel="#{instruccion.txtNombre}" itemValue="#{instruccion.nidCatalogo}" />
+                </p:selectOneMenu>
+            </div>
+            <p:outputPanel rendered="#{acreditacionAdministrado.personaEquipoExterno.personaEval.obsInstruccion!=null}">
+                #{acreditacionAdministrado.personaEquipoExterno.personaEval.obsInstruccion}
+            </p:outputPanel>
+        </div>
+        <div class="ui-g #{acreditacionAdministrado.personaEquipoExterno.personaEval.obsProfesion!=null?'panelObs':''}">
+            <div class="ui-g-12 ui-md-3">    
+                <p:outputLabel for="txtProfesion" value="Profesión"/> 
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:selectOneMenu id="txtProfesion" 
+                                   value="#{acreditacionAdministrado.personaEquipoExterno.profesion.nidCatalogo}"
+                                 autoWidth="false" required="true" 
+                                 requiredMessage="Debe seleccionar la profesión / oficio">
+                     <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                     <f:selectItems value="#{inscripcionAdministrado.obtenerOcupaciones()}" var="funcion" 
+                                    itemLabel="#{funcion.txtNombre}" itemValue="#{funcion.nidCatalogo}" />
+
+                </p:selectOneMenu>
+            </div> 
+            <p:outputPanel rendered="#{acreditacionAdministrado.personaEquipoExterno.personaEval.obsProfesion!=null}" >
+                #{acreditacionAdministrado.personaEquipoExterno.personaEval.obsProfesion}
+            </p:outputPanel>
+        </div>
+                
+        <div class="ui-g #{acreditacionAdministrado.personaEquipoExterno.personaEval.obsColegio!=null?'panelObs':''}">
+            <div class="ui-g-12 ui-md-3">    
+                <p:outputLabel for="txtColegio" value="Colegio Profesional:"/> 
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:inputText id="txtColegio" value="#{acreditacionAdministrado.personaEquipoExterno.txtColegio}" 
+                             maxlength="150"
+                             requiredMessage="Debe ingresar el colegio profesional"
+                                required="#{acreditacionAdministrado.esAbogadoOPsicologo(acreditacionAdministrado.personaEquipoExterno)}">
+                </p:inputText>
+            </div>
+            <p:outputPanel rendered="#{acreditacionAdministrado.personaEquipoExterno.personaEval.obsColegio!=null}" >
+                #{acreditacionAdministrado.personaEquipoExterno.personaEval.obsColegio}
+            </p:outputPanel>
+        </div>
+        
+        <div class="ui-g #{acreditacionAdministrado.personaEquipoExterno.personaEval.obsColegiatura!=null?'panelObs':''}">
+            <div class="ui-g-12 ui-md-3">    
+                <p:outputLabel for="txtColegiatura" value="Nro Colegiatura"/> 
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:inputText id="txtColegiatura" value="#{acreditacionAdministrado.personaEquipoExterno.txtColegiatura}" 
+                             maxlength="150"
+                             requiredMessage="Debe ingresar la colegiatura"
+                            required="#{acreditacionAdministrado.esAbogadoOPsicologo(acreditacionAdministrado.personaEquipoExterno)}">
+                </p:inputText>
+            </div>
+            <p:outputPanel rendered="#{acreditacionAdministrado.personaEquipoExterno.personaEval.obsColegiatura!=null}" >
+                #{acreditacionAdministrado.personaEquipoExterno.personaEval.obsColegiatura}
+            </p:outputPanel>
+        </div>
+ 
+        <div class="ui-g #{acreditacionAdministrado.personaEquipoExterno.personaEval.obsLugarDeCurso!=null?'panelObs':''}">
+            <div class="ui-g-12 ui-md-3">    
+                <p:outputLabel for="txtLugar" value="Lugar de curso:"/> 
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:inputText id="txtLugar" value="#{acreditacionAdministrado.personaEquipoExterno.txtLugarCurso}" 
+                             maxlength="150"
+                             requiredMessage="Debe ingresar el lugar del curso"
+                            required="#{acreditacionAdministrado.esAbogadoOPsicologo(acreditacionAdministrado.personaEquipoExterno)}">
+                    <p:keyFilter regEx="/[a-z_ ñ]/i"/>
+                </p:inputText>
+            </div>
+            <p:outputPanel rendered="#{acreditacionAdministrado.personaEquipoExterno.personaEval.obsLugarDeCurso!=null}">
+                #{acreditacionAdministrado.personaEquipoExterno.personaEval.obsLugarDeCurso}
+            </p:outputPanel>
+        </div>
+        
+        <div class="ui-g #{acreditacionAdministrado.personaEquipoExterno.personaEval.obsFechaDeCurso!=null?'panelObs':''}">
+            <div class="ui-g-12 ui-md-3">    
+                <p:outputLabel for="txtFechaCurso" value="Fecha  de curso:"/> 
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:calendar id="txtFechaCurso" value="#{acreditacionAdministrado.personaEquipoExterno.txtFechaCurso}"  
+                            requiredMessage="Debe ingresar la fecha del curso"
+                            required="#{acreditacionAdministrado.esAbogadoOPsicologo(acreditacionAdministrado.personaEquipoExterno)}"
+                            pattern="dd/MM/yyyy" navigator="true" mask="true" locale="es" />
+            </div>
+            <p:outputPanel rendered="#{acreditacionAdministrado.personaEquipoExterno.personaEval.obsFechaDeCurso!=null}">
+                #{acreditacionAdministrado.personaEquipoExterno.personaEval.obsFechaDeCurso}
+            </p:outputPanel>
+        </div>
+        
+      <p:fieldset legend="Plataforma de Interoperabilidad">
+   
+        <div class="ui-g">
+            <div class="ui-g-12 ui-md-2">    
+                <p:outputLabel for="txPj" value="PJ:"/>
+            </div>
+            <div class="ui-g-12 ui-md-10">
+                <p:inputText id="txPj"  readonly="true" value="#{acreditacionAdministrado.personaEquipoExterno.txtPj}" >
+                </p:inputText>
+            </div>
+            <div class="ui-g-12 ui-md-2">    
+                <p:outputLabel for="txtInpe" value="INPE:"/>
+            </div>
+            <div class="ui-g-12 ui-md-10">
+                <p:inputText id="txtInpe"  readonly="true" value="#{acreditacionAdministrado.personaEquipoExterno.txtInpe}" >
+                </p:inputText>
+            </div>
+            <div class="ui-g-12 ui-md-2">    
+                <p:outputLabel for="txtPnp" value="PNP:"/>
+            </div>
+            <div class="ui-g-12 ui-md-10">
+                <p:inputText id="txtPnp"  readonly="true" value="#{acreditacionAdministrado.personaEquipoExterno.txtPnp}" >
+                </p:inputText>
+            </div>
+        </div>
+          
+          <p:outputPanel rendered="#{acreditacionAdministrado.personaEquipoExterno.personaEval.obsAntecedentes!=null}" class="panelObs">
+            #{acreditacionAdministrado.personaEquipoExterno.personaEval.obsAntecedentes}
+        </p:outputPanel>
+
+          
+        </p:fieldset>
+   </div>
+
+
+</f:view>

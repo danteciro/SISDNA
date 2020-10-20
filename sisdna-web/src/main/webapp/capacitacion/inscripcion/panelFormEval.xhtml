@@ -1,0 +1,51 @@
+<f:view contentType="text/html"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <p:dataTable 
+            id="tablaInsEval"
+            widgetVar="tablaInsEval" 
+            var="itemInsEval" 
+            value="#{cursoInscripcionAdministrado.listaEvalMap}" 
+            emptyMessage="No se encontraron registros"
+            rowIndexVar="index"
+            scrollable="true"
+            paginator="false"
+
+            >
+        <f:facet name="header">
+            CALIFICACIONES
+        </f:facet>
+            <p:column headerText="NRO.DOC." class="left" width="80">
+                <h:outputText value="#{itemInsEval['inscripcion'].persona.nroDoc}" />
+            </p:column>
+            <p:column headerText="NOMBRE" class="left" width="200">
+                <h:outputText value="#{itemInsEval['nombres']}" />
+            </p:column>
+             <p:columns value="#{cursoInscripcionAdministrado.columnasEval}" var="column" columnIndexVar="colIndex"  width="100" class="pcenter">
+                <f:facet name="header" >
+                    <h:outputText value="#{column.header}" />
+                </f:facet>
+
+                <p:inputNumber  minValue="0" decimalPlaces="0" maxValue="20" inputStyle="width:40px !important"
+                          value="#{itemInsEval[column.property]}" decimalSeparator="." 
+                          maxlength="2" thousandSeparator="">
+                        <p:ajax event="blur" listener="#{cursoInscripcionAdministrado.updateNota(itemInsEval, column.property)}"
+                                update="@form:tablaInsEval:estadoNota, @form:tablaInsEval:notaEval" />
+                </p:inputNumber> 
+            </p:columns>
+            <p:column headerText="NOTA FINAL" class="pcenter" width="100">
+                    <h:outputText id="notaEval" value="#{itemInsEval['notaEval']}" />
+            </p:column>
+            <p:column headerText="ESTADO" class="pcenter " width="100">
+                    <h:outputText id="estadoNota"  value="#{(itemInsEval['estado'] eq 0 or itemInsEval['estado'] == null )?'PENDIENTE':(itemInsEval['estado'] eq 1)?'APROBADO':'DESAPROBADO'}" />
+                    
+            </p:column>
+        </p:dataTable>
+
+    
+    
+</f:view>

@@ -1,0 +1,201 @@
+<f:view contentType="text/html"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+
+       
+      <div class="ui-g">
+        <div class="ui-g-12 ui-md-4">
+             <p:outputLabel value="Tipo de Documento"/> 
+             <p:selectOneMenu id="selTipoDocumento" autoWidth="false"  required="true" 
+                                 requiredMessage="Debe seleccionar el tipo de documento"
+                                 value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.nidTipoDoc}">
+                    <p:ajax event="change" process="@this" update="txtDocumento" />
+                     <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+                     <f:selectItems value="#{tipoDocumentoAdministrado.entidades}"
+                                    var="itemTipo"
+                                    itemValue="#{itemTipo.nidTipoDocumento}"
+                                    itemLabel="#{itemTipo.txtDescripcion}"/>
+                  </p:selectOneMenu>
+        </div>
+        <div class="ui-g-12 ui-md-4">
+           <p:outputLabel value="Nro.Doc."/> 
+               <p:inputText  id="txtDocumento"
+                             value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.nroDoc}"
+                             converter="mayusculaConvertidor" class="my"
+                             validator="#{cursoInscripcionAdministrado.validarNroDoc}"
+                             requiredMessage="Debe ingresar el número de documento"
+                             required="true" maxlength="#{(cursoInscripcionAdministrado.cursoInscripcion.persona.nidTipoDoc eq 1)?8:50}"
+                             onkeypress="if (event.keyCode == 13) {onchange(); return false; } else { if(event.which &lt; 48 || event.which &gt; 57) return #{cursoInscripcionAdministrado.cursoInscripcion.persona.nidTipoDoc ne 1};}">
+                   <p:ajax event="change" listener="#{cursoInscripcionAdministrado.obtenerDatos()}" process="@this" update="panelPersona, btnGuardarIns" />
+                </p:inputText>
+        </div>
+      </div>   
+   
+    <p:outputPanel id="panelPersona">
+        
+     <p:outputPanel rendered="#{cursoInscripcionAdministrado.permiteIngreso}">
+      <div class="ui-g">
+         <div class="ui-g-12 ui-md-4">
+               <p:outputLabel value="Apellido Paterno"/> 
+               <p:inputText value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.apePaterno}" maxlength="150"
+                            required="true" requiredMessage="Debe ingresar el apellido paterno">
+                   <p:keyFilter regEx="/^[a-záéíóúüñäëü ]+$/i"/>
+               </p:inputText>    
+         </div>
+         <div class="ui-g-12 ui-md-4">
+             <p:outputLabel value="Apellido Materno"/> 
+             <p:inputText value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.apeMaterno}"  maxlength="150"
+                          required="true" requiredMessage="Debe ingresar el apellido materno" >
+               <p:keyFilter regEx="/^[a-záéíóúüñäëü ]+$/i"/>
+             </p:inputText>    
+         </div>
+         <div class="ui-g-12 ui-md-4">             
+             <p:outputLabel value="Nombres"/> 
+             <p:inputText value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.nombres}" maxlength="150"
+                          required="true" requiredMessage="Debe ingresar los nombres" >
+               <p:keyFilter regEx="/^[a-záéíóúüñäëü ]+$/i"/>
+               
+            </p:inputText>    
+         </div>
+         
+    </div>  
+    <div class="ui-g">
+         <div class="ui-g-12 ui-md-4">
+               <p:outputLabel value="Sexo"/> 
+               <p:selectOneMenu id="sexo" value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.sexo}" 
+                                 autoWidth="false" required="true" requiredMessage="Debe seleccionar el sexo">
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                    <f:selectItem itemLabel="HOMBRE" itemValue="H" />
+                    <f:selectItem itemLabel="MUJER" itemValue="M" />
+                </p:selectOneMenu>
+         </div>
+         <div class="ui-g-12 ui-md-4">
+             <p:outputLabel value="Teléfono"/> 
+             <p:inputText id="apeMaterno" value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.telefono}"  maxlength="150"
+                          required="false" requiredMessage="Debe ingresar el teléfono" >
+              
+             </p:inputText>    
+         </div>
+         <div class="ui-g-12 ui-md-4">             
+             <p:outputLabel value="Correo electrónico de contacto"/> 
+             <p:inputText value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.correo}" maxlength="150"
+                          required="true" requiredMessage="Debe ingresar el correo electrónico de contacto" 
+                          validatorMessage="El correo electrónico debe tener un formato válido: ___@___.___" >  
+                 <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]"  />
+                 <p:ajax update="@this"/>
+             </p:inputText>    
+         </div>
+         
+    </div>  
+    
+  <p:fieldset legend="Información de la Defensoría">     
+    <div class="ui-g">
+           <div class="ui-g-12 ui-md-4"> 
+                  <p:outputLabel value="Departamento"/> 
+                  <p:selectOneMenu value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.nidDepartamento}" autoWidth="false"
+                                   effect="fade" required="true" requiredMessage="Debe seleccionar el departamento de la Defensoría">
+                         <p:ajax listener="#{cursoInscripcionAdministrado.obtenerProvinciasIns()}" update="busProvincia, busDistrito" />
+                         <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                         <f:selectItems value="#{cursoInscripcionAdministrado.obtenerDepartamentos()}" var="departamentoBus" 
+                                      itemLabel="#{departamentoBus.txtDescripcion}" itemValue="#{departamentoBus.nidDepartamento}" />
+                  </p:selectOneMenu>
+           </div>
+           <div class="ui-g-12 ui-md-4">
+                  <p:outputLabel value="Provincia"/> 
+                  <p:selectOneMenu id="busProvincia" value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.nidProvincia}" autoWidth="false"
+                        effect="fade" required="true" requiredMessage="Debe seleccionar la provincia de la Defensoría" >
+                        <p:ajax listener="#{cursoInscripcionAdministrado.obtenerDistritosIns()}" update="busDistrito" />
+                        <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{cursoInscripcionAdministrado.listaProvincias}" var="provinciaBus" 
+                                      itemLabel="#{provinciaBus.txtDescripcion}" itemValue="#{provinciaBus.nidProvincia}" />
+                  </p:selectOneMenu>                  
+            </div>   
+            <div class="ui-g-12 ui-md-4">
+                   <p:outputLabel value="Distrito"/> 
+                   <p:selectOneMenu id="busDistrito" value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.nidDistrito}" autoWidth="false"
+                        effect="fade"  required="true" requiredMessage="Debe seleccionar el distrito de la Defensoría">
+                         <p:ajax event="change" process="@this" update="busDefensoria" />
+                         <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                         <f:selectItems value="#{cursoInscripcionAdministrado.listaDistritos}" var="distritoBus" 
+                                      itemLabel="#{distritoBus.txtDescripcion}" itemValue="#{distritoBus.nidDistrito}" />
+                   </p:selectOneMenu>
+            </div>   
+    </div>   
+    <div class="ui-g">
+            <div class="ui-g-12 ui-md-4">
+                   <p:outputLabel value="Defensoría"/> 
+                   <p:selectOneMenu id="busDefensoria" value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.defensoria.nidDna}" autoWidth="false"
+                        effect="fade"  required="true" requiredMessage="Debe seleccionar la Defensoría">
+                         <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                         <f:selectItems value="#{defensoriaAdministrado.obtenerDefensorias(cursoInscripcionAdministrado.cursoInscripcion.persona.nidDistrito)}" var="defensoriaBus" 
+                                        itemLabel="#{defensoriaBus.txtNombre}" itemValue="#{defensoriaBus.nidDna}" />
+                   </p:selectOneMenu>
+            </div>   
+    
+           <div class="ui-g-12 ui-md-4"> 
+                  <p:outputLabel value="Función que desempeña"/> 
+                  <p:selectOneMenu id="nidFuncion" 
+                                 value="#{cursoInscripcionAdministrado.cursoInscripcion.persona.funcion.nidCatalogo}"
+                                 autoWidth="false" required="true" 
+                                 requiredMessage="Debe seleccionar la función que cumple">
+                     <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                     <f:selectItems value="#{catalogoAdministrado.obtenerFunciones()}" var="funcionDna" 
+                                    itemLabel="#{funcionDna.txtNombre}" itemValue="#{funcionDna.nidCatalogo}" />
+
+                </p:selectOneMenu>
+           </div>
+    </div>
+  </p:fieldset>   
+      
+    <br/>
+    <p:outputPanel rendered="#{cursoInscripcionAdministrado.listaReq.size() gt 0}" > 
+    <h2>Adjunte los documentos solicitados en los requisitos</h2>
+    <p:dataList id="dlReq" widgetVar="dlReq" value="#{cursoInscripcionAdministrado.listaReq}" rowIndexVar="indexReqArchivo"
+                emptyMessage="No existen requisitos para inscribirse en el curso" type="ordered" styleClass="bcdocum"
+                     var="reqfull">
+        <div class="ui-g">
+           <div class="ui-g-12"> 
+               #{reqfull.get("nombre")}
+           </div>
+           <div class="ui-g-12 ui-md-6 ui-lg-3"> 
+               <p:fileUpload fileUploadListener="#{cursoInscripcionAdministrado.uploadRequisito}" mode="advanced" allowTypes="/(\.|\/)(pdf)$/"
+                             auto="true" invalidFileMessage="Sólo puede subir archivos PDF" label="Subir Archivo PDF"  
+                             requiredMessage="Debe adjuntar un documento" update="descargarReq"  > 
+                   <f:attribute name="indexReqAr" value="#{indexReqArchivo}" />
+             </p:fileUpload>
+               <p:outputPanel  id="descargarReq">
+                  <p:commandLink  ajax="false" process="@this" immediate="true"
+                                 value="Descargar pdf"
+                                 rendered="#{reqfull['load']}">
+                      <p:fileDownload value="#{cursoInscripcionAdministrado.descargarRequisito(indexReqArchivo)}" />
+                   </p:commandLink>
+                </p:outputPanel>
+           </div>
+            
+        </div>         
+        
+    </p:dataList>
+    </p:outputPanel>    
+     <div class="ui-g">
+        <div class="ui-g-12"> 
+            <p:selectBooleanCheckbox value="#{cursoInscripcionAdministrado.declaro}" style="display:inline"
+                itemLabel="Declaro bajo juramento no ser deudor alimentario y no tener antecedentes policiales, penales ni judiciales, por tanto, AUTORIZO la verificación de lo declarado sometiéndome a las acciones de ley en caso de falsedad de cualquier tipo">
+             <p:ajax event="change" process="@this" />
+          </p:selectBooleanCheckbox>
+        </div>
+     </div>
+    <div class="ui-g">
+        <div class="ui-g-12"> 
+          <p:selectBooleanCheckbox value="#{cursoInscripcionAdministrado.declaroCorreo}" itemLabel="Autorizo la notificación electrónica a través del correo electrónico de contacto">
+             <p:ajax event="change" process="@this" />
+          </p:selectBooleanCheckbox>
+        </div>
+     </div>
+    <f:event listener="#{cursoInscripcionAdministrado.validarInscripcion}" type="postValidate" />
+     </p:outputPanel>
+    </p:outputPanel>
+</f:view>

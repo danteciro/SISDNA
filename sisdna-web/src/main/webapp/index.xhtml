@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/default.xhtml">
+    <ui:define name="content">
+        <p:growl id="mensajes" widgetVar="mensajes" showDetail="true" life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true" />
+    </ui:define>
+</ui:composition>

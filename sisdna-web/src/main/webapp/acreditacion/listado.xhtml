@@ -1,0 +1,314 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="/WEB-INF/templates/default.xhtml">
+    <ui:define name="header">
+    </ui:define>
+    <ui:define name="content" >
+         <ui:include src="/WEB-INF/templates/cargando.xhtml"/>
+        <div class="pcenter">
+            <p:outputLabel class="ptextGradient pred pbold ptitle" value="ACREDITACIÓN DE DNA"/>    
+        </div>
+        <br></br>
+        <h:form>
+         <p:fieldset legend="Búsqueda de acreditación por Defensoría" style="max-width: 900px; width: 100%">
+            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2,ui-grid-col-7" class="pnoborder" >
+                  <p:outputLabel  for="rbTipoFiltro" value="Filtrar:"  />
+                <p:selectOneRadio id="rbTipoFiltro" value="#{acreditacionAdministrado.busTipo}" style="margin-top: -5px">
+                    <p:ajax listener="#{acreditacionAdministrado.initFiltro}" update="@this,tabBusqueda,formularioPrincipal"/>
+                    <f:selectItem itemLabel="Defensoría" itemValue="1" />
+                    <f:selectItem itemLabel="Solicitudes de Acreditación" itemValue="2" />
+                </p:selectOneRadio>
+            </p:panelGrid> 
+            <p:tabView id="tabBusqueda">
+                <p:ajax event="tabChange" listener="#{acreditacionAdministrado.cambiarBusquedaAcreditacion}"></p:ajax>
+                 <p:tab title="Por Código de Defensoría"  >
+                    <p:panelGrid columns="3" layout="grid" columnClasses="ui-grid-col-4,ui-grid-col-2,ui-grid-col-2" class="pnoborder" >
+                       <p:outputLabel for="txtCodigo" value="Ingrese el código de su defensoría: "/>
+                       <p:inputText id="txtCodigo" converter="maskConCero" value="#{acreditacionAdministrado.busCodigo}" maxlength="8" title="Campo Obligatorio" style="width: 150px">
+                            <p:ajax event="blur" update="@this"/>
+                       </p:inputText>
+                       <p:commandButton value="Buscar" process="@this"
+                             icon="ui-icon-disk" title="Guardar"
+                             actionListener="#{acreditacionAdministrado.buscar()}" ajax="true" update="formularioPrincipal"/>
+ 
+                    </p:panelGrid>
+                </p:tab>
+                
+                <p:tab title="Por Ubicación">
+                 <p:panelGrid columns="6" layout="grid" columnClasses="ui-grid-col-2,ui-grid-col-2,ui-grid-col-2,ui-grid-col-2" class="pnoborder">
+                
+                    <p:outputLabel for="busDepartamento" value="Departamento: "/>
+                    <p:selectOneMenu id="busDepartamento" value="#{acreditacionAdministrado.busDepartamento}" autoWidth="false"
+                         effect="fade" >
+                          <p:ajax listener="#{acreditacionAdministrado.buscar()}" update="formularioPrincipal" />
+                          <p:ajax listener="#{acreditacionAdministrado.obtenerProvinciasBus()}" update="busProvincia" />
+                          <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                          <f:selectItems value="#{acreditacionAdministrado.obtenerDepartamentos()}" var="departamentoBus" 
+                                       itemLabel="#{departamentoBus.txtDescripcion}" itemValue="#{departamentoBus.nidDepartamento}" />
+                   </p:selectOneMenu>
+                                      
+                    <p:outputLabel for="busProvincia" value="Provincia: "/>
+                    <p:selectOneMenu id="busProvincia" value="#{acreditacionAdministrado.busProvincia}" autoWidth="false"
+                         effect="fade" >
+                         <p:ajax listener="#{acreditacionAdministrado.buscar()}" update="formularioPrincipal" />
+                         <p:ajax listener="#{acreditacionAdministrado.obtenerDistritosBus()}" update="@this, busDistrito" />
+                         <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                         <f:selectItems value="#{acreditacionAdministrado.provinciasBus}" var="provinciaBus" 
+                                       itemLabel="#{provinciaBus.txtDescripcion}" itemValue="#{provinciaBus.nidProvincia}" />
+                   </p:selectOneMenu>
+                    
+                    <p:outputLabel for="busDistrito" value="Distrito: "/>
+                    <p:selectOneMenu id="busDistrito" value="#{acreditacionAdministrado.busDistrito}" autoWidth="false"
+                         effect="fade" >
+                          <p:ajax listener="#{acreditacionAdministrado.buscar()}" update="formularioPrincipal" />
+                          <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                          <f:selectItems value="#{acreditacionAdministrado.distritosBus}" var="distritoBus" 
+                                       itemLabel="#{distritoBus.txtDescripcion}" itemValue="#{distritoBus.nidDistrito}" />
+                   </p:selectOneMenu>
+                    </p:panelGrid>    
+                </p:tab>
+                <p:tab title="Por Estado" rendered="#{acreditacionAdministrado.busTipo eq '2'}"  >
+                    <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4,ui-grid-col-4" class="pnoborder" >
+                       <p:outputLabel for="txtEstadoBus" value="Seleccione el estado de la DNA: "/>
+                       <p:selectOneMenu id="txtEstadoBus" value="#{acreditacionAdministrado.busEstado}" autoWidth="false"
+                         effect="fade" >
+                          <p:ajax listener="#{acreditacionAdministrado.buscar()}" update="formularioPrincipal" />
+                          <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                          <f:selectItems value="#{acreditacionAdministrado.obtenerEstado()}" var="estado" 
+                                         itemLabel="#{estado.txtNombre}" itemValue="#{estado.nidCatalogo}" />
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                </p:tab>
+            </p:tabView>
+            
+         
+         
+        </p:fieldset>
+         </h:form>
+        <br />
+        <h:form id="formularioPrincipal">
+            <p:growl id="mensajes" widgetVar="mensajes" showDetail="true" showSummary="false" life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true"/>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
+
+              <p:outputPanel rendered="#{acreditacionAdministrado.busTipo eq '1'}">
+                <p:dataTable 
+                    id="tablaDefensoria"
+                    widgetVar="tablaDefensoria" 
+                    var="itemDefensoria" 
+                    value="#{acreditacionAdministrado.inscripcionesEncontradas}" 
+                    rowIndexVar="index"
+                    scrollable="true"
+                    rows="10" 
+                    paginator="true"
+                    resizableColumns="false"
+                    emptyMessage="No se encontraron registros"
+                    paginatorPosition="bottom"
+                    paginatorAlwaysVisible="true"
+                    rowsPerPageTemplate="5,10,15"
+                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}">
+                  >
+                    <f:facet name="header">
+                        Defensorías
+                    </f:facet>
+     
+                    <p:column headerText="ACCIONES" width="15%">            
+                        <p:commandButton rendered="#{itemDefensoria.flagAcredita != 1}" update=":dialogoAcreditacionInterno"
+                                         oncomplete="PF('dialogoAcreditacionInterno').show();"  
+                                         process="@this"
+                                         actionListener="#{acreditacionAdministrado.generarAcreditacionExterna(itemDefensoria)}" 
+                                         title="Crear Solicitud" 
+                                         icon="fa fa-newspaper-o">
+                        </p:commandButton>
+                    </p:column>
+
+                    <p:column headerText="CÓDIGO" class="left" width="10%">
+                        <h:outputText value="#{itemDefensoria.dna.txtConstancia}"  converter="maskConCero" />
+                    </p:column>
+
+                    <p:column headerText="ESTADO" class="left" width="10%">
+                        <h:outputText value="#{itemDefensoria.estado.txtNombre}" />
+                    </p:column>
+                    <p:column headerText="FECHA" class="left" width="15%">
+                       <h:outputText value="#{itemDefensoria.fecRegistro}"  ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText><br/>
+                    </p:column>
+
+                    <p:column headerText="TIPO" class="left" width="10%">
+                        <h:outputText value="#{itemDefensoria.dna.txtTipo}" />
+                    </p:column>
+                   
+                    <p:column headerText="NOMBRE" class="left" width="35%">
+                        <h:outputText value="#{itemDefensoria.dna.txtNombre}" />
+                    </p:column>
+
+                    <p:column headerText="ACTIVO" filterBy="#{itemDefensoria.flgActivo}" filterMatchMode="contains" class="pcenter" width="10%">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('tablaDefensoria').filter()">
+                                <f:selectItem itemLabel="Todos" itemValue="" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="Activo" itemValue="1" />
+                                <f:selectItem itemLabel="Inactivo" itemValue="0" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText value="#{itemDefensoria.flgActivo != 1? 'Inactivo':'Activo'}">
+                            <f:converter converterId="javax.faces.Character" />                                    
+                        </h:outputText>
+                    </p:column>
+
+                </p:dataTable>
+
+            
+            </p:outputPanel>
+            
+            <p:outputPanel rendered="#{acreditacionAdministrado.busTipo eq '2'}">
+               <p:dataTable 
+                    id="tablaDocs"
+                    widgetVar="tablaDocs" 
+                    var="item" 
+                    value="#{acreditacionAdministrado.lista}" 
+                    rowIndexVar="index"
+                    scrollable="true"
+                    rows="10" 
+                    paginator="true"
+                    emptyMessage="No se encontraron registros"
+                    resizableColumns="false"
+                    paginatorPosition="bottom"
+                    paginatorAlwaysVisible="true"
+                    rowsPerPageTemplate="5,10,15"
+                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}">
+                    
+                    <p:column headerText="ACCIONES" width="10%">   
+                        <p:commandButton   rendered="#{!(item.estado.txtNombre eq 'NUEVA')}" 
+                                           icon="fa fa-file-pdf-o"
+                                           ajax="false" 
+                                           process="@this"  
+                                           title="Descargar Acreditación">
+                                <p:fileDownload value="#{acreditacionAdministrado.downloadAcreditacion(item)}" />
+                        </p:commandButton>
+                        
+                        <p:commandButton rendered="#{item.estado.txtNombre == 'ACREDITADA' or 
+                                                     item.estado.txtNombre == 'OBSERVADA' or  
+                                                     item.estado.txtNombre == 'SUBSANADA' or  
+                                                     item.estado.txtNombre == 'DENEGADA'}" 
+                                        update=":dialogoVer" 
+                                        process="@this"
+                                        actionListener="#{acreditacionAdministrado.obtenerAcreditacionVer(item)}"
+                                        oncomplete="PF('dialogoVer').show();"  
+                                        title="Ver Acreditacion" icon="fa fa-eye">
+                        </p:commandButton>
+                        
+                        <p:commandButton 
+                            rendered="#{item.estado.txtNombre == 'POR EVALUAR'}"
+                            process="@this"
+                            update=":dialogoActualizar" 
+                            oncomplete="PF('dialogoActualizar').show();" 
+                            actionListener="#{acreditacionAdministrado.obtenerAcreditacionActualizar(item)}" 
+                            title="Editar Acreditación" 
+                            icon="fa fa-pencil">
+                        </p:commandButton>
+                        
+                        
+                        <p:commandButton  rendered="#{item.estado.txtNombre eq 'POR EVALUAR'}"
+                                     process="@this"
+                                     update=":dialogoEvaluar" 
+                                     oncomplete="PF('dialogoEvaluar').show();"  
+                                     actionListener="#{acreditacionAdministrado.obtenerAcreditacionAEvaluar(item)}" 
+                                     title="Evaluar" icon="fa fa-check">
+                        </p:commandButton>
+                        
+                        <p:commandButton  rendered="#{item.estado.txtNombre eq 'SUBSANADA'}"
+                                     process="@this"
+                                     update=":dialogoESubsanar" 
+                                     oncomplete="PF('dialogoESubsanar').show();"  
+                                     actionListener="#{acreditacionAdministrado.obtenerAcreditacionActualizar(item)}" 
+                                     title="Evaluar" icon="fa fa-check">
+                        </p:commandButton>
+                        
+                        <p:commandButton   rendered="#{item.estado.txtNombre eq 'ACREDITADA'}"
+                                           process="@this"
+                                            update=":dialogConstanciaAcre" 
+                                            oncomplete="PF('dialogConstanciaAcre').show();"  
+                                            actionListener="#{acreditacionAdministrado.obtenerAcreditacionConstancia(item)}" 
+                                            title="Descargar Constancia" icon="fa fa-download">
+                        </p:commandButton>
+                        
+                        <p:commandButton  rendered="#{item.estado.txtNombre eq 'ACREDITADA'}"
+                                     process="@this"
+                                     actionListener="#{acreditacionAdministrado.obtenerAcreditacionActualizar(item)}" 
+                                     oncomplete="PF('dialogoUpload').show();"  
+                                     title="Subir constancia firmada" icon="fa fa-upload">
+                        </p:commandButton>
+                        
+                        <p:commandButton  rendered="#{item.estado.txtNombre eq 'DENEGADA'}"
+                                     process="@this"
+                                     actionListener="#{acreditacionAdministrado.obtenerAcreditacionActualizar(item)}" 
+                                     oncomplete="PF('dialogoUploadDenegado').show();"  
+                                     title="Subir oficio de denegación" icon="fa fa-upload">
+                        </p:commandButton>
+                        
+                    </p:column>
+                   <p:column headerText="CÓDIGO" class="left" width="10%">
+                       <h:outputText value="#{item.padre.dna.txtConstancia}"  converter="maskConCero" />
+                    </p:column>
+                    <p:column headerText="ESTADO" class="left" width="10%">
+                        <h:outputText value="#{item.estado.txtNombre}" />
+                    </p:column>
+                    <p:column headerText="FECHA" class="left" width="15%">
+                       REGISTRO:<h:outputText value="#{item.fecRegistro}"  ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText><br/>
+                       <p:outputPanel rendered="#{item.fecObservado!=null}">
+                            OBSERVACIÓN:<h:outputText value="#{item.fecObservado}" ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText><br/>
+                       </p:outputPanel>
+                       <p:outputPanel rendered="#{item.fecSubsanado!=null}">
+                           SUBSANACIÓN:<h:outputText value="#{item.fecSubsanado}" ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText><br/>
+                       </p:outputPanel>
+                    </p:column>
+
+                    <p:column headerText="NOMBRE" class="left" width="45%">
+                        <h:outputText value="#{item.padre.dna.txtNombre}" />
+                    </p:column>
+                    <p:column headerText="NRO ORDENANZA" class="left" width="10%">
+                        <h:outputText value="#{item.txtNroOrdenanza}" />
+                    </p:column>
+                    
+                    <p:column headerText="ACTIVO" filterBy="#{item.flgActivo}" filterMatchMode="contains" class="pcenter" width="10%">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('tablaDocs').filter()">
+                                <f:selectItem itemLabel="Todos" itemValue="" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="Activo" itemValue="1" />
+                                <f:selectItem itemLabel="Inactivo" itemValue="0" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText value="#{item.flgActivo != 1? 'Inactivo':'Activo'}">
+                            <f:converter converterId="javax.faces.Character" />                                    
+                        </h:outputText>
+                    </p:column>
+
+                </p:dataTable>
+            </p:outputPanel>
+        </h:form>
+
+        <!-- Modals -->
+        <!-- Modals Actualizar -->
+        <ui:include src="panelDialogActualizar.xhtml" />
+        <!-- Models evaluar -->
+        <ui:include src="panelDialogEvaluar.xhtml" />
+        <!-- Ver -->
+        <ui:include src="panelDialogVer.xhtml" />
+        <!-- Models Evaluacion Subsanar -->
+        <ui:include src="panelDialogEvaluarSub.xhtml" />
+        <!-- Models Descarga y Subir -->
+        <ui:include src="panelDialogArchivo.xhtml" />
+        <!-- Models Externa -->
+        <ui:include src="panelDialogInterno.xhtml" />
+      
+        
+    </ui:define>           
+</ui:composition>

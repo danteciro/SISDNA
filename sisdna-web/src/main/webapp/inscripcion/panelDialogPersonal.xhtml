@@ -1,0 +1,59 @@
+<f:view contentType="text/html"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+    
+    
+   <p:dialog  modal="true" id="dialogoPersonalDna" widgetVar="dialogoPersonalDna" width="90%" height="500px" 
+              header="Personal DNA" closeOnEscape="true" resizable="false" dynamic="false" class="dlgdna" position="center center" responsive="true" >
+            <h:form id="frmPersonalDna">
+               <ui:include src="panelPersonal.xhtml"/>
+                 <br></br>
+                 <div class="ui-g">
+                    <div class="ui-g-12 ui-md-4">
+                      <p:commandButton value="Guardar" 
+                                         icon="ui-icon-disk" 
+                                         title="Guarda los datos de las persona" 
+                                         actionListener="#{inscripcionAdministrado.agregarPersonal()}"
+                                         oncomplete="if (!args.validationFailed) PF('dialogoPersonalDna').hide()"
+                                         update=":formularioPrincipal:pTabla"/>	
+                    </div>
+                    <div class="ui-g-12 ui-md-4"></div>
+                    <div class="ui-g-12 ui-md-4">
+                            <p:commandButton value="Cerrar" onclick="PF('dialogoPersonalDna').hide();" immediate="true"
+                                         process="@this" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                    </div>
+                 </div>   
+                            
+                 <f:event listener="#{inscripcionAdministrado.validarPanelPersona}" type="postValidate" />
+            </h:form>    
+        </p:dialog>
+
+       <p:dialog modal="true" id="dialogoActualizarPersonal" widgetVar="dialogoActualizarPersonal" width="90%" height="500px" 
+                 header="Personal DNA" closeOnEscape="true" resizable="false" dynamic="false" class="dlgdna" position="center center" responsive="true">
+            <h:form id="frmActPersonalDna">
+                <ui:include src="panelPersonal.xhtml" />
+                <br></br>
+                 <div class="ui-g">
+                    <div class="ui-g-12 ui-md-4">
+                        <p:commandButton value="Guardar" actionListener="#{inscripcionAdministrado.actualizarPersonal()}" 
+                                         update=":formularioPrincipal" 
+                                         oncomplete="if (!args.validationFailed) PF('dialogoActualizarPersonal').hide()" icon="ui-icon-disk" title="Guarda los cambios"/>	
+                    </div>
+                    <div class="ui-g-12 ui-md-4"></div>
+                    <div class="ui-g-12 ui-md-4">
+                          <p:commandButton value="Cerrar" onclick="PF('dialogoActualizarPersonal').hide();" immediate="true" 
+                                         process="@this" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                    </div>
+                 </div>    
+                          
+                <f:event listener="#{inscripcionAdministrado.validarPanelPersona}" type="postValidate" />
+            </h:form>
+        </p:dialog>
+    
+        
+</f:view>

@@ -1,0 +1,43 @@
+<f:view contentType="text/html"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <div class="ui-g">
+        <div class="ui-g-12"> 
+               <p:outputLabel value="Observaciones"/> 
+               <p:inputTextarea rows="4" value="#{cursoInscripcionAdministrado.cursoInscripcion.obsRechazo}" 
+                                required="true" requiredMessage="Debe ingresar las observaciones" />
+        </div>
+    </div>
+    <div class="ui-g">
+            <div class="ui-g-12 ui-md-6">
+                <p:fileUpload fileUploadListener="#{cursoInscripcionAdministrado.uploadRec}" mode="advanced" allowTypes="/(\.|\/)(pdf)$/"
+                                           invalidFileMessage="Sólo puede subir archivos PDF" 
+                           label="Adjuntar documento PDF"  update="descargarRec, eliminarRec"
+                           auto="true" requiredMessage="Debe adjuntar un documento" > 
+                 </p:fileUpload>
+             </div> 
+              <div class="ui-g-12 ui-md-3">
+                 <p:outputPanel id="descargarRec">
+                     <p:commandLink ajax="false" process="@this" immediate="true" 
+                                    value="Descargar documento" 
+                                    rendered="#{cursoInscripcionAdministrado.cursoInscripcion.archivoRechazo!=null}" >
+                         <p:fileDownload value="#{cursoInscripcionAdministrado.descargarRechazo()}" />
+                      </p:commandLink>
+                       </p:outputPanel>    
+             </div>
+             <div class="ui-g-12 ui-md-3">
+                 <p:outputPanel id="eliminarRec">
+                     <p:commandLink  ajax="true" process="@this" rendered="#{cursoInscripcionAdministrado.cursoInscripcion.archivoRechazo!=null}"
+                                   value="Eliminar documento"   update="descargarRec, eliminarRec"
+                                   actionListener="#{cursoInscripcionAdministrado.eliminarRechazo()}">
+                           <p:confirm header="Confirmación" message="¿ Está seguro de eliminar el archivo?" icon="pi pi-exclamation-triangle" />    
+                     </p:commandLink>                      
+                 </p:outputPanel>
+             </div> 
+    </div>
+
+</f:view>

@@ -1,0 +1,232 @@
+<f:view contentType="text/html"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+
+     <p:messages id="mensajes" autoUpdate="true" showDetail="false" closable="true" severity="error"  />
+   <p:growl  widgetVar="mensajes" showDetail="true" showSummary="false" 
+               life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true" severity="warn, info"/>
+   
+     <div class="ui-g">
+        <div class="ui-g-12 ui-md-4 ui-lg-3" style="padding-top: 16px;"> 
+            <p:outputPanel  id="giFoto"  >
+                <p:graphicImage value="#{cursoAdministrado.verFoto()}" stream="false" width="100%"  style="min-height: 142px" />
+            </p:outputPanel>
+             <p:fileUpload fileUploadListener="#{cursoAdministrado.uploadFoto}" mode="advanced" 
+                      label="Subir Foto"  update="giFoto" allowTypes="/(\.|\/)(jpg)$/" invalidFileMessage="Formato inválido"
+                      auto="true" requiredMessage="Debe adjuntar una foto" styleClass="bcfoto" > 
+           
+            </p:fileUpload>
+        </div>
+        <div class="ui-g-12 ui-md-8 ui-lg-9">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <p:outputLabel value="Nombre del curso" for="txtNombreCurso"/> 
+                   <p:inputText required="true" id="txtNombreCurso"  value="#{cursoAdministrado.curso.nombre}" 
+                                maxlength="150" requiredMessage="Debe ingresar el nombre del curso">
+                   </p:inputText>
+                </div>
+            </div>
+
+            <div class="ui-g">
+                <div class="ui-g-12">
+                   <p:outputLabel value="Objetivo" for="txtObjetivo"/>  
+                   <p:inputTextarea required="true" id="txtObjetivo"  value="#{cursoAdministrado.curso.objetivo}" rows="4"
+                                maxlength="400" requiredMessage="Debe ingresar el objetivo del curso">
+                   </p:inputTextarea>
+                </div>
+            </div>
+
+            <div class="ui-g">
+              
+                <div class="ui-g-12 ui-md-4">
+                    <p:outputLabel value="Nro de horas lectivas" for="txtHorasLectivas"/> 
+                    <p:inputNumber  id="txtHorasLectivas" minValue="0" decimalPlaces="0" maxValue="1000" padControl="false"
+                                    value="#{cursoAdministrado.curso.nroHoras}"  required="true"
+                                    thousandSeparator="" requiredMessage="Debe ingresar el número de horas">
+                    </p:inputNumber>   
+                </div>
+                 <div class="ui-g-12 ui-md-2">
+                    <p:outputLabel value="Siglas" for="txtSiglas"/> 
+                    <p:inputText  id="txtSiglas" required="true"  value="#{cursoAdministrado.curso.siglas}" 
+                                maxlength="20" requiredMessage="Debe ingresar las siglas del curso">
+                   </p:inputText>
+                    
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+   <p:fieldset legend="SUMARIO">
+        <p:inputTextarea required="true" value="#{cursoAdministrado.curso.sumario}" rows="7"
+                       maxlength="2000" requiredMessage="Debe ingresar el sumario del curso">
+        </p:inputTextarea>
+   </p:fieldset>
+  
+  <p:fieldset legend="PREREQUISITOS">
+    <div class="ui-g">
+       <div class="ui-g-12 ui-md-8">
+            <p:outputLabel value="Curso"/> 
+            <p:selectOneMenu  id="selPrereq" widgetVar="selPrereq" autoWidth="false"  required="false" value="#{cursoAdministrado.nidPrereq}">
+                    <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+                    <f:selectItems value="#{cursoAdministrado.obtenerCursosActivos()}"
+                                   var="itemCursoPrereq" 
+                                   itemValue="#{itemCursoPrereq.nidCurso}"
+                                   itemLabel="#{itemCursoPrereq.nombre}"/>
+             </p:selectOneMenu>
+       </div>
+       <div class="ui-g-12 ui-md-2">
+           <p:outputLabel value=" "/> 
+            <p:commandButton value="Agregar" actionListener="#{cursoAdministrado.agregarPrerequisito()}" 
+                                     process="@this,selPrereq" 
+                                     update="tablaPrereq"
+                                     title="Agrega al Prerequisito"/>	
+       </div>
+    </div>
+    <p:dataTable 
+         id="tablaPrereq"
+         widgetVar="tablaPrereq" 
+         var="itemPrereq" 
+         value="#{cursoAdministrado.curso.listaPrereq}" 
+         emptyMessage="No se encontraron registros"
+         rowIndexVar="index"
+         scrollable="true"
+         paginator="false"
+       >
+         <p:column headerText="ACCIONES" width="80">            
+
+            <p:commandButton icon="fa fa-trash" 
+                             action="#{cursoAdministrado.anularPrerequisito(itemPrereq)}" update="tablaPrereq"
+                             process="@this" >
+               <p:confirm header="Confirmación" message="¿ Está seguro de eliminar el prerequisito ?" />
+             </p:commandButton>
+
+         </p:column>
+         <p:column headerText="Haber aprobado los cursos" class="left" width="100%">
+             <h:outputText value="#{itemPrereq.cursoPrereq.nombre}" />
+         </p:column>
+
+     </p:dataTable>
+  </p:fieldset>
+
+
+   <p:fieldset legend="PONDERACIÓN">
+ 
+     <p:dataTable 
+         id="tablaPond"
+         widgetVar="tablaPond" 
+         var="itemPond" 
+         value="#{cursoAdministrado.curso.listaPonderacion}" 
+         emptyMessage="No se encontraron registros"
+         rowIndexVar="index"
+         scrollable="true"
+         paginator="false"
+       >
+        
+
+         <p:column headerText="TIPO" class="left" width="300">
+             <h:outputText value="#{itemPond.catalogo.txtNombre}" />
+         </p:column>
+         
+         <p:column headerText="PONDERACIÓN" class="left" width="100">
+             <p:inputNumber  minValue="0" decimalPlaces="2" maxValue="100"
+                            value="#{itemPond.ponderacion}" decimalSeparator="." 
+                            maxlength="5" thousandSeparator="">
+                 <p:ajax event="blur" process="@this" />
+            </p:inputNumber> 
+         </p:column>
+
+     </p:dataTable>
+   </p:fieldset>
+
+
+   
+    
+    
+  <p:fieldset legend="DOCUMENTACIÓN">
+   
+    <p:dataTable 
+         id="tablaDoc"
+         widgetVar="tablaDoc" 
+         var="itemDoc" 
+         value="#{cursoAdministrado.curso.listaDocum}" 
+         emptyMessage="No se encontraron registros"
+         rowIndexVar="index"
+         scrollable="true"
+         paginator="false"
+       >
+         <p:column headerText="TIPO" class="left" width="300">
+             <h:outputText value="#{itemDoc.catalogo.txtNombre}" />
+         </p:column>
+        <p:column headerText="ACCIONES" width="200">       
+             <p:fileUpload fileUploadListener="#{cursoAdministrado.upload}" mode="advanced" label="Subir Archivo PDF" allowTypes="/(\.|\/)(pdf)$/"
+                           auto="true" requiredMessage="Debe adjuntar el archivo PDF" 
+                           invalidFileMessage="Formato inválido"  update="descargarReq" > 
+                   <f:attribute name="index" value="#{index}" />
+            </p:fileUpload>
+             <p:outputPanel  id="descargarReq">
+                  <p:commandLink  ajax="false" process="@this" immediate="true"
+                                 value="Descargar pdf"
+                                 rendered="#{itemDoc.archivo!=null}">
+                      <p:fileDownload value="#{cursoAdministrado.descargar(index)}" />
+                   </p:commandLink>
+                </p:outputPanel>
+        </p:column>
+
+        
+
+     </p:dataTable>
+
+  </p:fieldset>
+
+  <p:fieldset legend="REQUISITOS">
+   <div class="ui-g">
+    <div class="ui-g-12 ui-md-4">
+         <p:outputLabel value="Requisito"/> 
+         <p:selectOneMenu id="selReq" autoWidth="false"  required="false" value="#{cursoAdministrado.nidRequisito}">
+                 <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+                 <f:selectItems value="#{catalogoAdministrado.obtenerCursoRequisitos()}"
+                                var="itemCatReq" 
+                                itemValue="#{itemCatReq.nidCatalogo}"
+                                itemLabel="#{itemCatReq.txtNombre}"/>
+              </p:selectOneMenu>
+    </div>
+    <div class="ui-g-12 ui-md-2">
+         <p:commandButton value="Agregar" actionListener="#{cursoAdministrado.agregarRequisito()}" 
+                                  process="@this,selReq" 
+                                  update="tablaReq"
+                                  title="Agrega al requisito"/>	
+    </div>
+   </div>
+    <p:dataTable 
+         id="tablaReq"
+         widgetVar="tablaReq" 
+         var="itemReq" 
+         value="#{cursoAdministrado.curso.listaReq}" 
+         emptyMessage="No se encontraron registros"
+         rowIndexVar="index"
+         scrollable="true"
+         paginator="false"
+       >
+        <p:column headerText="ACCIONES" width="10%">   
+            <p:commandButton icon="fa fa-trash" 
+                            action="#{cursoAdministrado.anularRequisito(itemReq)}" update="tablaReq"
+                            oncomplete="if (!args.validationFailed) PF('dialogoEvaluar').hide()"  process="@form"
+                            >
+               <p:confirm header="Confirmación" message="¿ Está seguro de eliminar el requisito ?" />
+           </p:commandButton>
+        </p:column>
+
+         <p:column headerText="DESCRIPCIÓN" class="left" width="90%">
+             <h:outputText value="#{itemReq.catalogo.txtNombre}" />
+         </p:column>
+
+     </p:dataTable>
+  </p:fieldset>
+    
+   <f:event listener="#{cursoAdministrado.validarCurso}" type="postValidate" />  
+</f:view>

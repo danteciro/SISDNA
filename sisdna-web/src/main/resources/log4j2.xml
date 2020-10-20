@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration >
+  <Appenders>
+     <File name="sisdna" fileName="/log/log_sisdna.log" append="false">
+      <PatternLayout pattern="%d{ABSOLUTE}|%p|%x|%c|%m%n"/>
+    </File>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </Console>
+  </Appenders>
+  <Loggers>
+    <Root level="ALL">
+      <!--AppenderRef ref="sisdna"/ -->
+      <AppenderRef ref="Console"/>
+    </Root>
+  </Loggers>
+</Configuration>

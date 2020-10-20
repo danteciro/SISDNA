@@ -1,0 +1,67 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://ws.verificacionAntecedentesPenalesWS.pj.gob.pe" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://ws.verificacionAntecedentesPenalesWS.pj.gob.pe">
+   <wsdl:types>
+      <xsd:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://ws.verificacionAntecedentesPenalesWS.pj.gob.pe" version="1.0">
+         <xsd:element name="verificarAntecedentesPenales">
+            <xsd:complexType>
+               <xsd:sequence>
+                  <xsd:element name="xApellidoPaterno" type="xsd:string"/>
+                  <xsd:element name="xApellidoMaterno" type="xsd:string"/>
+                  <xsd:element name="xNombre1" type="xsd:string"/>
+                  <xsd:element name="xNombre2" type="xsd:string"/>
+                  <xsd:element name="xNombre3" type="xsd:string"/>
+                  <xsd:element name="xDni" type="xsd:string"/>
+                  <xsd:element name="xMotivoConsulta" type="xsd:string"/>
+                  <xsd:element name="xProcesoEntidadConsultante" type="xsd:string"/>
+                  <xsd:element name="xRucEntidadConsultante" type="xsd:string"/>
+                  <xsd:element name="xIpPublica" type="xsd:string"/>
+                  <xsd:element name="xDniPersonaConsultante" type="xsd:string"/>
+                  <xsd:element name="xAudNombrePC" type="xsd:string"/>
+                  <xsd:element name="xAudIP" type="xsd:string"/>
+                  <xsd:element name="xAudNombreUsuario" type="xsd:string"/>
+                  <xsd:element name="xAudDireccionMAC" type="xsd:string"/>
+               </xsd:sequence>
+            </xsd:complexType>
+         </xsd:element>
+         <xsd:element name="verificarAntecedentesPenalesResponse">
+            <xsd:complexType>
+               <xsd:sequence>
+                  <xsd:element name="xCodigoRespuesta" type="xsd:string"/>
+                  <xsd:element name="xMensajeRespuesta" type="xsd:string"/>
+               </xsd:sequence>
+            </xsd:complexType>
+         </xsd:element>
+      </xsd:schema>
+   </wsdl:types>
+   <wsdl:message name="verificarAntecedentesPenales">
+      <wsdl:part name="in" element="tns:verificarAntecedentesPenales"/>
+   </wsdl:message>
+   <wsdl:message name="verificarAntecedentesPenalesResponse">
+      <wsdl:part name="out" element="tns:verificarAntecedentesPenalesResponse"/>
+   </wsdl:message>
+   <wsdl:portType name="PJAntecedentesPenalesPortType">
+      <wsdl:operation name="verificarAntecedentesPenales">
+         <wsdl:input message="tns:verificarAntecedentesPenales" wsaw:Action="http://ws.verificacionAntecedentesPenalesWS.pj.gob.pe/NewOperation"/>
+         <wsdl:output message="tns:verificarAntecedentesPenalesResponse" wsaw:Action="http://ws.verificacionAntecedentesPenalesWS.pj.gob.pe/verificacionAntecedentesPenalesServicio/verificarAntecedentesPenalesResponse"/>
+      </wsdl:operation>
+   </wsdl:portType>
+   <wsdl:binding name="PJAntecedentesPenalesSoap11Binding" type="tns:PJAntecedentesPenalesPortType">
+      <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+      <wsdl:operation name="verificarAntecedentesPenales">
+         <soap:operation soapAction="http://ws.verificacionAntecedentesPenalesWS.pj.gob.pe/NewOperation" style="document"/>
+         <wsdl:input>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+   </wsdl:binding>
+   <wsdl:service name="PJAntecedentesPenales">
+      <wsdl:port name="PJAntecedentesPenalesHttpSoap11Endpoint" binding="tns:PJAntecedentesPenalesSoap11Binding">
+         <soap:address location="http://ws3.pide.gob.pe/services/PJAntecedentesPenales.PJAntecedentesPenalesHttpSoap11Endpoint"/>
+      </wsdl:port>
+      <wsdl:port name="PJAntecedentesPenalesHttpsSoap11Endpoint" binding="tns:PJAntecedentesPenalesSoap11Binding">
+         <soap:address location="https://ws3.pide.gob.pe/services/PJAntecedentesPenales.PJAntecedentesPenalesHttpsSoap11Endpoint"/>
+      </wsdl:port>
+   </wsdl:service>
+</wsdl:definitions>

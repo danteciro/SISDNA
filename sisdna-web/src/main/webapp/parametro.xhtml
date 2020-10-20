@@ -1,0 +1,52 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="/WEB-INF/templates/default.xhtml">
+    <ui:define name="header">        
+    </ui:define>
+    <ui:define name="content" >
+        <h:form id="formularioPrincipal">
+            
+            <p:fieldset legend="Solicitud de Inscripción" style="margin-bottom:20px">
+                <p:panelGrid  columns="4" columnClasses="ui-grid-col-4,ui-grid-col-1,ui-grid-col-4,ui-grid-col-1" layout="grid" class="pnoborder" style="max-width:900px">
+                   <p:outputLabel  for="txtVencimientoSI" value="Plazo de vencimiento ( días ):"/>
+                   <p:inputNumber  id="txtVencimientoSI" value="" title="Campo Obligatorio" minValue="0" maxValue="1000" style="width: 100px">
+                        <p:ajax event="blur" update="@this"/>
+                    </p:inputNumber>
+                   
+                    <p:outputLabel  for="txtAlertaSI" value="Número de días para alerta de vencimiento:"/>
+                    <p:inputNumber id="txtAlertaSI" value="" title="Campo Obligatorio"  minValue="0" maxValue="1000">
+                        <p:ajax event="blur" update="@this"/>
+                    </p:inputNumber>
+                 </p:panelGrid>
+               
+             
+            </p:fieldset>
+             
+             <p:fieldset legend="Solicitud de Acreditación" style="margin-bottom:20px">
+                <p:panelGrid columns="4" columnClasses="ui-grid-col-4,ui-grid-col-1,ui-grid-col-4,ui-grid-col-1" layout="grid" class="pnoborder" style="max-width:900px">
+                   <p:outputLabel  for="txtVencimientoSA" value="Plazo de vencimiento ( días ):"/>
+                    <p:inputNumber  id="txtVencimientoSA" value="" title="Campo Obligatorio" minValue="0" maxValue="1000">
+                        <p:ajax event="blur" update="@this"/>
+                    </p:inputNumber>
+                   
+                    <p:outputLabel  for="txtAlertaSA" value="Número de días para alerta de vencimiento:"/>
+                    <p:inputNumber id="txtAlertaSA" value="" title="Campo Obligatorio"  minValue="0" maxValue="1000">
+                        <p:ajax event="blur" update="@this"/>
+                    </p:inputNumber>
+                </p:panelGrid>
+             
+            </p:fieldset>
+            
+            <p:commandButton id="btnParametro" value="Actualizar Parámetros"   />
+         
+        </h:form>
+        
+        
+    </ui:define>
+</ui:composition> 
+
+

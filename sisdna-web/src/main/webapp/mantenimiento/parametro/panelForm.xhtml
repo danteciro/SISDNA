@@ -1,0 +1,30 @@
+<f:view contentType="text/html"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <div class="ui-fluid">
+        <p:panelGrid id="pParametro" columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid">
+
+            <p:outputLabel for="txtComentario" value="Nombre de Documento"/>
+            <p:inputText id="txtComentario" value="#{parametroDnaAdministrado.entidadSeleccionada.comentario}" 
+                          converter="mayusculaConvertidor" disabled="true">
+            </p:inputText>
+            
+            <p:outputLabel  for="txtValor" value="Ingrese valor ( texto ): "/>
+            <p:inputText id="txtValor" converter="mayusculaConvertidor" value="#{parametroDnaAdministrado.entidadSeleccionada.txtValor}"
+                           maxlength="4000" title="Campo Obligatorio">
+            </p:inputText>
+
+            <p:outputLabel  for="numValor1" value="Ingrese valor ( numérico ): "/>
+            <p:inputNumber id="numValor1" value="#{parametroDnaAdministrado.entidadSeleccionada.numValor1}" style="width:100px">  
+            </p:inputNumber>  
+        </p:panelGrid>
+
+    </div>
+
+
+</f:view>

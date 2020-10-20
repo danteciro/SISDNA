@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="pe.gob.mimp_demuna-ejb_ejb_1.0-SNAPSHOTPU" transaction-type="JTA">
+    <jta-data-source>SisdnaDS</jta-data-source>
+    <class>pe.gob.mimp.sisdna.modelo.ParametroDna</class>
+    <class>pe.gob.mimp.sisdna.modelo.Defensoria</class>
+    <class>pe.gob.mimp.sisdna.modelo.DefensoriaInfo</class>
+    <class>pe.gob.mimp.sisdna.modelo.DefensoriaPersona</class>
+    <class>pe.gob.mimp.sisdna.modelo.Inscripcion</class>
+    <class>pe.gob.mimp.sisdna.modelo.Acreditacion</class>
+    <class>pe.gob.mimp.sisdna.modelo.InscripcionEval</class>
+    <class>pe.gob.mimp.sisdna.modelo.PersonaDna</class>
+    <class>pe.gob.mimp.sisdna.modelo.PersonaDnaEval</class>
+    <class>pe.gob.mimp.sisdna.modelo.Catalogo</class>
+    <class>pe.gob.mimp.sisdna.modelo.DocInscripcion</class>
+    <class>pe.gob.mimp.sisdna.modelo.AcreditacionEval</class>
+    <class>pe.gob.mimp.sisdna.modelo.PersonaDnaAcreEval</class>
+    <class>pe.gob.mimp.sisdna.modelo.PersonaDnaAcre</class>
+    <class>pe.gob.mimp.sisdna.modelo.DocAcreditacion</class>
+    <class>pe.gob.mimp.sisdna.modelo.Curso</class>
+    <class>pe.gob.mimp.sisdna.modelo.CursoDocum</class>
+    <class>pe.gob.mimp.sisdna.modelo.CursoEvaluacion</class>
+    <class>pe.gob.mimp.sisdna.modelo.CursoInscripcion</class>
+    <class>pe.gob.mimp.sisdna.modelo.CursoInscripcionPrereq</class>
+    <class>pe.gob.mimp.sisdna.modelo.CursoInscripcionReq</class>
+    <class>pe.gob.mimp.sisdna.modelo.CursoPonderacion</class>
+    <class>pe.gob.mimp.sisdna.modelo.CursoPrereq</class>
+    <class>pe.gob.mimp.sisdna.modelo.CursoReq</class>
+    <class>pe.gob.mimp.sisdna.modelo.Supervision</class>
+    <class>pe.gob.mimp.sisdna.modelo.SupervisionObs</class>
+    <class>pe.gob.mimp.sisdna.modelo.SupervisionResp</class>
+    <class>pe.gob.mimp.sisdna.modelo.SupervisionRrhh</class>
+    <class>pe.gob.mimp.sisdna.modelo.CursoProgramacion</class>
+    <class>pe.gob.mimp.sisdna.modelo.PersonaPre</class>
+    <class>pe.gob.mimp.sisdna.modelo.Municipalidad</class>
+    <exclude-unlisted-classes>true</exclude-unlisted-classes>
+    <shared-cache-mode>NONE</shared-cache-mode>
+    <validation-mode>NONE</validation-mode>
+    <properties>
+      <property name="eclipselink.logging.level.sql" value="FINE"/>
+      <property name="eclipselink.logging.parameters" value="true"/>
+    </properties>
+  </persistence-unit>
+</persistence>

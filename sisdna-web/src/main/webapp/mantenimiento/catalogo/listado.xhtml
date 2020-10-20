@@ -1,0 +1,157 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="/WEB-INF/templates/default.xhtml">
+    <ui:define name="header">
+    </ui:define>
+    <ui:define name="content" >
+        <ui:include src="/WEB-INF/templates/cargando.xhtml"/>
+        <div class="pcenter">
+            <p:outputLabel class="pred pbold ptitle" value="CATÁLOGO"/>    
+        </div>
+        <br></br>
+        <h:form>
+          <div class="ui-g">
+              <div class="ui-g-12 ui-md-2">
+                  <p:outputLabel  for="txtPadre" value="Seleccione Catálogo "/>
+              </div>
+              <div class="ui-g-12 ui-md-4">
+                  <p:selectOneMenu id="txtPadre" value="#{catalogoAdministrado.padre}" autoWidth="false"
+                        effect="fade" required="true">
+                     <p:ajax process="@this" listener="#{catalogoAdministrado.obtenerTodos()}" update="formularioPrincipal, btnAbrir" />
+                     <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"  />
+                     <f:selectItems value="#{catalogoAdministrado.obtenerPadres()}" var="catalogoPadre" 
+                                         itemLabel="#{catalogoPadre.txtNombre}" itemValue="#{catalogoPadre.nidCatalogo}" />
+                 </p:selectOneMenu>
+              </div>
+              <div class="ui-g-12 ui-md-3">
+              
+                <p:commandButton id="btnAbrir" disabled="#{catalogoAdministrado.padre==null}" value="Nuevo Catálogo"
+                                 actionListener="#{catalogoAdministrado.nuevoCatalogo()}" process="@this"
+                                 oncomplete="PF('dialogoDocInterno').show();" update="dialogoDocInterno"
+                                 title="Crea un nuevo catálogo" class="sombra" style="padding: 2px !important;">
+                   <p:ajax update="formDocInterno" resetValues="true" /> 
+                </p:commandButton>
+              </div>
+          </div> 
+             
+         </h:form>
+        <h:form id="formularioPrincipal">
+            <p:growl id="mensajes" widgetVar="mensajes" showDetail="true" life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true"/>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
+
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="boxshadowinside pnoborder">
+
+                <p:dataTable 
+                    id="tablaDocs"
+                    widgetVar="tablaDocs" 
+                    var="item" 
+                    value="#{catalogoAdministrado.lista}" 
+                    selection="#{catalogoAdministrado.catalogo}"
+                    rowIndexVar="index"
+                    scrollable="true"
+                    rows="10" 
+                    paginator="false"
+                    emptyMessage="No se encontraron registros"
+                >
+
+                    <p:column headerText="ACCIONES" width="20%">                                       	                                
+                        <p:commandButton update="formActualizar" oncomplete="PF('dialogoActualizar').show();" title="Editar" icon="fa fa-pencil" >
+                            <f:setPropertyActionListener value="#{item}" target="#{catalogoAdministrado.catalogo}"/>
+                        </p:commandButton>
+                        <p:commandButton update=":dialogoAnular" oncomplete="PF('dialogoAnular').show();"  title="Anular" icon="fa fa-trash">
+                            <f:setPropertyActionListener value="#{item}" target="#{catalogoAdministrado.catalogo}"/>
+                        </p:commandButton>
+                    </p:column>
+
+                   
+
+                    <p:column headerText="NOMBRE" class="left" width="60%" sortBy="#{item.txtNombre}">
+                        <h:outputText value="#{item.txtNombre}" />
+                    </p:column>
+
+                    <p:column headerText="ACTIVO" filterBy="#{item.flgActivo}" filterMatchMode="contains" class="pcenter" width="20%">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('tablaDocs').filter()">
+                                <f:selectItem itemLabel="Todos" itemValue="" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="Activo" itemValue="1" />
+                                <f:selectItem itemLabel="Inactivo" itemValue="0" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText value="#{item.flgActivo != 1? 'Inactivo':'Activo'}">
+                            <f:converter converterId="javax.faces.Character" />                                    
+                        </h:outputText>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:panelGrid>
+        </h:form>
+
+
+        <p:dialog modal="true" id="dialogoDocInterno"  widgetVar="dialogoDocInterno" header="Nuevo Catálogo" closeOnEscape="true" resizable="false" style="max-width: 600px;" width="90%" dynamic="true">
+            <h:form id="formDocInterno" >
+                <ui:include src="panelForm.xhtml" />
+                <br></br>
+                 <div class="ui-g">
+                    <div class="ui-md-5 nopad">
+                       <p:commandButton value="Guardar" actionListener="#{catalogoAdministrado.create()}" update="@form :formularioPrincipal:tablaDocs" oncomplete="if (!args.validationFailed) PF('dialogoDocInterno').hide()" icon="ui-icon-disk" title="Guarda los cambios"/>	
+                        </div>
+                    <div class="ui-md-2 nopad"> </div>
+                    <div class="ui-md-5 nopad">
+                         <p:commandButton value="Cerrar" onclick="PF('dialogoDocInterno').hide();" immediate="true" type="button" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                  </div>
+                </div>
+               
+            </h:form>
+        </p:dialog>
+
+          <p:dialog modal="true" id="dialogoActualizar" widgetVar="dialogoActualizar" header="Actualizar Catálogo" closeOnEscape="true" resizable="false" style="max-width: 600px;" width="90%"  dynamic="true">
+            <h:form id="formActualizar">
+                <ui:include src="panelForm.xhtml" />
+                <br></br>
+                <div class="ui-g">
+                    <div class="ui-md-5 nopad">
+                       <p:commandButton value="Guardar" actionListener="#{catalogoAdministrado.update()}" 
+                                         update="@form :formularioPrincipal:tablaDocs" 
+                                         oncomplete="if (!args.validationFailed) PF('dialogoActualizar').hide()" 
+                                         icon="ui-icon-disk" title="Guarda los cambios"/>	
+                     </div>
+                    <div class="ui-md-2 nopad"> </div>
+                    <div class="ui-md-5 nopad">
+                         <p:commandButton value="Cerrar" onclick="PF('dialogoActualizar').hide();" immediate="true" type="button" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                   </div>
+                </div>
+                
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog modal="true" dynamic="true" id="dialogoAnular" widgetVar="dialogoAnular" header="Estado del Catálogo" draggable="true" 
+                  resizable="false" closable="true" closeOnEscape="true" showEffect="puff" hideEffect="puff" width="280" >
+            <h:form>
+                <ui:include src="panelAnular.xhtml" />
+                <br></br>
+                 <div class="ui-g">
+                    <div class="ui-md-5 nopad">
+                          <p:commandButton value="Guardar" actionListener="#{catalogoAdministrado.anular(catalogoAdministrado.catalogo)}" update="@form :formularioPrincipal:tablaDocs" oncomplete="PF('dialogoAnular').hide()" icon="ui-icon-disk" title="Guarda los cambios"/>	
+                      
+                    </div>
+                    <div class="ui-md-2 nopad"> </div>
+                    <div class="ui-md-5 nopad">
+                               <p:commandButton value="Cerrar" onclick="PF('dialogoAnular').hide();" immediate="true" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                
+                  </div>
+                </div>
+               
+            </h:form>
+        </p:dialog>
+
+    </ui:define>           
+</ui:composition>

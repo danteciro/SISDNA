@@ -1,0 +1,162 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="/WEB-INF/templates/default.xhtml">
+    <ui:define name="header">
+    </ui:define>
+    <ui:define name="content" >
+        <ui:include src="/WEB-INF/templates/cargando.xhtml"/>
+        <div class="pcenter">
+            <p:outputLabel class="pred pbold ptitle" value="MUNICIPALIDADES"/>    
+        </div>
+        <br></br>
+         <p:messages id="mensajes" autoUpdate="true" showDetail="false" closable="true" severity="error"  />
+         <p:growl  widgetVar="mensajes" showDetail="true" showSummary="false" 
+               life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true" severity="warn, info"/>
+   
+        <h:form id="frmBuscar" >
+            
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-3">
+                    <p:commandButton value="CARGAR MUNICIPALIDADES" actionListener="#{municipalidadAdministrado.nuevaCarga()}" 
+                                        title="Cargar Metas"  update="dialogoCargar" oncomplete="PF('dialogoCargar').show();" >
+                    </p:commandButton>
+                </div>
+            </div>    
+             <p:fieldset legend="Búsqueda de Municipalidad" style="max-width: 900px; width: 100%">
+                  
+             <div class="ui-g">
+                     <div class="ui-g-12 ui-md-4">
+                        <p:outputLabel for="busDepartamento" value="Departamento: "/>
+                        <p:selectOneMenu id="busDepartamento" value="#{municipalidadAdministrado.busDepartamento}" autoWidth="false"
+                              effect="fade" >
+                               <p:ajax listener="#{municipalidadAdministrado.buscar()}" update="busProvincia, formularioPrincipal1" />
+                               <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                               <f:selectItems value="#{municipalidadAdministrado.obtenerDepartamentos()}" var="departamentoBus" 
+                                            itemLabel="#{departamentoBus.txtDescripcion}" itemValue="#{departamentoBus.nidDepartamento}" />
+                         </p:selectOneMenu>
+                   </div>    
+                   <div class="ui-g-12 ui-md-4">
+                        <p:outputLabel for="busProvincia" value="Provincia: "/>
+                        <p:selectOneMenu id="busProvincia" value="#{municipalidadAdministrado.busProvincia}" autoWidth="false"
+                             effect="fade" >
+                             <p:ajax listener="#{municipalidadAdministrado.buscar()}" update="busDistrito, formularioPrincipal1" />
+                             <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                             <f:selectItems value="#{municipalidadAdministrado.obtenerProvinciasBus()}" var="provinciaBus" 
+                                           itemLabel="#{provinciaBus.txtDescripcion}" itemValue="#{provinciaBus.nidProvincia}" />
+                       </p:selectOneMenu>
+                   </div>    
+                   <div class="ui-g-12 ui-md-4">
+                        <p:outputLabel for="busDistrito" value="Distrito: "/>
+                         <p:selectOneMenu id="busDistrito" value="#{municipalidadAdministrado.busDistrito}" autoWidth="false"
+                              effect="fade" >
+                               <p:ajax listener="#{municipalidadAdministrado.buscar()}" update="formularioPrincipal1" />
+                               <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                               <f:selectItems value="#{municipalidadAdministrado.obtenerDistritosBus()}" var="distritoBus" 
+                                            itemLabel="#{distritoBus.txtDescripcion}" itemValue="#{distritoBus.nidDistrito}" />
+                        </p:selectOneMenu>
+                   </div>    
+              
+              </div>
+               
+            </p:fieldset>
+         
+         </h:form>
+        <br />
+        <h:form id="formularioPrincipal1">
+         
+            <p:dataTable 
+                    id="tablaMunicipalidad"
+                    widgetVar="tablaMunicipalidad" 
+                    var="itemMunicipalidad" 
+                    value="#{municipalidadAdministrado.listaMunicipalidad}" 
+                    emptyMessage="No se encontraron registros"
+                    rowIndexVar="index"
+                    scrollable="true"
+                    rows="20" 
+                    paginator="true"
+                    resizableColumns="false"
+                    paginatorPosition="bottom"
+                    paginatorAlwaysVisible="true"
+                    rowsPerPageTemplate="20,30,40"
+                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}"
+                    >
+                  
+                <p:column headerText="UBIGEO" class="left" width="60" sortBy="#{itemMunicipalidad.ubigeo}">
+                        <h:outputText value="#{itemMunicipalidad.ubigeo}" />
+                    </p:column>
+
+                    <p:column headerText="CARGO" class="left" width="80" sortBy="#{itemMunicipalidad.cargo}">
+                        <h:outputText value="#{itemMunicipalidad.cargo}" />
+                    </p:column>
+                   
+                    <p:column headerText="NOMBRE DEL ALCALDE" class="left" width="200" sortBy="#{itemMunicipalidad.nombre}">
+                        <h:outputText value="#{itemMunicipalidad.nombre}" />
+                    </p:column>
+                    <p:column headerText="DIRECCIÓN" class="left" width="200">
+                        <h:outputText value="#{itemMunicipalidad.direccion}" />
+                    </p:column>
+                    <p:column headerText="TELÉFONO" class="left" width="200">
+                        (<h:outputText value="#{itemMunicipalidad.codigo}" />)<h:outputText value="#{itemMunicipalidad.telefono}" />
+                    </p:column>
+                    <p:column headerText="CORREO" class="left" width="200">
+                        <h:outputText value="#{itemMunicipalidad.correo}" />
+                    </p:column>
+
+                   
+
+                </p:dataTable>
+
+        </h:form>
+      
+      
+       <p:dialog modal="true" dynamic="true" id="dialogoCargar" widgetVar="dialogoCargar" header="Cargar Municipalidades"
+                 draggable="true" resizable="false" closable="true" closeOnEscape="true" width="420"
+                  position="center center" responsive="true">
+            <h:form>
+                <a href="#{request.contextPath}/resources/formatos/municipalidades.xlsx" target="_blank" >Descargue aquí el formato Excel para la carga</a>
+                   <br /><br />
+                 <div class="ui-g">
+                    <div class="ui-g-12 ui-md-6">
+                        <p:fileUpload fileUploadListener="#{municipalidadAdministrado.upload}" mode="advanced" 
+                                      label="Cargar Excel" allowTypes="/(\.|\/)(xlsx)$/" update="cargaResultados"
+                                      invalidFileMessage="Únicamente puede subir archivos con extensión xlsx"
+                                      auto="true" requiredMessage="Debe adjuntar un documento" > 
+
+                        </p:fileUpload>
+                     </div>
+                     <p:outputPanel id="cargaResultados" class="ui-g-12 ui-md-6">
+                             <p:outputPanel rendered="#{municipalidadAdministrado.archivo!=null}">
+                             Archivo Cargado. Presione Importar para iniciar el proceso.
+                             </p:outputPanel>
+                     </p:outputPanel>              
+                    
+                </div> 
+                <br />
+                <div class="ui-g">
+                   <div class="ui-g-12 ui-md-5"> 
+                       <p:commandButton value="IMPORTAR" actionListener="#{municipalidadAdministrado.importar()}" 
+                                         icon="ui-icon-import-export"  update=":formularioPrincipal1" 
+                                         oncomplete="PF('dialogoCargar').hide()" title="Importar Municipalidades"/>
+
+                   </div>
+                 <div class="ui-g-12 ui-md-2"></div>
+                 <div class="ui-g-12 ui-md-5"> 
+                            <p:commandButton value="Cerrar" onclick="PF('dialogoCargar').hide();" process="@this"
+                                         immediate="true" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+              
+                  </div>
+                  </div>
+               
+            </h:form>
+        </p:dialog>  
+    
+    </ui:define>  
+    
+    
+</ui:composition>

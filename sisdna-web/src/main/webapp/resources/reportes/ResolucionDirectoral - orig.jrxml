@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.9.0.final using JasperReports Library version 6.9.0-cb8f9004be492ccc537180b49c026951f4220bf3  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f9dc941a-71af-4482-9bde-43176622fed9">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<subDataset name="dsAprobados" uuid="63e747ac-ad63-494c-b53e-bc9a5f8bd86d">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+	</subDataset>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="nroInforme" class="java.lang.String"/>
+	<field name="departamento" class="java.lang.String"/>
+	<field name="provincia" class="java.lang.String"/>
+	<field name="distrito" class="java.lang.String"/>
+	<field name="fechas" class="java.lang.String"/>
+	<field name="curso" class="java.lang.String"/>
+	<field name="ciudad" class="java.lang.String"/>
+	<field name="direccion" class="java.lang.String"/>
+	<field name="nroIntegrantes" class="java.lang.String"/>
+	<field name="nroRd" class="java.lang.String"/>
+	<field name="nombreDir" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<detail>
+		<band height="754" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement x="26" y="216" width="494" height="24" uuid="2be6aa2f-c147-4e5d-af99-fa43ab48ad30"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Calibri" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Lima, "]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="138" y="0" width="270" height="190" uuid="618bcf52-50b7-4caf-850f-67964e3f1249"/>
+				<imageExpression><![CDATA["http://localhost:8080/sisdna-web/resources/images/rd_escudo.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="26" y="190" width="494" height="21" uuid="7558187b-2b75-4a92-bc01-63611d178641"/>
+				<textElement textAlignment="Center">
+					<font fontName="Calibri" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Nº                   -MIMP-DGNNA-DSLD"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="26" y="240" width="494" height="60" uuid="0823ad84-6c58-46c4-9bfd-c6fa8b555af6"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Calibri" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["		Visto, el Informe Nº "+ $F{nroInforme}+", sobre el Curso de "+$F{curso}+" realizado en la ciudad de "+$F{ciudad}+", provincia de "+$F{provincia}+", departamento de "+$F{departamento}+", a cargo del equipo profesional de la Dirección de Sistemas Locales y Defensorías, de la Dirección General de Niñas, Niños y Adolescentes, del Ministerio de la Mujer y Poblaciones Vulnerables; y"
+]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="26" y="310" width="494" height="270" uuid="b44578f7-1220-4fac-bf35-a36b57fd34d9"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Calibri" size="11"/>
+				</textElement>
+				<text><![CDATA[		CONSIDERANDO:
+			
+		Que, mediante Decreto Legislativo Nº 1098 se aprobó la Ley de Organización y Funciones del Ministerio de la Mujer y Poblaciones Vulnerables. Que mediante Decreto Supremo Nº 003-2012-MIMP se aprobó el Reglamento de Organización y Funciones del Ministerio de la Mujer y Poblaciones Vulnerables, modificado por Decreto Supremo Nº 002-2015-MIMP, el mismo que señala en el inciso a. del artículo 59°, como función de la Dirección de Sistemas Locales y Defensorías, de la Dirección General de Niñas, Niños y Adolescentes, ejercer la función de Autoridad Central del servicio de DNA, y en tal sentido, de conformidad con el inciso d. de dicho artículo, fortalecer las capacidades de defensoras y defensoras para brindar un servicio de calidad a niñas, niños y adolescentes.
+	
+		Que, el artículo 43° del Código de los Niños y Adolescentes, modificado por el artículo 4° del Decreto Legislativo Nº 1377, señala que la Defensoría de la Niña, Niño y Adolescente actúa en las instancias administrativas de las instituciones públicas y privadas de atención a las niñas, niños y adolescentes, correspondiendo al MIMP, en su condición de Autoridad Central del servicio de DNA, capacitar a sus integrantes. Que el artículo 44º del citado código, concordante con el artículo 17 del Decreto Supremo  Nº 005-2019-MIMP, Reglamento del Servicio de las Defensorías de la Niña, Niño y Adolescente, establece que los integrantes de las Defensorías deben cumplir con las siguientes condiciones: a) ser mayor de 18 años, b) no registrar antecedentes policiales, judiciales ni penales, c) no ser deudor/a alimentario/a; y d) haber aprobado el curso de formación para defensores/as. ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="26" y="598" width="494" height="70" uuid="26c1e68d-afd8-4cba-b046-09f9b92f03ed"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Calibri" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["		Que, el artículo 15° del Decreto Supremo Nº 005-2019-MIMP, señala que el curso de "+$F{curso}+" es dictado por la Dirección de Sistemas Locales y Defensorías (DSLD) del MIMP, para preparar a quienes se incorporarán como tales a la DNA. Mediante resolución directoral, la DSLD aprueba los resultados del curso de $F{curso}, con mención expresa de las personas que obtuvieron nota aprobatoria y disponiendo la emisión de su correspondiente certificado."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="26" y="679" width="494" height="60" uuid="bae04c67-64eb-4869-9753-4a7d679a9bf4"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Calibri" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["		Que, según concluye el Informe Nº "+$F{nroInforme}+", "+$F{fechas}+", se realizó el Curso de $F{curso} en $F{direccion} , ubicado en la ciudad de $F{ciudad}, provincia de $F{provincia}, departamento de $F{departamento}, en el que se evaluó a $F{nroIntegrantes}integrantes de las DNA, obteniendo los resultados indicados en el citado informe."]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="648">
+			<textField>
+				<reportElement x="26" y="20" width="494" height="100" uuid="a9fd1d51-d086-478e-89f0-b71daab09486"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Calibri" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["		Que, de conformidad con el artículo 42 del Código de los Niños y Adolescentes, concordante con el artículo 17 del Decreto Supremo Nº 005-2019-MIMP, para participar en el Curso de "+$F{curso}+", los/las integrantes del servicio declararon cumplir con las condiciones señaladas en la citada norma, las mismas que son obligatorias para su participación y fue notificado a cada participante al momento de su inscripción; por tanto, se procedió a verificar lo declarado en las fichas de inscripción de las/los participantes. Que al producirse observaciones en dicha verificación, éstas han sido sometidas al descarte correspondiente, según se detalla en el informe Nº "+$F{nroInforme}+" notificándose a los/las participantes acotados/as. "]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="27" y="410" width="494" height="30" uuid="a655d857-d404-40c6-abf7-213d89bc7363"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="dsAprobados" uuid="1773c290-276a-4976-bc88-e18cd32c32b6">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource() ]]></dataSourceExpression>
+					</datasetRun>
+					<jr:listContents height="30" width="494"/>
+				</jr:list>
+			</componentElement>
+			<textField>
+				<reportElement x="140" y="570" width="240" height="50" uuid="c38f1e92-2dfe-4c7a-95ed-b8f4721df1a8"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombreDir} +
+"\n Directora II" +
+"\n Direccion de Sistema Locales y Defensorías"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="27" y="134" width="494" height="60" uuid="a7910585-c1f0-4d05-9780-cbdffd0b7758"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Calibri" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["		Que, en tal sentido, corresponde emitir resolución directoral aprobando el resultado del presente Curso de "+$F{curso}+", haciendo mención expresa en la presente resolución de aquellos participantes que además de haber obtenido notas aprobatorias, cumplen con las condiciones señaladas en el marco normativo del servicio."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="26" y="207" width="494" height="90" uuid="5aa2e126-970f-4ee8-816c-603a1e6f0b50"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Calibri" size="11"/>
+				</textElement>
+				<text><![CDATA[		De conformidad con lo dispuesto en la Ley de Organización y Funciones del Ministerio de la Mujer y Poblaciones Vulnerables – MIMP, aprobada por Decreto Legislativo Nº 1098, su Reglamento de Organización y Funciones aprobado por Decreto Supremo N° 003-2012-MIMP y modificatorias y de conformidad con lo señalado en el artículo 43 del Código de los Niños y Adolescentes;
+
+		SE RESUELVE:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="26" y="300" width="494" height="50" uuid="457b0efb-610a-4f39-b20f-396bf79c49c1"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Calibri" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["		Artículo 1°.- Apruébese el resultado del Curso de "+$F{curso}+" realizado en la ciudad de "+$F{ciudad}+", provincia de "+$F{provincia}+", departamento de "+$F{departamento}+","+ $F{fechas}+", de conformidad con el Informe Nº "+$F{nroInforme} +"."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="27" y="360" width="494" height="50" uuid="9fe8077e-85d7-42ee-840c-173e7d81791d"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Calibri" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["		Artículo 2°.- Hacer expreso reconocimiento a los/las integrantes del servicio de las Defensorías de la Niña, Niño y Adolescente que, habiendo cumpliendo con las condiciones requeridas por ley, han obtenido nota aprobatoria: "
+]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="26" y="450" width="494" height="90" uuid="29dd45d9-0143-4d1d-878f-d8330ba5a772"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Calibri" size="11"/>
+				</textElement>
+				<text><![CDATA[		Artículo 3º.- Emítanse los certificados correspondientes y entréguense a los/las integrantes del servicio de las DNA mencionados/as.
+
+		Regístrese y comuníquese]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

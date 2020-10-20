@@ -1,0 +1,269 @@
+<f:view contentType="text/html"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+                
+              <div class="ui-g">
+                <div class="ui-g-12 ui-md-12">
+                    <h2>#{acreditacionAdministrado.acreditacionAEvaluar.padre.dna.txtEntidad}</h2>
+                    <h3>#{acreditacionAdministrado.acreditacionAEvaluar.padre.dna.txtConstancia} - 
+                        #{acreditacionAdministrado.acreditacionAEvaluar.padre.dna.txtNombre} - 
+                        #{acreditacionAdministrado.getNombreDepartamentoEvaluar()} -
+                        #{acreditacionAdministrado.getNombreProvinciaEvaluar()} -
+                        #{acreditacionAdministrado.getNombreDistritoEvaluar()}
+                    </h3>
+                </div>
+                <div class="ui-g-12 ui-md-12">
+                    <p:outputLabel value="Teléfono:"/>#{acreditacionAdministrado.acreditacionAEvaluar.padre.txtTelefono}
+                </div>
+            </div>
+            <p:separator />
+                
+                <div class="ui-g">
+                     <div class="ui-g-12 ui-md-1">
+                         <p:selectBooleanCheckbox id="flgNroOrdenanza" value="#{acreditacionAdministrado.flgNroOrdenanza}" >
+                            <p:ajax update="obsNroOrdenanza , btnEvaluar" />
+                        </p:selectBooleanCheckbox>
+                    </div>
+                    <div class="ui-g-12 ui-md-4">    
+                        <p:outputLabel for="txtNroOrdenanza" value="Número de Ordenanza "/> 
+                    </div>
+                    <div class="ui-g-12 ui-md-7">
+                        <p:inputText id="txtNroOrdenanza" value="#{acreditacionAdministrado.acreditacionEval.txtNroOrdenanza}" 
+                                     maxlength="850" readonly="true" title="Campo Obligatorio" >
+                        </p:inputText>
+                    </div>
+                </div>
+                <p:outputPanel id="obsNroOrdenanza" style="width: 100%">
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-1"> </div>   
+                        <div class="ui-g-12 ui-md-11"> 
+                            <p:inputText rendered="#{acreditacionAdministrado.flgNroOrdenanza}" required="#{acreditacionAdministrado.flgNroOrdenanza}" 
+                                        requiredMessage="Debe ingresar la observación de el número de ordenanza"
+                                        value="#{acreditacionAdministrado.acreditacionEval.obsNroOrdenanza}" 
+                                     maxlength="850">
+                            </p:inputText>
+                        </div>
+                    </div>                     
+                 </p:outputPanel>
+                 
+                <div class="ui-g">
+                     <div class="ui-g-12 ui-md-1">
+                         <p:selectBooleanCheckbox id="flgFecOrdenanza" value="#{acreditacionAdministrado.flgFecOrdenanza}" >
+                            <p:ajax update="obsFecOrdenanza , btnEvaluar" />
+                        </p:selectBooleanCheckbox>
+                    </div>
+                    <div class="ui-g-12 ui-md-4">    
+                        <p:outputLabel for="txtFecOrdenanza" value="Fecha de Ordenanza "/> 
+                    </div>
+                    <div class="ui-g-12 ui-md-7">
+                        <p:inputText id="txtFecOrdenanza" 
+                                     value="#{acreditacionAdministrado.obtenerFechaConFormato(acreditacionAdministrado.acreditacionEval.fecOrdenanza)}"
+                                     maxlength="850" readonly="true" >
+                        </p:inputText>
+                    </div>
+                </div>
+                <p:outputPanel id="obsFecOrdenanza" style="width: 100%">
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-1"> </div>   
+                        <div class="ui-g-12 ui-md-11"> 
+                            <p:inputText rendered="#{acreditacionAdministrado.flgFecOrdenanza}" required="#{acreditacionAdministrado.flgFecOrdenanza}" 
+                                        requiredMessage="Debe ingresar la observación de la fecha de ordenanza"
+                                        value="#{acreditacionAdministrado.acreditacionEval.obsFecOrdenanza}" 
+                                     maxlength="850">
+                            </p:inputText>
+                        </div>
+                    </div>                     
+                 </p:outputPanel>
+            
+                <div class="ui-g">
+                     <div class="ui-g-12 ui-md-1">
+                         <p:selectBooleanCheckbox id="flgCorreoObs" value="#{acreditacionAdministrado.flgEstadoCons}" >
+                            <p:ajax update="obsEstadoCons , btnEvaluar" />
+                        </p:selectBooleanCheckbox>
+                    </div>
+                    <div class="ui-g-12 ui-md-4">    
+                        <p:outputLabel for="obsEstadoCons" value="Estado de Conservación"/> 
+                    </div>
+                    <div class="ui-g-12 ui-md-7">
+                        <p:selectOneRadio required="true" id="txtEstadoCons" value="#{acreditacionAdministrado.acreditacionEval.txtEstadoCons}"
+                                          requiredMessage="Debe de escoger el estado de Conservación" disabled="true" >
+                            <f:selectItem itemLabel="BUENO" itemValue="1" />
+                            <f:selectItem itemLabel="REGULAR" itemValue="2" />
+                            <f:selectItem itemLabel="MALO" itemValue="3" />
+                        </p:selectOneRadio>
+                    </div>
+                </div>
+                <p:outputPanel id="obsEstadoCons" style="width: 100%">
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-1"> </div>   
+                        <div class="ui-g-12 ui-md-11"> 
+                            <p:inputText rendered="#{acreditacionAdministrado.flgEstadoCons}" required="#{acreditacionAdministrado.flgEstadoCons}" 
+                                        requiredMessage="Debe ingresar la observación de el estado de conservación"
+                                        value="#{acreditacionAdministrado.acreditacionEval.obsEstadoCons}"
+                                     maxlength="850" >
+                            </p:inputText>
+                        </div>
+                    </div>                     
+                 </p:outputPanel> 
+            
+                 <div class="ui-g">
+                     <div class="ui-g-12 ui-md-1">
+                         <p:selectBooleanCheckbox disabled="true" value="#{acreditacionAdministrado.acreditacionEval.flgEquipoComputo}" >
+                        </p:selectBooleanCheckbox>
+                    </div>
+                    <div class="ui-g-12 ui-md-9">    
+                        <p:outputLabel value="¿Cuenta con equipo de cómputo a disposición de cada personal de la DEMUNA?"/> 
+                    </div>
+                    <div class="ui-g-12 ui-md-2">    
+                        <p:outputLabel value="Observado" rendered="#{!acreditacionAdministrado.acreditacionEval.flgEquipoComputo}"/> 
+                    </div>
+                </div>
+            
+                <div class="ui-g">
+                     <div class="ui-g-12 ui-md-1">
+                         <p:selectBooleanCheckbox disabled="true" value="#{acreditacionAdministrado.acreditacionEval.flgImpresora}" >
+                        </p:selectBooleanCheckbox>
+                    </div>
+                    <div class="ui-g-12 ui-md-9">    
+                        <p:outputLabel value="¿Cuenta con impresora a disposición de la DEMUNA?"/> 
+                    </div>
+                    <div class="ui-g-12 ui-md-2">    
+                        <p:outputLabel value="Observado" rendered="#{!acreditacionAdministrado.acreditacionEval.flgImpresora}"/> 
+                    </div>
+                </div>
+            
+                <div class="ui-g">
+                     <div class="ui-g-12 ui-md-1">
+                         <p:selectBooleanCheckbox disabled="true" value="#{acreditacionAdministrado.acreditacionEval.flgInternet}" >
+                        </p:selectBooleanCheckbox>
+                    </div>
+                    <div class="ui-g-12 ui-md-9">    
+                        <p:outputLabel value="¿Cuenta con conexión a internet en la DEMUNA?"/> 
+                    </div>
+                    <div class="ui-g-12 ui-md-2">    
+                        <p:outputLabel value="Observado" rendered="#{!acreditacionAdministrado.acreditacionEval.flgInternet}"/> 
+                    </div>
+                </div>
+            
+                <div class="ui-g">
+                     <div class="ui-g-12 ui-md-1">
+                         <p:selectBooleanCheckbox disabled="true" value="#{acreditacionAdministrado.acreditacionEval.flgArchivadores}" >
+                        </p:selectBooleanCheckbox>
+                    </div>
+                    <div class="ui-g-12 ui-md-9">    
+                        <p:outputLabel value="¿Los archivadores y escritorios son seguros para el resguardo de los expedientes sobre riesgo de desprotección y otros de la DEMUNA?"/> 
+                    </div>
+                    <div class="ui-g-12 ui-md-2">    
+                        <p:outputLabel value="Observado" rendered="#{!acreditacionAdministrado.acreditacionEval.flgArchivadores}"/> 
+                    </div>
+                </div>
+            
+                <div class="ui-g">
+                     <div class="ui-g-12 ui-md-1">
+                         <p:selectBooleanCheckbox disabled="true" value="#{acreditacionAdministrado.acreditacionEval.flgAccesibilidad}" >
+                        </p:selectBooleanCheckbox>
+                    </div>
+                    <div class="ui-g-12 ui-md-9">    
+                        <p:outputLabel value="¿El Local garantiza la accesibilidad de niñas, niños, adolescentes, madres gestantes o personas con discapacidad?"/> 
+                    </div>
+                    <div class="ui-g-12 ui-md-2">    
+                        <p:outputLabel value="Observado" rendered="#{!acreditacionAdministrado.acreditacionEval.flgAccesibilidad}"/> 
+                    </div>
+                </div>
+            
+                <div class="ui-g">
+                     <div class="ui-g-12 ui-md-1">
+                         <p:selectBooleanCheckbox disabled="true" value="#{acreditacionAdministrado.acreditacionEval.flgAreaLudica}" >
+                        </p:selectBooleanCheckbox>
+                    </div>
+                    <div class="ui-g-12 ui-md-9">    
+                        <p:outputLabel value="¿Cuenta con un área lúdica para la atención de niñas, niños y adolescentes?"/> 
+                    </div>
+                    
+                    <div class="ui-g-12 ui-md-2">    
+                        <p:outputLabel value="Observado" rendered="#{!acreditacionAdministrado.acreditacionEval.flgAreaLudica}"/> 
+                    </div>
+                    
+                </div>
+           
+                <p:panelGrid id="pTabla" columns="1" columnClasses="ui-grid-col-12" layout="grid" class="boxshadowinside pnoborder">
+
+                   <p:dataTable 
+                       id="tablaPersonas"
+                       widgetVar="tablaPersonas" 
+                       var="persona" 
+                       value="#{acreditacionAdministrado.equipoEval}" 
+                       rowIndexVar="index"
+                       scrollable="true"
+                       rows="10" 
+                       paginator="false"
+                       resizableColumns="false"
+                       emptyMessage="No se encontraron registros"
+                       currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}">
+
+                       <p:column headerText="ACCIONES"  class="pcenter" width="10%">                                       	                                
+                           <p:commandButton
+                               update="dialogoEvaluarPersona"  process="@this"
+                                            oncomplete="PF('dialogoEvaluarPersona').show();"  
+                                            actionListener="#{acreditacionAdministrado.obtenerPersonaAEvaluar(persona)}" 
+                                            title="Evaluar" icon="fa fa-check">
+                               <f:setPropertyActionListener value="#{persona}" target="#{acreditacionAdministrado.personaEval}"/>
+                           </p:commandButton>
+                       </p:column>
+
+                       <p:column headerText="FUNCIÓN"  class="pcenter" width="15%">
+                           <h:outputText value="#{persona.funcion.txtNombre}" />
+                       </p:column>
+                       <p:column headerText="NOMBRES"  class="pcenter" width="20%">
+                           <h:outputText value="#{persona.txtNombre1}" />
+                       </p:column>
+
+                       <p:column headerText="APELLIDO PATERNO" class="pcenter" width="15%">
+                           <h:outputText value="#{persona.txtApellidoPaterno}" />
+                       </p:column>
+
+                       <p:column headerText="APELLIDO MATERNO" class="pcenter" width="15%">
+                           <h:outputText value="#{persona.txtApellidoMaterno}" />
+                       </p:column>
+
+                       <p:column headerText="SEXO" class="pcenter" width="5%">
+                           <h:outputText value="#{persona.txtSexo}" />
+                       </p:column>
+                       
+                   </p:dataTable>
+
+               </p:panelGrid>
+    <p:dataList id="dlAdjuntos" value="#{acreditacionAdministrado.obtenerAdjuntosEvaluar()}"  var="doc" rowIndexVar="indexDoc" type="definition" class="noborder" emptyMessage="No hay tipo de archivos registrados">
+        <p:outputPanel>
+            <p:commandButton value="Descargar #{doc.tipo.txtNombre} : #{doc.txtNombre}" ajax="false">
+                <p:fileDownload value="#{acreditacionAdministrado.obtenerNombreAdjunto(doc)}" />
+           </p:commandButton>
+        </p:outputPanel><br />
+    </p:dataList>
+    <div class="ui-g">
+        <div class="ui-g-12 ui-md-1">
+            <p:selectBooleanCheckbox value="#{acreditacionAdministrado.flgAdjuntosObs}" >
+                <p:ajax update="obsArchivos , btnEvaluar" />
+            </p:selectBooleanCheckbox>
+        </div>
+        <div class="ui-g-12 ui-md-4"> Observación en archivos  </div>
+    </div>
+    <p:outputPanel id="obsArchivos" style="width: 100%">
+        <div class="ui-g">
+            <div class="ui-g-12 ui-md-1"> </div>   
+            <div class="ui-g-12 ui-md-11"> 
+                <p:inputText rendered="#{acreditacionAdministrado.flgAdjuntosObs}"
+                         required="#{acreditacionAdministrado.flgAdjuntosObs}"
+                         requiredMessage="Debe ingresar la observación de los archivos adjuntos"
+                         value="#{acreditacionAdministrado.acreditacionEval.obsDocs}" 
+                         maxlength="850">
+            </p:inputText>
+            </div>
+        </div>                     
+     </p:outputPanel>  
+</f:view>

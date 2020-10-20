@@ -1,0 +1,94 @@
+<f:view contentType="text/html"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+    
+    
+   <p:dialog   width="70%" style="max-width: 500px" modal="true" id="dialogoUpload" widgetVar="dialogoUpload" 
+                    header="Subir Constancia de Acreditacion" closeOnEscape="true" resizable="false" dynamic="false">
+            <h:form> 
+              <div class="ui-g">
+                <div class="ui-g-12 hidden-xs ui-md-8">
+                    <p:fileUpload  fileUploadListener="#{acreditacionAdministrado.uploadConstancia}" mode="advanced" 
+                                 label="Adjuntar Constancia" update="dwConstancia"  allowTypes="/(\.|\/)(pdf)$/" 
+                                 auto="true" requiredMessage="Debe adjuntar la constancia" > 
+                    </p:fileUpload>
+                </div>    
+                <div class="ui-g-12 hidden-xs ui-md-4">
+                       <p:outputPanel  id="dwConstancia" >
+                          <p:commandButton value="Descargar Constancia"
+                                           rendered="#{acreditacionAdministrado.acreditacion.flagConstancia==1}"
+                                           ajax="false" process="@this">
+                                <p:fileDownload value="#{acreditacionAdministrado.downloadConstanciaFirmada()}" />
+                          </p:commandButton>
+                       </p:outputPanel>    
+                </div>  
+              </div>    
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pright">
+                    <p:column>
+                      <p:commandButton  value="Guardar y Enviar a Correo de Responsable" 
+                                        actionListener="#{acreditacionAdministrado.enviarConstancia}" 
+                                        oncomplete="if (!args.validationFailed) PF('dialogoUpload').hide()" 
+                                        process="@form"
+                                        update=":formularioPrincipal:tablaDocs"
+                                        icon="fa fa-check"  
+                                        id="btnEnviar"
+                                        />  
+                         
+                        <p:commandButton value="Regresar" 
+                                         onclick="PF('dialogoUpload').hide();" 
+                                         immediate="true" 
+                                         process="@this"
+                                         icon="ui-icon-cancel" />
+                     </p:column>
+                </p:panelGrid>    
+            </h:form>   
+        </p:dialog>
+        
+        <p:dialog   width="70%" style="max-width: 500px" modal="true" id="dialogoUploadDenegado" widgetVar="dialogoUploadDenegado" 
+                    header="Subir Oficio de Denegación" closeOnEscape="true" resizable="false" dynamic="false">
+            <h:form> 
+              <div class="ui-g">
+                <div class="ui-g-12 hidden-xs ui-md-8">
+                    <p:fileUpload  fileUploadListener="#{acreditacionAdministrado.uploadOficio}" mode="advanced" 
+                                 label="Adjuntar Oficio" update="dwOficio"  allowTypes="/(\.|\/)(pdf)$/" 
+                                 auto="true" requiredMessage="Debe adjuntar el oficio" > 
+                    </p:fileUpload>
+                </div>    
+                <div class="ui-g-12 hidden-xs ui-md-4">
+                       <p:outputPanel  id="dwOficio" >
+                          <p:commandButton value="Descargar Oficio"
+                                           rendered="#{acreditacionAdministrado.acreditacion.flagOficio==1}"
+                                           ajax="false" process="@this">
+                                <p:fileDownload value="#{acreditacionAdministrado.downloadOficio()}" />
+                          </p:commandButton>
+                       </p:outputPanel>    
+                </div>  
+              </div>    
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pright">
+                    <p:column>
+                      <p:commandButton  value="Guardar y Enviar a Correo de Responsable" 
+                                        actionListener="#{acreditacionAdministrado.enviarOficio}" 
+                                        oncomplete="if (!args.validationFailed) PF('dialogoUploadDenegado').hide()" 
+                                        process="@form"
+                                        update=":formularioPrincipal:tablaDocs"
+                                        icon="fa fa-check"  
+                                        id="btnEnviar"
+                                        />  
+                         
+                        <p:commandButton value="Regresar" 
+                                         onclick="PF('dialogoUploadDenegado').hide();" 
+                                         immediate="true" 
+                                         process="@this"
+                                         icon="ui-icon-cancel" />
+                     </p:column>
+                </p:panelGrid>    
+            </h:form>   
+        </p:dialog>
+    
+        
+</f:view>

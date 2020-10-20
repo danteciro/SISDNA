@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f05bdc5b-ea35-4d14-bc8e-876f5603afb8">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="tipoConstancia" class="java.lang.String"/>
+	<field name="nrDeConstancia" class="java.lang.String"/>
+	<field name="distrito" class="java.lang.String"/>
+	<field name="provincia" class="java.lang.String"/>
+	<field name="departamento" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="730" splitType="Stretch">
+			<staticText>
+				<reportElement x="1" y="126" width="553" height="38" uuid="6e4b2b1e-6742-455f-8fc6-bd4ed88638a8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Calibri" size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Constancia]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="78" y="213" width="399" height="39" uuid="3a35ec1e-bfc0-4fc8-b11e-4bcd2705b394"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Calibri" size="13"/>
+				</textElement>
+				<text><![CDATA[El Ministerio de la Mujer y Poblaciones Vulnerables,
+ otorga la presente a la:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="1" y="164" width="553" height="30" uuid="da6ddcf0-bd11-49af-bb99-cfeb991e6d97"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Calibri" size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipoConstancia}+" N° " + $F{nrDeConstancia}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="78" y="282" width="399" height="130" uuid="27d794f3-941e-4b43-b34c-4152c2a4ca76"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Calibri" size="20" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Defensoría Municipal de la Niña, Niño y Adolescente del distrito de "  + $F{distrito} + ",  provincia de " + $F{provincia}+", departamento " + $F{departamento}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="78" y="420" width="399" height="99" uuid="e4d24682-273a-4abf-95aa-ee5f5c3d44e3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Calibri" size="13"/>
+				</textElement>
+				<text><![CDATA[En mérito a su inscripción ante esta Dirección del MIMP, de conformidad con lo establecido por el Art. 43º de la Ley N° 27337 “Código de los Niños y Adolescentes”, el Decreto Legislativo Nº 1098, el artículo 59º del Decreto Supremo Nº 003-2012-MIMP y modificatorias.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="519" width="355" height="79" uuid="020ab1d3-0100-43af-a49a-6f3f7afc1402"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Calibri" size="13"/>
+				</textElement>
+				<text><![CDATA[La inscripción tiene vigencia desde la fecha de emisión de la presente constancia.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="78" y="598" width="399" height="40" uuid="974d3876-b184-43b7-babc-4d08be4a71b1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Calibri" size="13"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{departamento} + ","]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="145" y="710" width="264" height="20" uuid="818e3db6-9cc0-46d9-bc87-27e75f2bf9e7"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Calibri" size="9"/>
+				</textElement>
+				<text><![CDATA[Firma]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

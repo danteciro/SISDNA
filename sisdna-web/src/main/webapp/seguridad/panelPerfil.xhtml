@@ -1,0 +1,47 @@
+<f:view contentType="text/html"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <p:panelGrid columns="2" columnClasses="ui-grid-col-3,ui-grid-col-9 " layout="grid" class="pnoborder">
+        <h:outputLabel for="perfil" value="Perfil:" />
+        <p:selectOneMenu id="perfil" value="#{perfilAdministrado.entidadSeleccionada}" converter="perfilConvertidor">
+            <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+            <f:selectItems value="#{perfilAdministrado.obtenerPerfilesPorModulo()}"
+                           var="itemPerfil"
+                           itemValue="#{itemPerfil}"
+                           itemLabel="#{itemPerfil.txtPerfil}" />
+            <p:ajax event="change" update="@form"/>
+        </p:selectOneMenu>
+    </p:panelGrid>
+
+    <p:separator/>
+
+    <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder">
+        <p:dataTable 
+            id="tablaPaginas"
+            var="itemPaginas" 
+            value="#{funcionalidadAdministrado.obtenerPaginasPorPerfil()}"
+            emptyMessage="Ningún registro encontrado"
+            rows="10" 
+            paginator="true"
+            paginatorPosition="bottom"
+            paginatorAlwaysVisible="false"
+            rowsPerPageTemplate="5,10,15"
+            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+            currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}">
+
+            <p:column headerText="Título" class="pcenter" width="150">
+                <h:outputText value="#{itemPaginas.txtTitulo}" />
+            </p:column>
+
+            <p:column headerText="Referencia" class="pcenter" >
+                <h:outputText value="#{itemPaginas.txtReferencia}" />
+            </p:column>
+
+        </p:dataTable>
+    </p:panelGrid>
+
+</f:view>

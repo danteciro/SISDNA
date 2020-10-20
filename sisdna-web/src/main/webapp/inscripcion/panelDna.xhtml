@@ -1,0 +1,119 @@
+<f:view contentType="text/html"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <div class="ui-g">
+        <div class="ui-g-12 ui-md-3"> <p:outputLabel  for="txtTipo" value="Seleccione Tipo: "/></div>
+        <div class="ui-g-12 ui-md-9"> 
+           <p:selectOneRadio id="txtTipo" value="#{inscripcionAdministrado.defensoria.txtTipo}" required="true" 
+                             requiredMessage="Debe seleccionar el tipo">
+               <p:ajax listener="#{inscripcionAdministrado.renderOrigen()}" update="@form:pCodigo, @form:pControlDna" />
+               <f:selectItem itemLabel="Sede Central" itemValue="CEN" />
+               <f:selectItem itemLabel="Anexo" itemValue="ANX" />
+           </p:selectOneRadio>
+        </div>
+    </div>   
+    <p:outputPanel id="pCodigo" style="padding: 0px" >
+    <p:outputPanel rendered="#{!inscripcionAdministrado.verOrigen}" style="padding: 0px" >
+    <div class="ui-g" >
+         <div class="ui-g-12 ui-md-3"> <p:outputLabel for="txtCodigo"  value="Código de la DNA de Sede Central: "/></div>
+         <div class="ui-g-12 ui-md-3"> 
+              <p:inputText id="txtCodigo" required="#{!inscripcionAdministrado.verOrigen}" value="#{inscripcionAdministrado.codigo}"
+                                 requiredMessage="Debe ingresar el código de la DNA de la sede Central"
+                                 maxlength="5" converter="maskConCero" validator="#{inscripcionAdministrado.buscarDna}"  >
+                  <p:ajax event="blur" update="@this, txtNombrePadre, pControlDna"/>
+               </p:inputText>
+         </div>
+     
+    </div>     
+    <div class="ui-g">
+         <div class="ui-g-12 ui-md-3">  <p:outputLabel for="txtNombrePadre"  value="Nombre de la DNA de Sede Central: "/></div>
+         <div class="ui-g-12 ui-md-9"> 
+             <p:inputText id="txtNombrePadre" disabled="true"  value="#{inscripcionAdministrado.nombreSede}" 
+                          required="#{inscripcionAdministrado.verOrigen}" />
+         </div>
+    </div>     
+    </p:outputPanel>  
+    </p:outputPanel>         
+    <p:outputPanel id="pControlDna" style="padding: 0px" >
+     <div class="ui-g">
+         <div class="ui-g-12 ui-md-3"> <p:outputLabel  for="txtOrigen" value="Seleccione Origen "/></div>
+         <div class="ui-g-12 ui-md-9"> 
+           <p:selectOneMenu id="txtOrigen" value="#{inscripcionAdministrado.defensoria.origen.nidCatalogo}" autoWidth="false"
+                effect="fade" disabled="#{!inscripcionAdministrado.verOrigen}"
+                required="#{inscripcionAdministrado.verOrigen}" requiredMessage="Debe seleccionar el origen" >
+                  <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                  <f:selectItems value="#{inscripcionAdministrado.obtenerOrigen()}" var="origen" 
+                                itemLabel="#{origen.txtNombre}" itemValue="#{origen.nidCatalogo}" />
+           </p:selectOneMenu>
+         </div>
+     </div>     
+     <div class="ui-g">
+         <div class="ui-g-12 ui-md-3"> <p:outputLabel for="txtEntidad"  value="Nombre de la Entidad Responsable: "/></div>
+         <div class="ui-g-12 ui-md-9"> 
+           <p:inputText id="txtEntidad"  
+                        disabled="#{!inscripcionAdministrado.verOrigen}"
+                        value="#{inscripcionAdministrado.defensoria.txtEntidad}" maxlength="150"
+                        required="true" requiredMessage="Debe ingresar el Nombre del Entidad Responsable">
+           </p:inputText>
+         </div>
+     </div>   
+     <div class="ui-g">
+         <div class="ui-g-12 ui-md-3"> <p:outputLabel for="txtNombre"  value="Nombre de la DNA: "/></div>
+         <div class="ui-g-12 ui-md-9"> 
+           <p:inputText id="txtNombre" required="true"  
+                        requiredMessage="Debe ingresar el nombre de la DNA"
+                        value="#{inscripcionAdministrado.defensoria.txtNombre}" maxlength="150">
+           </p:inputText>
+         </div>
+     </div>    
+     <div class="ui-g">
+         <div class="ui-g-12 ui-md-3"><p:outputLabel for="txtDepartamento" value="Departamento: "/></div>
+         <div class="ui-g-12 ui-md-9"> 
+             <p:selectOneMenu id="txtDepartamento" value="#{inscripcionAdministrado.defensoria.nidDepartamento}" 
+                            autoWidth="false"  effect="fade" 
+                            disabled="#{!inscripcionAdministrado.verOrigen}" 
+                            required="true" requiredMessage="Debe seleccionar el departamento" >
+                 <p:ajax listener="#{inscripcionAdministrado.obtenerProvincias()}" update="txtProvincia" />
+
+                 <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                 <f:selectItems value="#{inscripcionAdministrado.obtenerDepartamentos()}" var="departamento" 
+                              itemLabel="#{departamento.txtDescripcion}" itemValue="#{departamento.nidDepartamento}" />
+             </p:selectOneMenu>
+         </div>
+     </div>   
+     <div class="ui-g">
+         <div class="ui-g-12 ui-md-3"><p:outputLabel for="txtProvincia" value="Provincia "/></div>
+         <div class="ui-g-12 ui-md-9"> 
+             <p:selectOneMenu id="txtProvincia" value="#{inscripcionAdministrado.defensoria.nidProvincia}" 
+                              autoWidth="false" effect="fade" 
+                              disabled="#{!inscripcionAdministrado.verOrigen}" 
+                              required="true" requiredMessage="Debe seleccionar la provincia">
+                <p:ajax listener="#{inscripcionAdministrado.obtenerDistritos()}" update="txtDistrito" />
+                <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                <f:selectItems value="#{inscripcionAdministrado.provincias}" var="provincia" 
+                              itemLabel="#{provincia.txtDescripcion}" itemValue="#{provincia.nidProvincia}" />
+              </p:selectOneMenu>
+         </div>
+     </div>    
+     <div class="ui-g">
+         <div class="ui-g-12 ui-md-3"> <p:outputLabel for="txtDistrito" value="Distrito "/></div>
+         <div class="ui-g-12 ui-md-9"> 
+             <p:selectOneMenu id="txtDistrito" value="#{inscripcionAdministrado.defensoria.nidDistrito}" autoWidth="false"
+                effect="fade" disabled="#{!inscripcionAdministrado.verOrigen}" 
+                required="true" requiredMessage="Debe seleccionar el distrito">
+                <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                <f:selectItems value="#{inscripcionAdministrado.distritos}" var="distrito" 
+                              itemLabel="#{distrito.txtDescripcion}" itemValue="#{distrito.nidDistrito}" />
+          </p:selectOneMenu>
+         </div>    
+    </div>
+    </p:outputPanel>    
+    <f:event listener="#{inscripcionAdministrado.validarDna}" type="postValidate" />
+
+</f:view>

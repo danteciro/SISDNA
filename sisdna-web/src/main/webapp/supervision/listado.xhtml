@@ -1,0 +1,348 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="/WEB-INF/templates/default.xhtml">
+    <ui:define name="header">
+    </ui:define>
+    <ui:define name="content" >
+        <ui:include src="/WEB-INF/templates/cargando.xhtml"/>
+        <div class="pcenter">
+            <p:outputLabel class="pred pbold ptitle" value="FICHAS DE SUPERVISIÓN"/>    
+        </div>
+        <br></br>
+            <p:messages id="mensajes" autoUpdate="true" showDetail="false" closable="true" severity="error" />
+          <p:growl id="messages" widgetVar="messages"  globalOnly="false" showDetail="true" showSummary="false" life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true" severity="warn, info"/>
+  
+        <h:form id="frmNuevo" > 
+          <p:outputPanel rendered="#{supervisionAdministrado.modo > 0}">
+               <div class="ui-g">
+                    <div class="ui-g-12 ui-md-3">
+                        <p:commandLink ajax="true" actionListener="#{supervisionAdministrado.regresar()}"  immediate="true" process="@this" class="sback"
+                                       update=":frmNuevo, :frmBuscar, :formularioPrincipal1" >
+                            
+                            <span>Regresar al Listado</span>
+                        </p:commandLink>
+
+                    </div>
+                </div>    
+                <h1>#{supervisionAdministrado.titulo()}</h1>
+                <ui:include src="panelFormFicha.xhtml" />
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-3">
+                        <p:commandButton value="Guardar" actionListener="#{supervisionAdministrado.create()}" 
+                                  update=":frmNuevo, :frmBuscar, :formularioPrincipal1" 
+                                  process="@form"
+                                  icon="ui-icon-disk" title="Guarda los cambios"/>	
+                    </div>
+                </div>    
+                
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" >
+               <div class="ui-g">
+                   <div class="ui-md-5 nopad">
+                       <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"  />
+                   </div>
+                   <div class="ui-md-2 nopad"></div>
+                   <div class="ui-md-5 nopad">
+                       <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"  />
+                   </div>
+               </div>
+                
+            </p:confirmDialog> 
+      
+      
+          </p:outputPanel>
+        </h:form>    
+            
+        <h:form id="frmBuscar" >
+            <p:outputPanel rendered="#{supervisionAdministrado.modo eq 0}">
+             
+             <div class="ui-g">
+                <div class="ui-g-12 ui-md-4">
+                   <p:commandButton value="NUEVA FICHA" 
+                                    actionListener="#{supervisionAdministrado.nuevo()}" 
+                                    update=":frmNuevo, :frmBuscar, :formularioPrincipal1" 
+                                    process="@form"
+                                    title="Nueva ficha de supervisión" class="sombra">
+                   </p:commandButton>
+                </div>
+             </div>
+              
+                <p:fieldset legend="Filtro de Búsqueda">
+                      <div class="ui-g">
+                        <div class="ui-g-12 ui-md-2"> 
+                                <p:outputLabel value="Departamento"/> 
+                                <p:selectOneMenu id="busDepartamento" value="#{supervisionAdministrado.busDepartamento}" autoWidth="false"
+                                                 effect="fade">
+                                       <p:ajax event="change" update="formularioPrincipal1, busProvincia" 
+                                               listener="#{supervisionAdministrado.obtenerTodos()}" />
+                                       <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                                       <f:selectItems value="#{cursoInscripcionAdministrado.obtenerDepartamentos()}" var="departamentoBus" 
+                                                    itemLabel="#{departamentoBus.txtDescripcion}" itemValue="#{departamentoBus.nidDepartamento}" />
+                                </p:selectOneMenu>
+                         </div>
+                         <div class="ui-g-12 ui-md-2">
+                                <p:outputLabel value="Provincia"/> 
+                                <p:selectOneMenu id="busProvincia" value="#{supervisionAdministrado.busProvincia}" autoWidth="false"
+                                      effect="fade">
+                                      <p:ajax event="change" process="@this" update="formularioPrincipal1, busDistrito" 
+                                              listener="#{supervisionAdministrado.obtenerTodos()}" />
+                                      <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                                      <f:selectItems value="#{supervisionAdministrado.obtenerProvinciasBus()}" var="provinciaBus" 
+                                                    itemLabel="#{provinciaBus.txtDescripcion}" itemValue="#{provinciaBus.nidProvincia}" />
+                                </p:selectOneMenu>                  
+                        </div>   
+                        <div class="ui-g-12 ui-md-2">
+                                <p:outputLabel value="Distrito"/> 
+                                <p:selectOneMenu id="busDistrito" value="#{supervisionAdministrado.busDistrito}" autoWidth="false"
+                                      effect="fade">
+                                      <p:ajax event="change" process="@this" update="formularioPrincipal1" 
+                                              listener="#{supervisionAdministrado.obtenerTodos()}" />
+                                      <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                                      <f:selectItems value="#{supervisionAdministrado.obtenerDistritoBus()}" var="distritoBus" 
+                                                    itemLabel="#{distritoBus.txtDescripcion}" itemValue="#{distritoBus.nidDistrito}" />
+                                </p:selectOneMenu>                  
+                        </div> 
+                        <div class="ui-g-12 ui-md-2">
+                            <p:outputLabel value="Código"/> 
+                            <p:inputText value="#{supervisionAdministrado.busCodigo}" maxlength="6"
+                                    onkeypress="if (event.keyCode == 13) {onchange(); return false; }" >  
+                                <p:ajax event="change" process="@this" update="formularioPrincipal1"
+                                        listener="#{supervisionAdministrado.obtenerTodos()}" />
+                            </p:inputText>    
+                        </div>   
+                        <div class="ui-g-12 ui-md-2">
+                            <p:outputLabel value="Estado"/> 
+                            <p:selectOneMenu id="busEstado" value="#{supervisionAdministrado.busEstado}" autoWidth="false"
+                                  effect="fade">
+                                  <p:ajax event="change" process="@this" update="formularioPrincipal1"
+                                          listener="#{supervisionAdministrado.obtenerTodos()}" />
+                                  <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                                  <f:selectItems value="#{catalogoAdministrado.obtenerSupervisionEstados()}" var="estadoBus" 
+                                                 itemLabel="#{estadoBus.txtNombre}" itemValue="#{estadoBus.nidCatalogo}" />
+                            </p:selectOneMenu>                  
+                        </div> 
+                        
+                      </div>    
+                      <div class="ui-g">
+                        <div class="ui-g-12 ui-md-2">
+                                <p:outputLabel value="Desde"/> 
+                                <p:calendar  value="#{supervisionAdministrado.busDesde}" required="false" maxdate="today"
+                                            pattern="dd/MM/yyyy" navigator="true" mask="true" locale="es">
+                                    <p:ajax event="dateSelect" process="@this" update="formularioPrincipal1"
+                                            listener="#{supervisionAdministrado.obtenerTodos()}" />
+                                    <p:ajax event="change" process="@this" update="formularioPrincipal1" 
+                                            listener="#{supervisionAdministrado.obtenerTodos()}" /> 
+                               </p:calendar>               
+                        </div> 
+                        <div class="ui-g-12 ui-md-2">
+                                <p:outputLabel value="Hasta"/> 
+                                <p:calendar  value="#{supervisionAdministrado.busHasta}" required="false" maxdate="today"
+                                            pattern="dd/MM/yyyy" navigator="true" mask="true" locale="es">
+                                    <p:ajax event="dateSelect" process="@this" 
+                                            listener="#{supervisionAdministrado.obtenerTodos()}" 
+                                            update="formularioPrincipal1" />
+                                    <p:ajax event="change" process="@this" update="formularioPrincipal1"
+                                            listener="#{supervisionAdministrado.obtenerTodos()}" />  
+                               </p:calendar>               
+                        </div> 
+                        <div class="ui-g-12 ui-md-4">
+                            <p:outputLabel for="selSupervisor" value="Supervisor:"/> 
+                             <p:selectOneMenu id="selSupervisor"  autoWidth="false"  
+                                               value="#{supervisionAdministrado.busSupervisor}">
+                                   <p:ajax event="change" process="@this" update="formularioPrincipal1"
+                                          listener="#{supervisionAdministrado.obtenerTodos()}" />
+                                   <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+                                   <f:selectItems value="#{usuarioAdministrado.getEntidadesModuloPerfil('DSLD')}"
+                                                  var="itemPer"
+                                                  itemValue="#{itemPer.nidUsuario}"
+                                                  itemLabel="#{itemPer.persona.nombreApellidos()}"/>
+                              </p:selectOneMenu>
+                       </div>
+                        <div class="ui-g-12 ui-md-3" style="padding-top: 24px">
+                            <p:selectBooleanCheckbox value="#{supervisionAdministrado.verNoSupervisadas}" itemLabel="Ver DNA no supervisadas" >
+                                <p:ajax event="change" update="formularioPrincipal1" />
+                            </p:selectBooleanCheckbox>
+ 
+                        </div> 
+                      </div>
+                </p:fieldset>     
+                          
+           </p:outputPanel>
+        </h:form>
+        <br />
+        <h:form id="formularioPrincipal1">
+            <p:outputPanel rendered="#{supervisionAdministrado.modo eq 0}">
+              
+               <p:outputPanel rendered="#{!supervisionAdministrado.verNoSupervisadas and supervisionAdministrado.lista != null}">
+                  <div class="ui-g"> 
+                     <div class="ui-g-12 ui-md-9"></div>
+                     <div class="ui-g-12 ui-md-3">
+                       <p:commandButton  value="DESCARGAR EXCEL" ajax="false" 
+                                          process="@this" 
+                                          class="sombra">
+                            <p:dataExporter type="xlsx" target="tablaSup" fileName="supervisiones"  postProcessor="#{supervisionAdministrado.postProcessXLSSupervisiones}" />
+                       </p:commandButton>
+                     </div>
+                  </div>   
+               <p:dataTable 
+                    id="tablaSup"
+                    widgetVar="tablaSup" 
+                    var="itemSup" 
+                    value="#{supervisionAdministrado.lista}" 
+                    emptyMessage="No se encontraron registros"
+                    rowIndexVar="index"
+                    scrollable="true"
+                    rows="20" 
+                    paginator="true"
+                    resizableColumns="false"
+                    paginatorPosition="bottom"
+                    paginatorAlwaysVisible="true"
+                    rowsPerPageTemplate="20,30,40"
+                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}">
+                  
+                  <f:facet name="header">
+                    LISTADO DE SUPERVISIONES
+                  </f:facet>
+                   
+                   <p:column headerText="ACCIONES" width="80" exportable="false">            
+                        
+                  
+                        <p:commandButton update=":frmNuevo, :frmBuscar, :formularioPrincipal1"
+                                         process="@this"
+                                         actionListener="#{supervisionAdministrado.obtener(itemSup)}" 
+                                         title="Actualizar supervisión" icon="fa fa-pencil">
+                       </p:commandButton>
+                          
+                        
+                        <p:commandButton update=":dialogoAnular" 
+                                         oncomplete="PF('dialogoAnular').show();"   process="@this"
+                                         title="Anular" icon="fa fa-trash">
+                            <f:setPropertyActionListener value="#{itemSup}" target="#{supervisionAdministrado.supervision}"/>
+                        </p:commandButton>
+                        
+                      
+                      
+                    </p:column>
+
+                    <p:column headerText="FECHA" styleClass="pcenter" width="80" sortBy="#{itemSup.fecha}">
+                        <h:outputText value="#{itemSup.fecha}"  >
+                        <f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText>
+                    </p:column>
+                   <p:column headerText="CÓDIGO" class="pcenter" width="80" sortBy="#{itemSup.defensoria.txtConstancia}" >
+                       <h:outputText value="#{itemSup.defensoria.txtConstancia}"  />
+                    </p:column>
+                    <p:column headerText="DNA" styleClass="center" width="300"  sortBy="#{itemSup.defensoria.txtNombre}" >
+                        <h:outputText value="#{itemSup.defensoria.txtNombre}"  />
+                    </p:column>
+                   
+                    <p:column headerText="ESTADO" styleClass="pcenter" width="100"  sortBy="#{itemSup.estado.txtNombre}">
+                        <h:outputText value="#{itemSup.estado.txtNombre}"  />
+                    </p:column>
+                   
+                   <p:column headerText="ARCHIVO" styleClass="pcenter" width="100"  sortBy="#{itemSup.estado.txtNombre}" exportable="false">
+                       <p:commandLink ajax="false" process="@this" immediate="true" 
+                                    value="Descargar" 
+                                    rendered="#{itemSup.archivoFicha!=null}" >
+                           <p:fileDownload value="#{supervisionAdministrado.descargarFicha(itemSup)}" />
+                        </p:commandLink>
+                    </p:column>
+                   
+                   <p:column headerText="ACTIVO" filterBy="#{itemSup.flgActivo}" filterMatchMode="contains" class="pcenter" 
+                             width="80">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('tablaSup').filter()">
+                                <f:selectItem itemLabel="Todos" itemValue="" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="Activo" itemValue="1" />
+                                <f:selectItem itemLabel="Inactivo" itemValue="0" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText value="#{itemSup.flgActivo != 1? 'Inactivo':'Activo'}">
+                            <f:converter converterId="javax.faces.Character" />                                    
+                        </h:outputText>
+                    </p:column>
+
+                </p:dataTable>
+             </p:outputPanel> 
+   
+             <p:outputPanel rendered="#{supervisionAdministrado.verNoSupervisadas}">
+                   <div class="ui-g"> 
+                     <div class="ui-g-12 ui-md-9"></div>
+                     <div class="ui-g-12 ui-md-3">
+                       <p:commandButton  value="DESCARGAR EXCEL" ajax="false" 
+                                          process="@this" 
+                                          class="sombra">
+                            <p:dataExporter type="xlsx" target="tablaDna" fileName="nosupervisadas"  postProcessor="#{supervisionAdministrado.postProcessXLSNoSupervisadas}" />
+                       </p:commandButton>
+                     </div>
+                  </div>
+               <p:dataTable 
+                    id="tablaDna"
+                    widgetVar="tablaDna" 
+                    var="itemDna" 
+                    value="#{supervisionAdministrado.obtenerDefensorias()}" 
+                    emptyMessage="No se encontraron registros"
+                    rowIndexVar="index"
+                    scrollable="true"
+                    rows="20" 
+                    paginator="true"
+                    resizableColumns="false"
+                    paginatorPosition="bottom"
+                    paginatorAlwaysVisible="true"
+                    rowsPerPageTemplate="20,30,40"
+                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}">
+                  
+                  <f:facet name="header">
+                   LISTADO DE DEFENSORÍAS NO SUPERVISADAS
+                  </f:facet>
+                   <p:column headerText="DEP-PROV-DIS" width="200" >
+                        <h:outputText value="#{itemDna[0]}"  />
+                   </p:column>
+                    <p:column headerText="CÓDIGO" styleClass="pcenter" width="80" >
+                        <h:outputText value="#{itemDna[1]}"  />
+                   </p:column>
+                    <p:column headerText="NOMBRE DE LA DEFENSORÍA" width="300" >
+                        <h:outputText value="#{itemDna[2]}"  />
+                   </p:column>
+                   
+              
+                </p:dataTable>
+                 
+             </p:outputPanel>    
+           </p:outputPanel>
+        </h:form>
+       
+       
+         
+        <p:dialog modal="true" dynamic="true" id="dialogoAnular" widgetVar="dialogoAnular" header="Anular Supervisión" 
+                  draggable="true" resizable="false" 
+                  closable="true" closeOnEscape="true" width="380"
+                  class="dlgdna" position="center center" responsive="true">
+            <h:form>
+                <ui:include src="panelAnular.xhtml" />
+                <br></br>
+                <div class="ui-g">
+                    <div class="ui-md-5 nopad">
+                           <p:commandButton value="Guardar" actionListener="#{supervisionAdministrado.anular()}" update="@form :formularioPrincipal1:tablaSup" oncomplete="PF('dialogoAnular').hide()" icon="ui-icon-disk" title="Guarda los cambios"/>	
+                 
+                    </div>
+                    <div class="ui-md-2 nopad"> </div>
+                    <div class="ui-md-5 nopad">
+                            <p:commandButton value="Cerrar" onclick="PF('dialogoAnular').hide();" process="@this"
+                             immediate="true" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+          
+                  </div>
+                </div>
+             
+            </h:form>
+        </p:dialog>
+     
+    </ui:define>  
+    
+    
+</ui:composition>

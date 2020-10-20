@@ -1,0 +1,153 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="/WEB-INF/templates/default.xhtml">
+    <ui:define name="header">
+    </ui:define>
+    <ui:define name="content" >
+        <ui:include src="/WEB-INF/templates/cargando.xhtml"/>
+        <div class="pcenter">
+            <p:outputLabel class="ptextGradient pred pbold ptitle" value="GESTIÓN DE CURSOS"/>    
+        </div>
+        <br></br>
+        <p:growl id="mensajes" widgetVar="mensajes" showDetail="true" showSummary="false" life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true"/>
+        
+        <h:form id="frmBuscar" >
+          <p:outputPanel rendered="#{cursoAdministrado.modo eq 0}">
+      
+             <p:commandButton value="NUEVO CURSO" 
+                             actionListener="#{cursoAdministrado.nuevo()}" 
+                             update=":frmNuevo, :frmBuscar, :formularioPrincipal1" 
+                             process="@form"
+                             icon="fa fa-user" title="Nueva Curso" class="sombra">
+            </p:commandButton>
+          </p:outputPanel>
+        </h:form>
+        <br />
+        <h:form id="formularioPrincipal1">
+           
+               <p:dataTable 
+                    id="tablaCursos"
+                    widgetVar="tablaCursos" 
+                    var="itemCurso" 
+                    value="#{cursoAdministrado.obtenerTodos()}" 
+                    emptyMessage="No se encontraron registros"
+                    rowIndexVar="index"
+                    scrollable="true"
+                    rows="10" 
+                    paginator="true"
+                    resizableColumns="false"
+                    paginatorPosition="bottom"
+                    paginatorAlwaysVisible="true"
+                    rowsPerPageTemplate="5,10,15"
+                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}">
+                  >
+                  <p:column headerText="ACCIONES" width="15%">            
+                        
+                     
+                        <p:commandButton update=":frmNuevo, :frmBuscar, :formularioPrincipal1"
+                                         process="@this"
+                                         actionListener="#{cursoAdministrado.obtener(itemCurso)}" 
+                                         title="Editar Datos del Curso" icon="fa fa-pencil">
+                       </p:commandButton>
+                          
+                        
+                        <p:commandButton update=":dialogoAnular" 
+                                         oncomplete="PF('dialogoAnular').show();"   process="@this"
+                                         title="Anular" icon="fa fa-trash">
+                            <f:setPropertyActionListener value="#{itemCurso}" target="#{cursoAdministrado.curso}"/>
+                        </p:commandButton>
+                        
+                        
+                    </p:column>
+
+                    <p:column headerText="NOMBRE" class="left" width="200">
+                        <h:outputText value="#{itemCurso.nombre}" />
+                    </p:column>
+                    <p:column headerText="TUTOR" class="left" width="200">
+                        <h:outputText value="#{itemCurso.nombreApellidos}" />
+                    </p:column>
+                    <p:column headerText="FECHA DE INICIO" styleClass="center" width="80">
+                        <h:outputText value="#{itemCurso.fechaIni}"  >
+                        <f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText><br/>
+                    </p:column>
+                    <p:column headerText="FECHA DE FIN" styleClass="center" width="80">
+                        <h:outputText value="#{itemCurso.fechaFin}"  >
+                        <f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText><br/>
+                    </p:column>
+                    <p:column headerText="ESTADO" class="left" width="100">
+                        <h:outputText value="#{itemCurso.estado}" />
+                    </p:column>
+                    <p:column headerText="ACTIVO" filterBy="#{itemCurso.flgActivo}" filterMatchMode="contains" class="pcenter" width="80">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('tablaCursos').filter()">
+                                <f:selectItem itemLabel="Todos" itemValue="" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="Activo" itemValue="1" />
+                                <f:selectItem itemLabel="Inactivo" itemValue="0" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText value="#{itemCurso.flgActivo != 1? 'Inactivo':'Activo'}">
+                            <f:converter converterId="javax.faces.Character" />                                    
+                        </h:outputText>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:outputPanel>
+            </h:form>
+       
+        <p:dialog modal="true" id="dialogoNuevo"  widgetVar="dialogoNuevo" header="Nuevo Personal" closeOnEscape="true" resizable="false" 
+                  style="max-width: 400px;" width="90%" dynamic="true">
+            <h:form id="formDocInterno" >
+                <ui:include src="panelForm.xhtml" />
+                <br></br>
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pright">
+                    <p:column>
+                        <p:commandButton value="Guardar" actionListener="#{catalogoAdministrado.create()}" update="@form :formularioPrincipal:tablaDocs" oncomplete="if (!args.validationFailed) PF('dialogoDocInterno').hide()" icon="ui-icon-disk" title="Guarda los cambios"/>	
+                        <p:commandButton value="Cerrar" onclick="PF('dialogoDocInterno').hide();" immediate="true" type="button" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                    </p:column>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+
+          <p:dialog modal="true" id="dialogoActualizar" widgetVar="dialogoActualizar" header="Actualizar Catálogo" closeOnEscape="true" resizable="false" width="900px" dynamic="false">
+            <h:form id="formActualizar">
+                <ui:include src="panelForm.xhtml" />
+                <br></br>
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pright">
+                    <p:column>
+                        <p:commandButton value="Guardar" actionListener="#{catalogoAdministrado.update()}" 
+                                         update="@form :formularioPrincipal:tablaDocs" 
+                                         oncomplete="if (!args.validationFailed) PF('dialogoActualizar').hide()" 
+                                         icon="ui-icon-disk" title="Guarda los cambios"/>	
+                        <p:commandButton value="Cerrar" onclick="PF('dialogoActualizar').hide();" immediate="true" type="button" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                    </p:column>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+         
+        <p:dialog modal="true" dynamic="true" id="dialogoAnular" widgetVar="dialogoAnular" header="Anular Solicitud" draggable="true" resizable="false" 
+                  closable="true" closeOnEscape="true" showEffect="puff" hideEffect="puff" width="280"
+                  class="dlgdna" position="center center" responsive="true">
+            <h:form>
+                <ui:include src="panelAnular.xhtml" />
+                <br></br>
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pright">
+                    <p:column>
+                       <p:commandButton value="Cerrar" onclick="PF('dialogoAnular').hide();" process="@this"
+                                         immediate="true" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                    </p:column>
+                </p:panelGrid> 
+            </h:form>
+        </p:dialog>
+        
+               
+    </ui:define>  
+    
+    
+</ui:composition>

@@ -1,0 +1,335 @@
+.colored {
+    background-color: #d1d1d1 !important;
+    color: #ADADAD !important;
+}
+
+.colored2 {
+    background-color: #d1d1d1 !important;
+    color: #ADADAD !important;
+
+    button{
+        display: none;
+    }
+    .ui-row-toggler{
+        display: none;
+    }
+}
+
+.fondonegro .ui-grid-row {
+    background-color: #5a5a5a !important;
+    margin-bottom: 0px !important;
+}
+
+.hidden-md {
+  display: block !important;
+}
+.hidden-xs {
+  display: block !important;
+}
+
+@media (min-width: 575px) {
+  .hidden-md {
+    display: none !important;
+  }
+  
+  
+}
+
+@media (max-width: 575px) {
+  .hidden-xs {
+    display: none !important;
+  }
+  .card {
+      border: 0px !important;
+      padding: 0px;
+  }
+}
+
+
+h2, h3 {
+    margin:0px;
+}
+.ui-growl {
+   left: 50% !important;
+   top: 30% !important;
+   right: 0;
+   margin-left:-150px;
+}
+
+
+#formularioEvaluarInscripcion\:dlAdjuntos_content,
+#formularioPrincipal\3A dlAdjuntos_content{
+    border: 0px !important;
+    margin-left: 10px;
+}
+
+.dlgdna {
+    max-width: 900px; 
+    position:fixed !important;
+}
+
+.dlgdna1 {
+    max-width: 700px; 
+    position:fixed !important;
+}
+.dlgdna2 {
+    max-width: 700px; 
+    position:fixed !important;
+}
+
+input, textarea {
+    text-transform: none !important;
+}
+
+.ui-fieldset {
+    padding: .6em 1em;
+    margin: .6em 0;
+}
+
+.ui-fieldset-legend {
+    background: #e0e0e0 !important;
+    color: #000 !important;
+}
+
+.ui-inputfield, .ui-widget-content .ui-inputfield, .ui-widget-header .ui-inputfield {
+    background: #ffffff;
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow:  none !important;
+}  
+
+.ui-widget-content {
+    background: #fafafa repeat-x scroll 0 0 !important;
+}
+
+.card {
+    max-width: 1024px;
+    border: 1px solid #c0c0c0;
+    padding: 24px;
+    margin: auto;
+}
+
+.ui-button {
+    padding: 8px !important;
+    background: #a52e2e !important; /*#ef5350*/
+    width: 100%;
+}
+.ui-state-default {
+    background: none;
+}
+
+.ui-fileupload-buttonbar,
+.ui-fileupload-content {
+   /* float:left;*/
+}
+.ui-fileupload-buttonbar{
+    padding: 0px !important;
+    /*width:40% */
+}
+.ui-fileupload-content {
+   /* width:60%*/
+}
+.ui-messages-error {
+    margin: 0px !important;
+    
+}
+.ui-datalist-content {
+    border: 0px !important;
+}
+.ui-datalist-data {
+    margin: 0px;
+    padding: 0px;
+    list-style-position: inside;
+}
+
+.ui-datalist-data .ui-datalist-item {
+    margin: 6px 0;
+}
+.bclist li {
+    display: inline;
+    padding-right: 12px;
+    padding-bottom: 12px;
+}
+
+.ui-fileupload-buttonbar .ui-button {
+    padding: 4px !important;
+}
+
+.bcfoto .ui-fileupload-buttonbar,
+.bcfoto .ui-fileupload-buttonbar .ui-button {
+    width: 100%;
+}
+.bcfoto .ui-fileupload-buttonbar .ui-button {
+    padding-right: 0px !important;
+    padding-left: 0px !important;
+}
+
+.ui-widget {
+    font-family: Arial, sans-serif !important;
+}
+
+.bcdocum .ui-datalist-data {
+    list-style-position: outside;
+    margin-left: 24px;
+}
+
+.bccursos .ui-datalist-data {
+    list-style: none;
+}
+.bccursos .ui-datalist-item {
+    padding: 12px;
+}
+.bccursos .bcurtitulo {
+    font-size: 1.3em;
+}
+.bccursos .bcurfecha {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+.bccursos li:nth-child(odd) {
+    background: #fafafa;
+}
+.bccursos li:nth-child(even) {
+    background: #fcefd4;
+}
+.bcregresar {
+  color: #ef5350;
+  text-decoration: none;
+}
+.l24 {
+  line-height: 24px;
+  text-align: justify;
+}
+
+.cabeceraContenedor h1 {
+    font-size: 1.3em;
+}
+
+.ui-datatable .ui-button {
+    padding: 4px !important;
+}
+
+.ui-datatable .ui-widget-header {
+    background: #a0a0a0;
+}
+
+.ui-datatable th.ui-state-default {
+    background: none;
+}
+
+.ui-messages {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    margin-left: -180px;
+    z-index: 10000;
+}
+
+.my {
+    text-transform: uppercase
+}
+
+
+.ui-chkbox .ui-chkbox-label {
+    display: inline !important;
+}
+
+.mensajeResReg {
+    border: 1px solid #aaaaaa;
+    padding: 24px;
+    font-weight: bold;
+    margin-top: 24px;
+    font-size: 1.1em !important;
+    text-align: justify;
+}
+
+.ui-dialog .ui-dialog-buttonpane {
+    text-align: left;
+    background-image: none;
+    margin: 0 !important;
+    padding: 0.5em !important;
+}
+
+.nopad {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.sback {
+    text-decoration: none;
+}
+.sback span {
+    color: #a52e2e;
+}
+
+.ui-widget-overlay {
+    background: #000 !important;
+    opacity: .30;
+    filter: Alpha(Opacity=30);
+}
+
+.bcsuper .ui-datalist-data {
+    list-style: none;
+}
+.bcsuper .ui-datalist-item {
+    padding: 0px;
+    margin: 0px;
+}
+.bcsuper .ui-datalist-content {
+    border-left: 1px solid #000 !important;
+    border-right: 1px solid #000 !important;
+    border-bottom: 1px solid #000 !important;
+}
+
+.bcsuper div {
+    padding: 0px;
+}
+.bcsuper li:nth-child(odd) {
+    background: #FFF;
+}
+.bcsuper li:nth-child(even) {
+    background: #fcefd4;
+}
+.bcsuper label { display: none !important;}
+
+.bcsuper table {
+  border-collapse: collapse;
+  width:100%;
+  height: 100%;
+}
+
+.bcsuper td {
+   text-align: center !important;
+}
+
+.bcsuper td:not(:first-child) {
+   border-left: 1px solid black !important;
+}
+.bOut { border-top: 1px solid #000; }
+.bLeft { border-left: 1px solid #000; }
+.pad8 { padding: 8px !important;}
+.m12 { margin: 12px 0px 12px 0px; }
+
+.guion {
+-webkit-hyphens: auto;
+-moz-hyphens: auto;
+hyphens: auto;
+}
+
+
+@media (max-width: 1000px) {
+  .cabeceraContenedor h1{
+      font-size: 1.1em !important;
+  }
+}
+
+@media (max-width: 850px) {
+  .cabeceraContenedor h1{
+      font-size: 1em !important;
+  }
+}
+
+
+.drtotal td {
+  font-weight: bold;
+}

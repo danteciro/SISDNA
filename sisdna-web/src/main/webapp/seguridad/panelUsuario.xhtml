@@ -1,0 +1,161 @@
+<f:view contentType="text/html"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <div class="ui-fluid">
+        <p:panelGrid columns="6" columnClasses="ui-grid-col-2,ui-grid-col-2,ui-grid-col-2,ui-grid-col-2,ui-grid-col-2,ui-grid-col-2" layout="grid">
+
+            <p:outputLabel for="tipoDocumento" value="Tipo Documento:"/>
+            <p:selectOneMenu id="tipoDocumento" required="true"
+                             value="#{tipoDocumentoAdministrado.entidadSeleccionada}"
+                             style="width: 100%"
+                             converter="tipoDocumentoConvertidor">
+                <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+                <f:selectItems value="#{tipoDocumentoAdministrado.obtenerTiposDocumento()}"
+                               var="itemTipoDocumento"
+                               itemValue="#{itemTipoDocumento}"
+                               itemLabel="#{itemTipoDocumento.txtDescripcion}" />
+            </p:selectOneMenu>
+
+            <p:outputLabel for="documento" value="Nro. Documento:"/>
+            <p:inputText id="documento" value="#{personaAdministrado.entidadSeleccionada.txtDocumento}" required="true">
+                <f:validateLength minimum="1" /> 
+                <p:keyFilter regEx="/[a-z \d\.]/"/> 
+            </p:inputText>
+
+            <p:outputLabel value=""/>
+            <p:outputLabel value=""/>
+
+            <p:outputLabel for="apePaterno" value="Apellido Paterno:"/>
+            <p:inputText id="apePaterno" converter="mayusculaConvertidor" value="#{personaAdministrado.entidadSeleccionada.txtApellidoPaterno}" required="true">
+                <f:validateLength minimum="1" /> 
+                <p:keyFilter regEx="/[a-z_ ñ]/i"/>
+            </p:inputText>
+
+            <p:outputLabel for="apeMaterno" value="Apellido Materno:"/>
+            <p:inputText id="apeMaterno" converter="mayusculaConvertidor" value="#{personaAdministrado.entidadSeleccionada.txtApellidoMaterno}" required="true">
+                <f:validateLength minimum="1" /> 
+                <p:keyFilter regEx="/[a-z_ ñ]/i"/>
+            </p:inputText>
+
+            <p:outputLabel for="nombres" value="Nombres:"/>
+            <p:inputText id="nombres" converter="mayusculaConvertidor" value="#{personaAdministrado.entidadSeleccionada.txtNombres}" required="true">
+                <f:validateLength minimum="1" /> 
+                <p:keyFilter regEx="/[a-z_ ñ]/i"/>
+            </p:inputText>
+
+            <p:outputLabel for="sexo" value="Sexo:"/>
+            <p:selectOneMenu id="sexo" required="true"
+                             value="#{personaAdministrado.entidadSeleccionada.txtSexo}"
+                             style="width: 100%">
+                <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                <f:selectItem itemLabel="HOMBRE" itemValue="M" />
+                <f:selectItem itemLabel="MUJER" itemValue="F" />
+            </p:selectOneMenu>
+
+            <p:outputLabel for="fecNacimiento" value="Fec. Nacimiento:"/>
+            <p:calendar id="fecNacimiento" value="#{personaAdministrado.entidadSeleccionada.fecNacimiento}" pattern="dd/MM/yyyy" navigator="true" mask="true" required="true" yearRange="c-100:c+10" locale="es"/>
+
+            <p:outputLabel value=""/>
+            <p:outputLabel value=""/>
+
+            <p:outputLabel for="tipotelefono" value="Tipo teléfono:"/>
+            <p:selectOneMenu 
+                id="tipotelefono" required="true"
+                value="#{tipoTelefonoAdministrado.entidadSeleccionada}"
+                converter="tipoTelefonoConvertidor">
+                <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+                <f:selectItems value="#{tipoTelefonoAdministrado.entidades}"
+                               var="itemTipoTelefono"
+                               itemValue="#{itemTipoTelefono}"
+                               itemLabel="#{itemTipoTelefono.txtTipoTelefono}" />
+            </p:selectOneMenu>
+
+            <p:outputLabel for="telefono" value="Teléfono:"/>
+            <p:inputText id="telefono" value="#{telefonoPersonaAdministrado.entidadSeleccionada.txtTelefonoPersona}" required="true">
+                <f:validateLength minimum="1" />
+                <p:keyFilter regEx="/[\d\.]/"/> 
+            </p:inputText>
+
+            <p:outputLabel for="correo" value="Correo:"/>
+            <p:inputText id="correo" value="#{correoPersonaAdministrado.entidadSeleccionada.txtCorreoPersona}" required="true">
+                <f:validateLength minimum="1" />
+                <p:keyFilter regEx="/[a-z0-9_ ñ\.\-@]/i"/>
+            </p:inputText>
+
+            <p:outputLabel for="cargo" value="Cargo:"/>
+            <p:selectOneMenu id="cargo" required="true"
+                             value="#{cargoAdministrado.entidadSeleccionada}"
+                             style="width: 100%"
+                             converter="cargoConvertidor">
+                <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+                <f:selectItems value="#{cargoAdministrado.entidades}"
+                               var="itemCargo"
+                               itemValue="#{itemCargo}"
+                               itemLabel="#{itemCargo.txtDescripcion}" />
+            </p:selectOneMenu>
+
+            <p:outputLabel for="area" value="Área"/>
+            <p:selectOneMenu id="area" required="true"
+                             value="#{areaAdministrado.entidadSeleccionada}"
+                             style="width: 100%"
+                             converter="areaConvertidor">
+                <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+                <f:selectItems value="#{areaAdministrado.entidades}"
+                               var="itemArea"
+                               itemValue="#{itemArea}"
+                               itemLabel="#{itemArea.txtArea}" />
+            </p:selectOneMenu>
+
+            <p:outputLabel for="perfil" value="Perfil:" />
+            <p:selectOneMenu id="perfil"
+                             value="#{perfilAdministrado.entidadSeleccionada}"
+                             style="width: 100%"
+                             converter="perfilConvertidor">
+                <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+                <f:selectItems value="#{perfilAdministrado.obtenerPerfilesPorModulo()}"
+                               var="itemPerfil"
+                               itemValue="#{itemPerfil}"
+                               itemLabel="#{itemPerfil.txtPerfil}" />
+            </p:selectOneMenu>
+
+        </p:panelGrid>
+
+        <p:separator/>
+
+        <p:panelGrid columns="6" columnClasses="ui-grid-col-2,ui-grid-col-2 ,ui-grid-col-2,ui-grid-col-2 ,ui-grid-col-2,ui-grid-col-2 " layout="grid">
+            <p:outputLabel for="usuario" value="Nombre de Usuario:"/>
+            <p:inputText id="usuario" converter="mayusculaConvertidor" value="#{usuarioAdministrado.entidadNueva.txtUsuario}" required="true">
+                <f:validateLength minimum="1" /> 
+                <p:keyFilter regEx="/[a-z0-9_ñ\.\-@]/i"/>
+            </p:inputText>
+
+            <h:outputLabel for="pwd1" value="Nueva Contraseña:" />
+            <p:password id="pwd1" value="#{usuarioAdministrado.nuevaContrasena}" match="pwd2" label="Nueva Contraseña" maxlength="20" feedback="true" promptLabel="Ingrese una contraseña" weakLabel="Contraseña débil" goodLabel="Contraseña buena" strongLabel="Contraseña fuerte" inline="true" required="true">
+                <f:validateLength minimum="6" />
+            </p:password>
+
+            <h:outputLabel for="pwd2" value="Repetir Contraseña:" />
+            <p:password id="pwd2" value="#{usuarioAdministrado.nuevaContrasena}" label="Repetir Contraseña" maxlength="20" required="true" >
+                <f:validateLength minimum="6" />
+            </p:password>
+        </p:panelGrid>
+        <pe:tooltip for="usuario" value="Se pueden usar todos los caracteres." atPosition="bottom left" />
+        <pe:tooltip for="pwd1" value="El tamaño de la contraseña debe ser de al menos 6 caracteres." atPosition="bottom left" />
+        <pe:tooltip for="apePaterno" value="Solo se permiten letras y espacios." atPosition="bottom left" />
+        <pe:tooltip for="apeMaterno" value="Solo se permiten letras y espacios." atPosition="bottom left" />
+        <pe:tooltip for="nombres" value="Solo se permiten letras y espacios." atPosition="bottom left" />
+        <pe:tooltip for="documento" value="Se permiten letras y números." atPosition="bottom left" />        
+        <pe:tooltip for="correo" value="Ingrese su correo electrónico." atPosition="bottom left" />        
+        <pe:tooltip for="fecNacimiento" value="Seleccione una fecha." atPosition="bottom left" />
+
+
+
+    </div>
+
+
+</f:view>

@@ -1,0 +1,143 @@
+<f:view contentType="text/html"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <div class="ui-g">
+         <div class="ui-g-12">
+             <p:outputLabel value="Curso"/> 
+             <p:selectOneMenu value="#{cursoProgramacionAdministrado.cursoProgramacion.curso.nidCurso}" autoWidth="false"
+                              required="true" requiredMessage="Debe seleccionar el curso"
+                        effect="fade" >
+                         <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                         <f:selectItems value="#{cursoAdministrado.obtenerCursosActivos()}" var="cursoActivo" 
+                                        itemLabel="#{cursoActivo.nombre}" itemValue="#{cursoActivo.nidCurso}" />
+              </p:selectOneMenu>
+         </div>
+     </div>
+
+    
+     <div class="ui-g">
+         <div class="ui-g-12 ui-md-3">
+              <p:outputLabel value="Fecha de Inicio"/>  
+              <p:calendar id="txtFechaIni" value="#{cursoProgramacionAdministrado.cursoProgramacion.fechaIni}" required="true"
+                          pattern="dd/MM/yyyy" navigator="true" mask="true" locale="es"
+                          requiredMessage="Debe ingresar la fecha de inicio.">
+                    <p:ajax event="dateSelect" update="@this, txtFechaFin, txtFechaIniIns, txtFechaFinIns"  />
+              </p:calendar>   
+         </div>
+         <div class="ui-g-12 ui-md-3">
+             <p:outputLabel value="Fecha de Fin"/> 
+             <p:calendar id="txtFechaFin" value="#{cursoProgramacionAdministrado.cursoProgramacion.fechaFin}" required="true"
+                         pattern="dd/MM/yyyy" navigator="true" mask="true" locale="es" mindate="#{cursoProgramacionAdministrado.cursoProgramacion.fechaIni}"
+                          requiredMessage="Debe ingresar la fecha de fin.">
+                   <p:ajax event="dateSelect" update="@this"  />
+              </p:calendar>   
+         </div>
+         <div class="ui-g-12 ui-md-3">
+             <p:outputLabel value="Capacidad"/> 
+             <p:inputNumber  minValue="0" decimalPlaces="0"  maxValue="5000"  padControl="false"
+                             value="#{cursoProgramacionAdministrado.cursoProgramacion.capacidad}"  required="true"
+                             thousandSeparator="" requiredMessage="Debe ingresar la capacidad">
+             </p:inputNumber>   
+         </div>
+         
+         <div class="ui-g-12 ui-md-3">
+             <p:outputLabel value="Genera Res. Dir."/> <br/>
+             <p:inputSwitch value="#{cursoProgramacionAdministrado.cursoProgramacion.flgGenerard}" onLabel="SÍ" offLabel="NO"  />
+          </div>
+     </div>
+
+     <p:fieldset legend="INSCRIPCIÓN">
+      <div class="ui-g">
+         <div class="ui-g-12 ui-md-3">
+              <p:outputLabel value="Fecha de Inicio"/>  
+              <p:calendar id="txtFechaIniIns" value="#{cursoProgramacionAdministrado.cursoProgramacion.fechaIniIns}" required="true"
+                          pattern="dd/MM/yyyy" navigator="true" mask="true" locale="es" maxdate="#{cursoProgramacionAdministrado.cursoProgramacion.fechaIni}"
+                          requiredMessage="Debe ingresar la fecha de inicio de inscripción" >
+                 
+              </p:calendar>   
+         </div>
+         <div class="ui-g-12 ui-md-3">
+             <p:outputLabel value="Fecha de Fin"/> 
+              <p:calendar id="txtFechaFinIns" value="#{cursoProgramacionAdministrado.cursoProgramacion.fechaFinIns}" required="true"
+                          pattern="dd/MM/yyyy" navigator="true" mask="true" locale="es" maxdate="#{cursoProgramacionAdministrado.cursoProgramacion.fechaIni}"
+                          requiredMessage="Debe ingresar la fecha de fin de inscripción"
+                          >
+              </p:calendar>   
+         </div>
+         <div class="ui-g-12 ui-md-3">
+             <p:outputLabel value="Publicar"/> <br/>
+             <p:inputSwitch value="#{cursoProgramacionAdministrado.cursoProgramacion.flgPublicar}" onLabel="SÍ" offLabel="NO"  />
+
+         </div>
+      </div>
+    </p:fieldset>    
+
+    <p:fieldset legend="LUGAR">
+         <div class="ui-g">
+           <div class="ui-g-12 ui-md-4"> 
+                  <p:outputLabel value="Departamento"/> 
+                  <p:selectOneMenu id="busDepartamento" value="#{cursoProgramacionAdministrado.cursoProgramacion.nidDepartamento}" autoWidth="false"
+                                   effect="fade" required="true" requiredMessage="Debe seleccionar el departamento" >
+                         <p:ajax listener="#{cursoProgramacionAdministrado.obtenerProvincias()}" update="busProvincia, busDistrito" />
+                         <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                         <f:selectItems value="#{cursoProgramacionAdministrado.obtenerDepartamentos()}" var="departamentoBus" 
+                                      itemLabel="#{departamentoBus.txtDescripcion}" itemValue="#{departamentoBus.nidDepartamento}" />
+                  </p:selectOneMenu>
+           </div>
+           <div class="ui-g-12 ui-md-4">
+                  <p:outputLabel value="Provincia"/> 
+                  <p:selectOneMenu id="busProvincia" value="#{cursoProgramacionAdministrado.cursoProgramacion.nidProvincia}" autoWidth="false"
+                        effect="fade"  required="true" requiredMessage="Debe seleccionar la provincia">
+                        <p:ajax listener="#{cursoProgramacionAdministrado.obtenerDistritos()}" update="busDistrito" />
+                        <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{cursoProgramacionAdministrado.listaProvincias}" var="provinciaBus" 
+                                      itemLabel="#{provinciaBus.txtDescripcion}" itemValue="#{provinciaBus.nidProvincia}" />
+                  </p:selectOneMenu>                  
+            </div>   
+            <div class="ui-g-12 ui-md-4">
+                   <p:outputLabel value="Distrito"/> 
+                   <p:selectOneMenu id="busDistrito" value="#{cursoProgramacionAdministrado.cursoProgramacion.nidDistrito}" autoWidth="false"
+                        effect="fade"  required="true" requiredMessage="Debe seleccionar el distrito">
+                         <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                         <f:selectItems value="#{cursoProgramacionAdministrado.listaDistritos}" var="distritoBus" 
+                                      itemLabel="#{distritoBus.txtDescripcion}" itemValue="#{distritoBus.nidDistrito}" />
+                   </p:selectOneMenu>
+            </div>   
+        </div>   
+        <div class="ui-g">
+            <div class="ui-g-12 ui-md-4">
+                  <p:outputLabel value="Ciudad"/> 
+                  <p:inputText required="true" value="#{cursoProgramacionAdministrado.cursoProgramacion.ciudad}" maxlength="50"
+                               requiredMessage="Debe ingresar el nombre de la ciudad"/>
+             </div>
+             <div class="ui-g-12 ui-md-8">
+                  <p:outputLabel value="Dirección"/> 
+                  <p:inputText required="false" value="#{cursoProgramacionAdministrado.cursoProgramacion.direccion}" maxlength="150" />
+             </div>
+         </div>
+
+    </p:fieldset>
+    
+    <p:fieldset legend="TUTOR">
+        
+      <div class="ui-g">
+        <div class="ui-g-12">
+              <p:selectOneMenu autoWidth="false"  required="false" 
+                                 requiredMessage="Debe seleccionar el tutor"
+                                 value="#{cursoProgramacionAdministrado.cursoProgramacion.nidTutor}">
+                     <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+                     <f:selectItems value="#{usuarioAdministrado.getEntidadesModuloPerfil('DSLD')}"
+                                    var="itemPer"
+                                    itemValue="#{itemPer.nidUsuario}"
+                                    itemLabel="#{itemPer.persona.nombreApellidos()}"/>
+                  </p:selectOneMenu>
+        </div>
+      </div>  
+    </p:fieldset>
+   
+</f:view>

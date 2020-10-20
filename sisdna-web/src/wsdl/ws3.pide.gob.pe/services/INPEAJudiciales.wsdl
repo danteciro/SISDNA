@@ -1,0 +1,51 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:impl="http://endpoint.wsantjudiciales.inpe.gob.pe" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:intf="http://endpoint.wsantjudiciales.inpe.gob.pe" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://endpoint.wsantjudiciales.inpe.gob.pe">
+   <wsdl:types>
+      <schema xmlns="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://endpoint.wsantjudiciales.inpe.gob.pe">
+         <element name="getAntecedenteJudicial">
+            <complexType>
+               <sequence>
+                  <element name="apepat" type="string"/>
+                  <element name="apemat" type="string"/>
+                  <element name="nombres" type="string"/>
+               </sequence>
+            </complexType>
+         </element>
+         <element name="getAntecedenteJudicialResponse">
+            <complexType>
+               <sequence>
+                  <element name="getAntecedenteJudicialReturn" type="string"/>
+               </sequence>
+            </complexType>
+         </element>
+      </schema>
+   </wsdl:types>
+   <wsdl:message name="getAntecedenteJudicialRequest">
+      <wsdl:part name="parameters" element="impl:getAntecedenteJudicial"/>
+   </wsdl:message>
+   <wsdl:message name="getAntecedenteJudicialResponse">
+      <wsdl:part name="parameters" element="impl:getAntecedenteJudicialResponse"/>
+   </wsdl:message>
+   <wsdl:portType name="INPEAJudicialesPortType">
+      <wsdl:operation name="getAntecedenteJudicial">
+         <wsdl:input message="impl:getAntecedenteJudicialRequest" wsaw:Action="getAntecedenteJudicial"/>
+         <wsdl:output message="impl:getAntecedenteJudicialResponse" wsaw:Action="http://endpoint.wsantjudiciales.inpe.gob.pe/ServiceAntecedenteJudicial/getAntecedenteJudicialResponse"/>
+      </wsdl:operation>
+   </wsdl:portType>
+   <wsdl:binding name="INPEAJudicialesSoap11Binding" type="impl:INPEAJudicialesPortType">
+      <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+      <wsdl:operation name="getAntecedenteJudicial">
+         <soap:operation soapAction="getAntecedenteJudicial" style="document"/>
+         <wsdl:input>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+   </wsdl:binding>
+   <wsdl:service name="INPEAJudiciales">
+      <wsdl:port name="INPEAJudicialesHttpsSoap11Endpoint" binding="impl:INPEAJudicialesSoap11Binding">
+         <soap:address location="https://ws3.pide.gob.pe/services/INPEAJudiciales.INPEAJudicialesHttpsSoap11Endpoint"/>
+      </wsdl:port>
+   </wsdl:service>
+</wsdl:definitions>

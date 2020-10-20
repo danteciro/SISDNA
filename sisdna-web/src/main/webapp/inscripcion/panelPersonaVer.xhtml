@@ -1,0 +1,153 @@
+<f:view contentType="text/html"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <div class="ui-fluid">
+        <div class="ui-g">
+            <div class="ui-g-12 ui-md-2"><p:outputLabel for="nidFuncion" value="Cumple función de"/></div>
+            <div class="ui-g-12 ui-md-2">
+                <p:inputText id="nidFuncion" value="#{inscripcionAdministrado.personaVer.funcion.txtNombre}" maxlength="8" readonly="true">
+                </p:inputText>
+            </div>    
+         </div>
+        
+        <p:outputPanel id="datosPersona">
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-2"><p:outputLabel for="documento" value="Nro. DNI"/></div>
+                <div class="ui-g-12 ui-md-2">
+                     <p:inputText id="documento" value="#{inscripcionAdministrado.personaVer.txtDocumento}" maxlength="8" readonly="true">
+                     </p:inputText>
+                </div>      
+            </div>  
+            <div class="ui-g">
+               <div class="ui-g-12 ui-md-2"> <p:outputLabel for="apePaterno" value="Apellido Paterno:"/></div>
+               <div class="ui-g-12 ui-md-2">
+                  <p:inputText id="apePaterno" readonly="true" value="#{inscripcionAdministrado.personaVer.txtApellidoPaterno}" />
+               </div>
+               <div class="ui-g-12 ui-md-2">
+                  <p:outputLabel for="apeMaterno" value="Apellido Materno:"/>
+               </div>
+               <div class="ui-g-12 ui-md-2">
+                   <p:inputText id="apeMaterno" readonly="true" value="#{inscripcionAdministrado.personaVer.txtApellidoMaterno}" />
+               </div>
+            </div>  
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtNombre1" value="Primer Nombre:"/></div>
+                <div class="ui-g-12 ui-md-2">
+                    <p:inputText id="txtNombre1" readonly="true" value="#{inscripcionAdministrado.personaVer.txtNombre1}"/>
+                </div>
+                <div class="ui-g-12 ui-md-2">
+                   <p:outputLabel for="txtNombre2" value="Segundo Nombre:"/>
+                </div>
+                <div class="ui-g-12 ui-md-2">
+                    <p:inputText id="txtNombre2" readonly="true" value="#{inscripcionAdministrado.personaVer.txtNombre2}"/>
+                </div>
+                <div class="ui-g-12 ui-md-2">
+                   <p:outputLabel for="txtNombre3" value="Tercer Nombre:"/>
+                </div>
+                <div class="ui-g-12 ui-md-2">
+                    <p:inputText id="txtNombre3" readonly="true" value="#{inscripcionAdministrado.personaVer.txtNombre3}"/>
+                </div>
+            </div>
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-2"><p:outputLabel for="sexo" value="Sexo:"/></div>
+                <div class="ui-g-12 ui-md-2">
+                    <p:inputText id="sexo" readonly="true" value="#{inscripcionAdministrado.personaVer.txtSexo}"/>
+                </div>   
+                <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtEdad" value="Edad:"/></div>
+                <div class="ui-g-12 ui-md-2">
+                    <p:inputText id="txtEdad" readonly="true" value="#{inscripcionAdministrado.personaVer.edad}"/>
+                </div>   
+                <div class="ui-g-12 ui-md-2"><p:outputLabel for="telefono" value="Teléfono:"/></div>
+                <div class="ui-g-12 ui-md-2">
+                    <p:inputText id="telefono" readonly="true" value="#{inscripcionAdministrado.personaVer.txtTelefono}"/>
+                </div>
+             </div> 
+             <div class="ui-g">
+                <div class="ui-g-12 ui-md-2"> <p:outputLabel for="correo" value="Correo:" /></div>
+                <div class="ui-g-12 ui-md-6">
+                    <p:inputText id="correo" readonly="true" value="#{inscripcionAdministrado.personaVer.txtCorreo}"/>
+                </div>
+             </div> 
+             <div class="ui-g">
+                <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtDireccionDna" value="Dirección Domiciliaria: " /></div>
+                <div class="ui-g-12 ui-md-6">
+                    <p:inputText id="txtDireccionDna" readonly="true" value="#{inscripcionAdministrado.personaVer.txtDireccion}"/>
+                </div>
+             </div> 
+             <div class="ui-g">
+                <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtDepartamentoDna" value="Departamento: "/></div>
+                <div class="ui-g-12 ui-md-2">
+                    <p:inputText id="txtDepartamentoDna" readonly="true" value="#{inscripcionAdministrado.getNombreDepartamentoVer()}"/>
+                </div>    
+                <div class="ui-g-12 ui-md-2">
+                     <p:outputLabel for="txtProvinciaDna" value="Provincia "/>
+                </div>     
+                <div class="ui-g-12 ui-md-2">
+                    <p:inputText id="txtProvinciaDna" readonly="true" value="#{inscripcionAdministrado.getNombreProvinciaVer()}"/>
+                </div> 
+                <div class="ui-g-12 ui-md-2">
+                      <p:outputLabel for="txtDistritoDna" value="Distrito "/>
+                </div>
+                <div class="ui-g-12 ui-md-2">
+                    <p:inputText id="txtDistritoDna" readonly="true" value="#{inscripcionAdministrado.getNombreDistritoVer()}"/>
+                </div>
+             </div>
+             <div class="ui-g">
+                <div class="ui-g-12 ui-md-2">
+                    <p:outputLabel for="txtInstruccion" value="Grado de Instrucción"/>
+                </div>
+                <div class="ui-g-12 ui-md-2">
+                    <p:inputText id="txtInstruccion" readonly="true" value="#{inscripcionAdministrado.getNombreGradoDeInstruccionVer()}"/>
+                </div>
+                <div class="ui-g-12 ui-md-2">
+                    <p:outputLabel for="txtProfesion" value="Profesión/oficio:"/>
+                </div>    
+                <div class="ui-g-12 ui-md-6">
+                    <p:inputText id="txtProfesion" readonly="true" value="#{inscripcionAdministrado.personaVer.profesion.txtNombre}"/>
+                </div>    
+             </div>
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtColegio" value="Colegio Profesional:"/></div>
+                <div class="ui-g-12 ui-md-4">
+                    <p:inputText id="txtColegio" readonly="true" value="#{inscripcionAdministrado.personaVer.txtColegio}"/>
+                </div>
+                <div class="ui-g-12 ui-md-2">
+                    <p:outputLabel for="txtColegiatura" value="N° de Colegiatura:"/>
+                </div>    
+                <div class="ui-g-12 ui-md-4">
+                     <p:inputText id="txtColegiatura" readonly="true" value="#{inscripcionAdministrado.personaVer.txtColegiatura}"/>
+                </div>    
+             </div>  
+             <div class="ui-g">
+                <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtLugarCurso" value="Lugar de curso:"/></div>
+                <div class="ui-g-12 ui-md-4">
+                    <p:inputText id="txtLugarCurso" readonly="true" value="#{inscripcionAdministrado.personaVer.txtLugarCurso}"/>
+                </div>
+                <div class="ui-g-12 ui-md-2">
+                    <p:outputLabel for="txtFechaCurso" value="Fecha de curso:"/>
+                </div>    
+                <div class="ui-g-12 ui-md-2">
+                    <p:inputText id="txtFechaCurso" readonly="true" value="#{inscripcionAdministrado.getFechaCursoTexto()}"/>
+                </div>    
+             </div>  
+
+            <pe:tooltip for="apePaterno" value="Solo se permiten letras y espacios." atPosition="bottom left" />
+            <pe:tooltip for="apeMaterno" value="Solo se permiten letras y espacios." atPosition="bottom left" />
+            <pe:tooltip for="txtNombre1" value="Solo se permiten letras y espacios." atPosition="bottom left" />
+            <pe:tooltip for="txtNombre2" value="Solo se permiten letras y espacios." atPosition="bottom left" />
+            <pe:tooltip for="txtNombre3" value="Solo se permiten letras y espacios." atPosition="bottom left" />
+            <pe:tooltip for="documento" value="Se permiten letras y números." atPosition="bottom left" />        
+            <pe:tooltip for="correo" value="Ingrese su correo electrónico." atPosition="bottom left" />        
+        </p:outputPanel>
+        
+     
+
+    </div>
+
+
+</f:view>

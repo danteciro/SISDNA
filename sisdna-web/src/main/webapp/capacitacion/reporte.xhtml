@@ -1,0 +1,436 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="/WEB-INF/templates/default.xhtml">
+    <ui:define name="header">
+    </ui:define>
+    <ui:define name="content" >
+        <ui:include src="/WEB-INF/templates/cargando.xhtml"/>
+        <div class="pcenter">
+            <p:outputLabel class="pred pbold ptitle" value="REPORTES"/>    
+        </div>
+        <br></br>
+          <p:messages id="mensajes" autoUpdate="true" showDetail="false" closable="true" severity="error" />
+          <p:growl id="messages" widgetVar="messages"  globalOnly="false" showDetail="true" showSummary="false" life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true" severity="warn, info"/>
+   
+        <h:form id="frmBuscar" >
+                  
+                <p:fieldset legend="Filtro">
+                    <div class="ui-g">
+                    <div class="ui-g-12">
+                        <p:outputLabel value="Reporte" for="opTipoReporte"/> 
+                  
+                        <p:selectOneMenu id="opTipoReporte" value="#{reporteAdministrado.reporte}" autoWidth="false"
+                                        effect="fade" height="200" required="true" requiredMessage="Debe seleccionar el reporte">
+                           <p:ajax event="change" process="@this" listener="#{reporteAdministrado.seleccionarReporte()}" 
+                                   update="opFiltro, formularioPrincipal1,opDescarga"/>
+                              <f:selectItem itemLabel="Seleccione el reporte" itemValue="" noSelectionOption="true"/>
+                              <f:selectItem itemLabel="#{reporteAdministrado.titulo(10)}" itemValue="10" />
+                              <f:selectItem itemLabel="#{reporteAdministrado.titulo(11)}" itemValue="11" />
+                              <f:selectItem itemLabel="#{reporteAdministrado.titulo(20)}" itemValue="20" />
+                              <f:selectItem itemLabel="#{reporteAdministrado.titulo(21)}" itemValue="21" />
+                              <f:selectItem itemLabel="#{reporteAdministrado.titulo(12)}" itemValue="12" />
+                              <f:selectItem itemLabel="#{reporteAdministrado.titulo(30)}" itemValue="30" />
+                       
+                          </p:selectOneMenu>  
+
+                  </div>
+                </div>    
+                 <p:outputPanel id="opFiltro" class="ui-g">
+                         <p:outputPanel class="ui-g-12 ui-md-2" rendered="#{reporteAdministrado.verDepartamento}"> 
+                           <p:outputLabel value="Departamento"/> 
+                                <p:selectOneMenu id="busDepartamento" value="#{reporteAdministrado.busDepartamento}" autoWidth="false"
+                                                 effect="fade">
+                                       <p:ajax event="change" listener="#{reporteAdministrado.resetLista()}" update="formularioPrincipal1, busProvincia" />
+                                       <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                                       <f:selectItems value="#{reporteAdministrado.obtenerDepartamentos()}" var="departamentoBus" 
+                                                    itemLabel="#{departamentoBus.txtDescripcion}" itemValue="#{departamentoBus.nidDepartamento}" />
+                                </p:selectOneMenu>
+                         </p:outputPanel>
+                         <p:outputPanel class="ui-g-12 ui-md-2" rendered="#{reporteAdministrado.verProvincia}"> 
+                                <p:outputLabel value="Provincia"/> 
+                                <p:selectOneMenu id="busProvincia" value="#{reporteAdministrado.busProvincia}" autoWidth="false"
+                                      effect="fade">
+                                      <p:ajax event="change" process="@this" listener="#{reporteAdministrado.resetLista()}" update="formularioPrincipal1, busDistrito" />
+                                      <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                                      <f:selectItems value="#{reporteAdministrado.obtenerProvinciasBus()}" var="provinciaBus" 
+                                                    itemLabel="#{provinciaBus.txtDescripcion}" itemValue="#{provinciaBus.nidProvincia}" />
+                                </p:selectOneMenu>                  
+                         </p:outputPanel>   
+                         <p:outputPanel class="ui-g-12 ui-md-2" rendered="#{reporteAdministrado.verDistrito}"> 
+                                <p:outputLabel value="Distrito"/> 
+                                <p:selectOneMenu id="busDistrito" value="#{reporteAdministrado.busDistrito}" autoWidth="false"
+                                      effect="fade">
+                                      <p:ajax event="change" process="@this" listener="#{reporteAdministrado.resetLista()}" update="formularioPrincipal1" />
+                                      <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                                      <f:selectItems value="#{reporteAdministrado.obtenerDistritoBus()}" var="distritoBus" 
+                                                    itemLabel="#{distritoBus.txtDescripcion}" itemValue="#{distritoBus.nidDistrito}" />
+                                </p:selectOneMenu>                  
+                         </p:outputPanel> 
+                        <p:outputPanel class="ui-g-12 ui-md-2" rendered="#{reporteAdministrado.verAnho}"> 
+                             <p:outputLabel for="txtAnhoBus" value="Año" /> 
+                            <p:inputNumber id="txtAnhoBus"  
+                                           value="#{reporteAdministrado.busAnho}" minValue="0" maxValue="2100" decimalSeparator="" thousandSeparator="" decimalPlaces="0" >
+                                  <p:ajax event="change"  listener="#{reporteAdministrado.resetLista()}" update="opFiltro,formularioPrincipal1,opDescarga" />
+                                
+                            </p:inputNumber>
+                        </p:outputPanel>   
+                        <p:outputPanel class="ui-g-12 ui-md-2" rendered="#{reporteAdministrado.verFechas}"> 
+                                <p:outputLabel value="Desde"/> 
+                                <p:calendar  value="#{reporteAdministrado.busDesde}" required="false"
+                                            pattern="dd/MM/yyyy" navigator="true" mask="true" locale="es">
+                                <p:ajax event="change"  listener="#{reporteAdministrado.resetLista()}" update="opFiltro,formularioPrincipal1,opDescarga" />
+                                <p:ajax event="dateSelect"  listener="#{reporteAdministrado.resetLista()}" update="opFiltro,formularioPrincipal1,opDescarga" />
+                                
+                               </p:calendar>               
+                        </p:outputPanel>
+                        <p:outputPanel class="ui-g-12 ui-md-2" rendered="#{reporteAdministrado.verFechas}"> 
+                               <p:outputLabel value="Hasta"/> 
+                               <p:calendar  value="#{reporteAdministrado.busHasta}" required="false"
+                                            pattern="dd/MM/yyyy" navigator="true" mask="true" locale="es">
+                                <p:ajax event="change"  listener="#{reporteAdministrado.resetLista()}" update="opFiltro,formularioPrincipal1,opDescarga" />
+                                <p:ajax event="dateSelect"  listener="#{reporteAdministrado.resetLista()}" update="opFiltro,formularioPrincipal1,opDescarga" />
+                       
+                               </p:calendar>               
+                        </p:outputPanel> 
+                                          
+                       <p:outputPanel class="ui-g-12 ui-md-4" rendered="#{reporteAdministrado.verCurso}"> 
+                        <p:outputLabel value="Curso"/> 
+                        <p:selectOneMenu value="#{reporteAdministrado.busCurso}" autoWidth="false"
+                                       effect="fade" >
+                              <p:ajax event="change" process="@this" listener="#{reporteAdministrado.resetLista()}" update="formularioPrincipal1" />
+                             
+                                    <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{cursoAdministrado.obtenerCursosActivos()}" var="cursoActivo" 
+                                                   itemLabel="#{cursoActivo.nombre}" itemValue="#{cursoActivo.nidCurso}" />
+                         </p:selectOneMenu>
+                       </p:outputPanel>
+                      <p:outputPanel class="ui-g-12 ui-md-2" rendered="#{reporteAdministrado.verEstadoEval}"> 
+                        <p:outputLabel value="Calificación"/> 
+                        <p:selectOneMenu value="#{reporteAdministrado.busEstadoEval}" autoWidth="false"
+                                       effect="fade" >
+                              <p:ajax event="change" process="@this" listener="#{reporteAdministrado.resetLista()}" update="formularioPrincipal1" />
+                             
+                                    <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="PENDIENTE" itemValue="0" />
+                                    <f:selectItem itemLabel="APROBADO" itemValue="1" />
+                                    <f:selectItem itemLabel="DESAPROBADO" itemValue="2" />
+                                    
+                         </p:selectOneMenu>
+                       </p:outputPanel>
+                       <p:outputPanel class="ui-g-12 ui-md-3" rendered="#{reporteAdministrado.verUsuario}"> 
+                            <p:outputLabel value="Tutor"/> 
+                            <p:selectOneMenu autoWidth="false"  required="false" 
+                                               requiredMessage="Debe seleccionar el tutor"
+                                               value="#{reporteAdministrado.busTutor}">
+                                  <p:ajax event="change" process="@this" listener="#{reporteAdministrado.resetLista()}" update="formularioPrincipal1" />
+                             
+                                   <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+                                   <f:selectItems value="#{usuarioAdministrado.getEntidadesModuloPerfil('DSLD')}"
+                                                  var="itemPer"
+                                                  itemValue="#{itemPer.nidUsuario}"
+                                                  itemLabel="#{itemPer.persona.nombreApellidos()}"/>
+                                </p:selectOneMenu>
+                       </p:outputPanel>
+                 </p:outputPanel>
+                    
+                     <div class="ui-g">
+                        <div class="ui-g-12 ui-md-3">
+                            <p:commandButton value="GENERAR REPORTE" actionListener="#{reporteAdministrado.generar()}" 
+                                                update="formularioPrincipal1, opDescarga" 
+                                                process="@form" 
+                                                title="Genera el reporte"/>	
+                        </div>
+                        <div class="ui-g-12 ui-md-6"></div>
+                        <p:outputPanel id="opDescarga" class="ui-g-12 ui-md-3">
+
+                            <p:commandButton value="EXPORTAR A EXCEL" ajax="false" rendered="#{reporteAdministrado.lista!=null}" >
+                              <p:fileDownload value="#{reporteAdministrado.exportar()}" />
+                          </p:commandButton> 
+
+                        </p:outputPanel>
+                    </div>
+                </p:fieldset>     
+               
+        </h:form>
+        <br />
+        
+        
+        <h:form id="formularioPrincipal1">
+         <p:outputPanel rendered="#{reporteAdministrado.lista != null}">   
+            
+           <h2>#{reporteAdministrado.tituloReporte}</h2>
+            <p:outputPanel rendered="#{reporteAdministrado.reporte eq 10 or reporteAdministrado.reporte eq 11}" >
+       
+               <p:dataTable 
+                    var="item" 
+                    value="#{reporteAdministrado.lista}" 
+                    emptyMessage="No se encontraron registros"
+                    rowIndexVar="index"
+                    scrollable="true"
+                    sortBy="#{item[11]}"
+                    rows="40" 
+                    expandableRowGroups="true"
+                    paginator="true"
+                    resizableColumns="false"
+                    paginatorPosition="bottom"
+                    paginatorAlwaysVisible="true"
+                    rowsPerPageTemplate="40,60,80"
+                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}">
+                
+                    <p:headerRow>
+                      <p:column colspan="4">
+                           <h:outputText value="#{item[0]}" />
+                      </p:column>
+                      <p:column styleClass="pcenter">
+                          <h:outputText value="#{item[5]}" />
+                      </p:column>  
+                      <p:column styleClass="pcenter">
+                          <h:outputText value="#{item[6]}" />
+                      </p:column>  
+                      <p:column styleClass="pcenter">
+                          <h:outputText value="#{item[7]}" />
+                      </p:column>    
+                    </p:headerRow>
+
+                    <p:column headerText="SEDE" width="100" rendered="#{item[1] ne '**subtotal**'}" >
+                        <h:outputText value="#{item[1]}"  />
+                    </p:column>
+          
+                    <p:column headerText="FECHA DE INICIO" styleClass="pcenter" width="80"  rendered="#{item[1] ne '**subtotal**'}">
+                        <h:outputText value="#{item[2]}"  >
+                             <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="FECHA DE FIN" styleClass="pcenter" width="80"  rendered="#{item[1] ne '**subtotal**'}">
+                        <h:outputText value="#{item[3]}"  >
+                             <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="DEPARTAMENTOS PARTICIPANTES" width="250"  rendered="#{item[1] ne '**subtotal**'}">
+                        <h:outputText value="#{item[4]}"  />
+                    </p:column>
+                    <p:column headerText="MASCULINO" styleClass="pcenter" width="80"  rendered="#{item[1] ne '**subtotal**'}">
+                        <h:outputText value="#{item[5]}"  />
+                    </p:column>
+                    <p:column headerText="FEMENINO" styleClass="pcenter" width="80"  rendered="#{item[1] ne '**subtotal**'}">
+                        <h:outputText value="#{item[6]}"  />
+                    </p:column>
+                    <p:column headerText="TOTAL" styleClass="pcenter" width="80"  rendered="#{item[1] ne '**subtotal**'}">
+                        <h:outputText value="#{item[7]}"  />
+                    </p:column>
+                    <p:column headerText="TUTOR" width="160"  rendered="#{item[1] ne '**subtotal**'}">
+                        <h:outputText value="#{item[8]}"  />
+                    </p:column>
+                    <p:column headerText="TIPO CURSO" styleClass="pcenter" width="100"  rendered="#{item[1] ne '**subtotal**'}">
+                        <h:outputText value="#{item[9]}"  />
+                    </p:column>
+             </p:dataTable>
+          </p:outputPanel>
+        
+             <p:outputPanel rendered="#{reporteAdministrado.reporte eq 12}" >
+       
+               <p:dataTable 
+                    var="item" 
+                    value="#{reporteAdministrado.lista}" 
+                    emptyMessage="No se encontraron registros"
+                    rowIndexVar="index"
+                    scrollable="true"
+                    sortBy="#{item[11]}"
+                    rows="40" 
+                    expandableRowGroups="true"
+                    paginator="true"
+                    resizableColumns="false"
+                    paginatorPosition="bottom"
+                    paginatorAlwaysVisible="true"
+                    rowsPerPageTemplate="40,60,80"
+                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}">
+                
+                   
+                    <p:column headerText="TIPO DE DOCUMENTO" width="80" >
+                        <h:outputText value="#{item[0]}"  />
+                    </p:column>
+                    <p:column headerText="NÚMERO DE DOCUMENTO" styleClass="pcenter" width="80"  >
+                        <h:outputText value="#{item[1]}"  />
+                    </p:column>
+                    <p:column headerText="APELLIDO PATERNO" width="80"  >
+                        <h:outputText value="#{item[2]}"  />
+                    </p:column>
+                    <p:column headerText="APELLIDO MATERNO" width="80"  >
+                        <h:outputText value="#{item[3]}"  />
+                    </p:column>
+                    <p:column headerText="NOMBRES" width="80"  >
+                        <h:outputText value="#{item[4]}"  />
+                    </p:column>
+                    <p:column headerText="DNA" width="300"  >
+                        <h:outputText value="#{item[5]}"  />
+                    </p:column>
+                    <p:column headerText="ORIGEN" width="80"  >
+                        <h:outputText value="#{item[6]}"  />
+                    </p:column>
+                    <p:column headerText="DEPARTAMENTO" width="80"  >
+                        <h:outputText value="#{item[7]}"  />
+                    </p:column>
+                    <p:column headerText="PROVINCIA" width="100"  >
+                        <h:outputText value="#{item[8]}"  />
+                    </p:column>
+                    <p:column headerText="DISTRITO" width="100"  >
+                        <h:outputText value="#{item[9]}"  />
+                    </p:column>
+                    <p:column headerText="CURSO" width="80"  >
+                        <h:outputText value="#{item[10]}"  />
+                    </p:column>
+                    <p:column headerText="CIUDAD" width="80"  >
+                        <h:outputText value="#{item[11]}"  />
+                    </p:column>
+                    <p:column headerText="FECHA DE INICIO" styleClass="pcenter" width="80">
+                        <h:outputText value="#{item[12]}"  />
+                    </p:column>
+                    <p:column headerText="FECHA DE FIN" styleClass="pcenter" width="80">
+                        <h:outputText value="#{item[13]}"  />
+                    </p:column>
+                    <p:column headerText="CALIFICACIÓN" styleClass="pcenter" width="80">
+                         <h:outputText value="#{item[14]}"  />
+                    </p:column>
+                    <p:column headerText="TUTOR" width="160" >
+                        <h:outputText value="#{item[15]}"  />
+                    </p:column>
+                 
+             </p:dataTable>
+          </p:outputPanel>
+           
+           <p:outputPanel rendered="#{reporteAdministrado.reporte eq 20}" style="width: 100%; max-width: 800px">
+                 <p:dataTable 
+                    var="item" 
+                    value="#{reporteAdministrado.lista}" 
+                    emptyMessage="No se encontraron registros"
+                    rowStyleClass="#{item[1] eq '**' ? 'drtotal' : null}" 
+                    rowIndexVar="index"
+                    scrollable="true"
+                    rows="40" 
+                    expandableRowGroups="true"
+                    paginator="false"
+                    resizableColumns="false"
+                   >
+          
+                  
+                    <p:column headerText="TOTAL X MES X SEXO"  width="80"  >
+                        <h:outputText value="#{item[1]}"  rendered="#{item[1] ne '**'}" />
+                        <h:outputText value="#{item[0]}"  rendered="#{item[1] eq '**'}" />
+                    </p:column>
+                    <p:column headerText="TOTAL" styleClass="pcenter" width="100"  >
+                        <h:outputText value="#{item[2]}"  />
+                    </p:column>
+          
+                    <p:columns value="#{reporteAdministrado.nombreCursos}" var="column" columnIndexVar="colIndex"  width="100" class="pcenter"  >
+                        <f:facet name="header" >
+                            <h:outputText value="#{column}" />
+                        </f:facet>
+                        <h:outputText value="#{item[3 + colIndex]}" />
+                    </p:columns>
+
+                 </p:dataTable>  
+               
+          </p:outputPanel> 
+           
+           <p:outputPanel rendered="#{reporteAdministrado.reporte eq 21}"  style="width: 100%; max-width: 800px">
+                 <p:dataTable 
+                    var="item" 
+                    value="#{reporteAdministrado.lista}" 
+                    emptyMessage="No se encontraron registros"
+                    rowStyleClass="#{item[2] eq '**' ? 'drtotal' : null}" 
+                    rowIndexVar="index"
+                    scrollable="true"
+                    rows="40" 
+                    expandableRowGroups="true"
+                    paginator="false"
+                    resizableColumns="false"
+                   >
+          
+                  
+                    <p:column headerText="TOTAL X TRIMESTRE X SEXO" width="80"  >
+                        <h:outputText value="#{item[2]}"  rendered="#{item[2] ne '**'}" />
+                        <h:outputText value="#{item[1]}"  rendered="#{item[2] eq '**'}" />
+                    </p:column>
+                    <p:column headerText="TOTAL" styleClass="pcenter" width="100"  >
+                        <h:outputText value="#{item[3]}"  />
+                    </p:column>
+          
+                    <p:columns value="#{reporteAdministrado.nombreCursos}" var="column" columnIndexVar="colIndex"  width="100" class="pcenter"  >
+                        <f:facet name="header" >
+                            <h:outputText value="#{column}" />
+                        </f:facet>
+                        <h:outputText value="#{item[4 + colIndex]}" />
+                    </p:columns>
+
+                 </p:dataTable>  
+               
+          </p:outputPanel>  
+          
+             <p:outputPanel rendered="#{reporteAdministrado.reporte eq 30}" >
+                 <p:dataTable 
+                    var="item" 
+                    value="#{reporteAdministrado.lista}" 
+                    emptyMessage="No se encontraron registros"
+                    rowIndexVar="index"
+                    scrollable="true"
+                    rows="40" 
+                    expandableRowGroups="true"
+                    paginator="true"
+                    resizableColumns="false"
+                    paginatorPosition="bottom"
+                    paginatorAlwaysVisible="true"
+                    rowsPerPageTemplate="40,60,80"
+                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}">
+         
+              
+                    <p:column headerText="N°" styleClass="pcenter" width="20"  >
+                        <h:outputText value="#{item[0]}"  />
+                    </p:column>
+                    <p:column headerText="CÓDIGO" styleClass="pcenter" width="60"  >
+                        <h:outputText value="#{item[1]}"  />
+                    </p:column>
+                     <p:column headerText="DEMUNA" width="320"  >
+                        <h:outputText value="#{item[2]}"  />
+                    </p:column>
+                     <p:column headerText="REGISTRO / INSCRIPCIÓN" styleClass="pcenter" width="80"  >
+                        <h:outputText value="#{item[3]}"  />
+                    </p:column>
+                     <p:column headerText="DEPARTAMENTO" styleClass="pcenter" width="60"  >
+                        <h:outputText value="#{item[4]}"  />
+                    </p:column>
+                     <p:column headerText="PROVINCIA" styleClass="pcenter" width="60"  >
+                        <h:outputText value="#{item[5]}"  />
+                    </p:column>
+                    <p:column headerText="DISTRITO" styleClass="pcenter" width="60"  >
+                        <h:outputText value="#{item[6]}"  />
+                    </p:column>
+                    <p:column headerText="TIPO" styleClass="pcenter" width="80"  >
+                        <h:outputText value="#{item[7]}"  />
+                    </p:column>
+                    <p:column headerText="MES" styleClass="pcenter" width="60"  >
+                        <h:outputText value="#{item[8]}"  />
+                    </p:column>
+                    <p:column headerText="MESx" styleClass="pcenter" width="60"  >
+                        <h:outputText value="#{item[9]}"  />
+                    </p:column>
+                     
+                 </p:dataTable>  
+               
+          </p:outputPanel> 
+           
+         </p:outputPanel>
+        </h:form>
+       
+       
+    </ui:define>  
+    
+    
+</ui:composition>

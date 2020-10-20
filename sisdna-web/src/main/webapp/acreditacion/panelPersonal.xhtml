@@ -1,0 +1,233 @@
+<f:view contentType="text/html"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <div class="ui-fluid">
+        <div class="ui-g">
+            <div class="ui-g-12 ui-md-2"><p:outputLabel for="nidFuncion" value="Cumple función de"/></div>
+            <div class="ui-g-12 ui-md-3">
+                <p:selectOneMenu id="nidFuncion" 
+                                 value="#{acreditacionAdministrado.personaEquipoExterno.funcion.nidCatalogo}"
+                                 autoWidth="false" required="true" 
+                                 requiredMessage="Debe seleccionar la función">
+                    <p:ajax listener="#{acreditacionAdministrado.onPersonaFuncionChange}" 
+                            update="@form , btnReponsable"/>
+                     <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                     <f:selectItems value="#{acreditacionAdministrado.obtenerFunciones()}"
+                                    var="funcion" 
+                                    itemLabel="#{funcion.txtNombre}"
+                                    itemValue="#{funcion.nidCatalogo}" />
+
+                </p:selectOneMenu>
+                
+            </div>    
+            <div class="ui-g-12 ui-md-3">
+                <p:outputPanel id="btnReponsable">
+                    <p:commandButton rendered="#{acreditacionAdministrado.showBtnResponsable}"
+                                     value="Seleccionar responsable"
+                                     actionListener="#{acreditacionAdministrado.colocarFuncionResponsable}"
+                                     process="@this"  update="datosPersona">
+                    </p:commandButton>
+                </p:outputPanel>
+            </div>
+         </div>
+        <div class="ui-g">
+           <div class="ui-g-12 ui-md-2"><p:outputLabel for="documento" value="Nro. DNI"/></div>
+           <div class="ui-g-12 ui-md-2">
+               <p:inputText id="documento" 
+                            value="#{acreditacionAdministrado.personaEquipoExterno.txtDocumento}" maxlength="8" required="true"
+                            validator="#{acreditacionAdministrado.verificarReniec}"
+                            requiredMessage="Debe ingresar el documento">
+                  <p:keyFilter regEx="/[\d\.]/"/> 
+                   <p:ajax event="blur" update="apePaterno , apeMaterno , txtNombre1 ,txtNombre2 , txtNombre3 , txtDireccionDna"/>
+              </p:inputText>
+           </div>      
+        </div>  
+        <div class="ui-g">
+           <div class="ui-g-12 ui-md-2"> <p:outputLabel for="apePaterno" value="Apellido Paterno:"/></div>
+           <div class="ui-g-12 ui-md-2">
+              <p:inputText id="apePaterno" disabled="true" value="#{acreditacionAdministrado.personaEquipoExterno.txtApellidoPaterno}"  required="true" />
+           </div>
+           <div class="ui-g-12 ui-md-2">
+              <p:outputLabel for="apeMaterno" value="Apellido Materno:"/>
+           </div>
+           <div class="ui-g-12 ui-md-2">
+               <p:inputText id="apeMaterno" disabled="true" value="#{acreditacionAdministrado.personaEquipoExterno.txtApellidoMaterno}"  required="true" />
+           </div>
+        </div>  
+        <div class="ui-g">
+            <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtNombre1" value="Primer Nombre:"/></div>
+            <div class="ui-g-12 ui-md-2">
+                  <p:inputText id="txtNombre1" disabled="true"  value="#{acreditacionAdministrado.personaEquipoExterno.txtNombre1}"  required="true" >
+                    <p:keyFilter regEx="/[a-z_ ñ]/i"/>
+                 </p:inputText>
+              </div>
+            <div class="ui-g-12 ui-md-2">
+               <p:outputLabel for="txtNombre2" value="Segundo Nombre:"/>
+            </div>
+            <div class="ui-g-12 ui-md-2">
+               <p:inputText id="txtNombre2" disabled="true"  value="#{acreditacionAdministrado.personaEquipoExterno.txtNombre2}" >
+                  <p:keyFilter regEx="/[a-z_ ñ]/i"/>
+              </p:inputText>
+            </div>
+            <div class="ui-g-12 ui-md-2">
+               <p:outputLabel for="txtNombre3" value="Tercer Nombre:"/>
+            </div>
+            <div class="ui-g-12 ui-md-2">
+               <p:inputText id="txtNombre3" disabled="true"  value="#{acreditacionAdministrado.personaEquipoExterno.txtNombre3}" >
+                <p:keyFilter regEx="/[a-z_ ñ]/i"/>
+               </p:inputText>
+            </div>
+        </div>
+        <div class="ui-g">
+            <div class="ui-g-12 ui-md-2"><p:outputLabel for="sexo" value="Sexo:"/></div>
+            <div class="ui-g-12 ui-md-2">
+                <p:selectOneMenu id="sexo" disabled="#{!acreditacionAdministrado.dniValido}"
+                                 value="#{acreditacionAdministrado.personaEquipoExterno.txtSexo}" 
+                                 autoWidth="false" required="true"
+                                 requiredMessage="Debe seleccionar el sexo">
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                    <f:selectItem itemLabel="HOMBRE" itemValue="M" />
+                    <f:selectItem itemLabel="MUJER" itemValue="F" />
+                </p:selectOneMenu>
+            </div>   
+            <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtEdad" value="Edad:"/></div>
+            <div class="ui-g-12 ui-md-2">
+                <p:inputNumber required="true" id="txtEdad" decimalPlaces="0" value="#{acreditacionAdministrado.personaEquipoExterno.edad}" 
+                               requiredMessage="Debe ingresar la edad"
+                               title="Campo Obligatorio" validatorMessage="Debe tener al menos 18 años" maxlength="2">
+                    <p:ajax event="blur" update="@this"/>
+                     <f:validateDoubleRange minimum="18" maximum="99" />
+                </p:inputNumber>
+            </div>   
+            <div class="ui-g-12 ui-md-2"><p:outputLabel for="telefono" value="Teléfono:"/></div>
+            <div class="ui-g-12 ui-md-2">
+               <p:inputText id="telefono"  value="#{acreditacionAdministrado.personaEquipoExterno.txtTelefono}" maxlength="150" >
+                   <p:keyFilter regEx="/[\d\.]/"/> 
+               </p:inputText>
+            </div>
+         </div> 
+         <div class="ui-g">
+            <div class="ui-g-12 ui-md-2"> <p:outputLabel for="correo" value="Correo:" /></div>
+            <div class="ui-g-12 ui-md-6">
+                <p:inputText id="correo"  value="#{acreditacionAdministrado.personaEquipoExterno.txtCorreo}"  required="true" 
+                             requiredMessage="Debe ingresar el correo electrónico" 
+                              validatorMessage="El correo electrónico no dispone de un formato válido" maxlength="150">
+                     <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+                     <p:ajax event="blur" update="@this"/>
+                 </p:inputText>
+            </div>
+         </div> 
+         <div class="ui-g">
+            <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtDireccionDna" value="Dirección Domiciliaria: " /></div>
+            <div class="ui-g-12 ui-md-6">
+                <p:inputText id="txtDireccionDna"  value="#{acreditacionAdministrado.personaEquipoExterno.txtDireccion}" maxlength="150"  
+                             disabled="#{acreditacionAdministrado.dniValido}"
+                             required="true" title="Campo Obligatorio" requiredMessage="Debe ingresar la dirección">
+                        <p:ajax event="blur" update="@this"/>
+                </p:inputText>
+            </div>
+         </div> 
+         <div class="ui-g">
+            <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtDepartamentoDna" value="Departamento: "/></div>
+            <div class="ui-g-12 ui-md-2">
+                <p:selectOneMenu id="txtDepartamentoDna" value="#{acreditacionAdministrado.personaEquipoExterno.nidDepartamento}" autoWidth="false"
+                    effect="fade" required="true" requiredMessage="Debe seleccionar el departamento">
+                    <p:ajax listener="#{acreditacionAdministrado.obtenerProvinciasDna()}" update="txtProvinciaDna" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                    <f:selectItems value="#{acreditacionAdministrado.obtenerDepartamentos()}" var="departamentoDna" 
+                                  itemLabel="#{departamentoDna.txtDescripcion}" itemValue="#{departamentoDna.nidDepartamento}" />
+                </p:selectOneMenu>
+            </div>    
+            <div class="ui-g-12 ui-md-2">
+                 <p:outputLabel for="txtProvinciaDna" value="Provincia "/>
+            </div>     
+            <div class="ui-g-12 ui-md-2">
+                <p:selectOneMenu id="txtProvinciaDna" value="#{acreditacionAdministrado.personaEquipoExterno.nidProvincia}" autoWidth="false"
+                    effect="fade" required="true" requiredMessage="Debe seleccionar la provincia">
+                    <p:ajax listener="#{acreditacionAdministrado.obtenerDistritosDna()}" update="txtDistritoDna" />
+                    <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                    <f:selectItems value="#{acreditacionAdministrado.provinciasDna}" var="provinciaDna" 
+                                  itemLabel="#{provinciaDna.txtDescripcion}" itemValue="#{provinciaDna.nidProvincia}" />
+                </p:selectOneMenu>
+            </div> 
+            <div class="ui-g-12 ui-md-2">
+                  <p:outputLabel for="txtDistritoDna" value="Distrito "/>
+            </div>
+            <div class="ui-g-12 ui-md-2">
+                <p:selectOneMenu id="txtDistritoDna" value="#{acreditacionAdministrado.personaEquipoExterno.nidDistrito}" autoWidth="false"
+                        effect="fade"  required="true" requiredMessage="Debe seleccionar el distrito">
+                         <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/> 
+                         <f:selectItems value="#{acreditacionAdministrado.distritosDna}" var="distritoDna" 
+                                      itemLabel="#{distritoDna.txtDescripcion}" itemValue="#{distritoDna.nidDistrito}" />
+                </p:selectOneMenu>
+            </div>
+         </div>
+         <div class="ui-g">
+            <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtInstruccion" value="Grado de Instrucción"/></div>
+            <div class="ui-g-12 ui-md-2">
+                <p:selectOneMenu id="txtInstruccion" autoWidth="false"
+                                 value="#{acreditacionAdministrado.personaEquipoExterno.nidInstruccion}"
+                                 >
+                     <p:ajax update="@this"/>
+                     <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                     <f:selectItems value="#{acreditacionAdministrado.obtenerGradoInstruccion()}" var="instruccion" 
+                                    itemLabel="#{instruccion.txtNombre}" itemValue="#{instruccion.nidCatalogo}" />
+                </p:selectOneMenu>
+            </div>
+            <div class="ui-g-12 ui-md-2">
+                <p:outputLabel for="txtProfesion" value="Profesión/oficio:"/>
+            </div>    
+            <div class="ui-g-12 ui-md-6">
+                <p:inputText id="txtProfesion"  value="#{acreditacionAdministrado.personaEquipoExterno.txtProfesion}" maxlength="150" >
+                    <p:keyFilter regEx="/[a-z_ ñ]/i"/>
+                </p:inputText>
+            </div>    
+         </div>
+          <div class="ui-g">
+            <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtColegio" value="Colegio Profesional:"/></div>
+            <div class="ui-g-12 ui-md-4">
+                <p:inputText id="txtColegio"   value="#{acreditacionAdministrado.personaEquipoExterno.txtColegio}" maxlength="150">
+                     <p:keyFilter regEx="/[a-z_ ñ]/i"/>
+                 </p:inputText>
+            </div>
+            <div class="ui-g-12 ui-md-2">
+                <p:outputLabel for="txtColegiatura" value="N° de Colegiatura:"/>
+            </div>    
+            <div class="ui-g-12 ui-md-4">
+                <p:inputText id="txtColegiatura"   value="#{acreditacionAdministrado.personaEquipoExterno.txtColegiatura}" maxlength="150">
+                 </p:inputText>
+            </div>    
+         </div>  
+        
+         <div class="ui-g">
+            <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtLugarCurso" value="Lugar de curso:"/></div>
+            <div class="ui-g-12 ui-md-4">
+                <p:inputText id="txtLugarCurso"   value="#{acreditacionAdministrado.personaEquipoExterno.txtLugarCurso}" maxlength="150">
+                     <p:keyFilter regEx="/[a-z_ ñ]/i"/>
+                 </p:inputText>
+            </div>
+            <div class="ui-g-12 ui-md-2">
+                <p:outputLabel for="txtLugarCurso" value="Fecha de curso:"/>
+            </div>    
+            <div class="ui-g-12 ui-md-2">
+                <p:calendar id="txtFechaCurso" value="#{acreditacionAdministrado.personaEquipoExterno.txtFechaCurso}"
+                            pattern="dd/MM/yyyy" navigator="true" mask="true" locale="es" />
+            </div>    
+         </div>  
+      
+        <pe:tooltip for="apePaterno" value="Solo se permiten letras y espacios." atPosition="bottom left" />
+        <pe:tooltip for="apeMaterno" value="Solo se permiten letras y espacios." atPosition="bottom left" />
+        <pe:tooltip for="txtNombre1" value="Solo se permiten letras y espacios." atPosition="bottom left" />
+        <pe:tooltip for="txtNombre2" value="Solo se permiten letras y espacios." atPosition="bottom left" />
+        <pe:tooltip for="txtNombre3" value="Solo se permiten letras y espacios." atPosition="bottom left" />
+        <pe:tooltip for="documento" value="Se permiten letras y números." atPosition="bottom left" />        
+        <pe:tooltip for="correo" value="Ingrese su correo electrónico." atPosition="bottom left" />        
+     
+
+    </div>
+</f:view>

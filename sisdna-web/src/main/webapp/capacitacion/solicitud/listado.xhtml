@@ -1,0 +1,436 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="/WEB-INF/templates/default.xhtml">
+    <ui:define name="header">
+    </ui:define>
+     <ui:define name="content" >
+        <ui:include src="/WEB-INF/templates/cargando.xhtml"/>
+        <div class="pcenter">
+            <p:outputLabel class="pred pbold ptitle" value="SOLICITUDES DE INSCRIPCIÓN"/>    
+        </div>
+        <br></br>
+          
+        <h:form id="frmBuscar">
+             <p:outputPanel rendered="#{cursoInscripcionAdministrado.modo > 0}">
+               <div class="ui-g">
+                    <div class="ui-g-12 ui-md-3">
+                        <p:commandLink ajax="true" actionListener="#{cursoInscripcionAdministrado.regresar()}"  immediate="true" process="@this" class="sback"
+                                       update=":frmNuevo, :frmBuscar, :formularioPrincipal1" >
+                            
+                            <span>Regresar al Listado</span>
+                        </p:commandLink>
+
+                    </div>
+                </div>    
+             </p:outputPanel>     
+        </h:form>
+          <h:form>  
+              <p:fieldset legend="Datos del Curso">
+                      <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6">
+                             <p:outputLabel value="Curso"/> 
+                             <p:selectOneMenu value="#{cursoInscripcionAdministrado.nidCurso}" autoWidth="false"
+                                        effect="fade" >
+                                <p:ajax event="change" listener="#{cursoInscripcionAdministrado.resetProg()}" update="formularioPrincipal1, selProgramacionBus" />
+                                <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{cursoAdministrado.obtenerCursosActivos()}" var="cursoActivo" 
+                                               itemLabel="#{cursoActivo.nombre}" itemValue="#{cursoActivo.nidCurso}" />
+                              </p:selectOneMenu>
+                        </div>    
+                          
+                        <div class="ui-g-12 ui-md-6">
+                                <p:outputLabel value="Tutor" rendered="#{authAdministrado.authTutor == null}" /> 
+                                <p:selectOneMenu autoWidth="false"  value="#{cursoInscripcionAdministrado.busTutor}" rendered="#{authAdministrado.authTutor == null}">
+                                       <p:ajax  event="change" process="@this" update="formularioPrincipal1, selProgramacionBus" 
+                                                 listener="#{cursoInscripcionAdministrado.obtenerTodos()}" />
+                                     
+                                       <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+                                       <f:selectItems value="#{usuarioAdministrado.getEntidadesModuloPerfil('DSLD')}"
+                                                      var="itemPer"
+                                                      itemValue="#{itemPer.nidUsuario}"
+                                                      itemLabel="#{itemPer.persona.nombreApellidos()}"/>
+                                    </p:selectOneMenu>
+                          </div>  
+                      </div>    
+                     
+                      <div>
+                        <div class="ui-g-12 ui-md-3"> 
+                                <p:outputLabel value="Departamento"/> 
+                                <p:selectOneMenu value="#{cursoInscripcionAdministrado.busDepartamento}" autoWidth="false"
+                                                 effect="fade"  >
+                                       <p:ajax event="change" process="@this" update="formularioPrincipal1, busProvinciaFiltro, selProgramacionBus" 
+                                                listener="#{cursoInscripcionAdministrado.obtenerTodos()}" />
+                                       <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                                       <f:selectItems value="#{cursoInscripcionAdministrado.obtenerDepartamentos()}" var="departamentoBus" 
+                                                    itemLabel="#{departamentoBus.txtDescripcion}" itemValue="#{departamentoBus.nidDepartamento}" />
+                                </p:selectOneMenu>
+                         </div>
+                         <div class="ui-g-12 ui-md-3">
+                                <p:outputLabel value="Provincia"/> 
+                                <p:selectOneMenu id="busProvinciaFiltro" value="#{cursoInscripcionAdministrado.busProvincia}" autoWidth="false"
+                                      effect="fade"  >
+                                      <p:ajax event="change" process="@this" update="formularioPrincipal1, busDistritoFiltro, selProgramacionBus" 
+                                               listener="#{cursoInscripcionAdministrado.obtenerTodos()}"/>
+                                      <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                                      <f:selectItems value="#{cursoInscripcionAdministrado.obtenerProvinciasBus()}" var="provinciaBus" 
+                                                    itemLabel="#{provinciaBus.txtDescripcion}" itemValue="#{provinciaBus.nidProvincia}" />
+                                </p:selectOneMenu>                  
+                        </div>   
+                        <div class="ui-g-12 ui-md-3">
+                                <p:outputLabel value="Distrito"/> 
+                                <p:selectOneMenu id="busDistritoFiltro" value="#{cursoInscripcionAdministrado.busDistrito}" autoWidth="false"
+                                      effect="fade">
+                                      <p:ajax event="change" process="@this" update="formularioPrincipal1, selProgramacionBus"
+                                               listener="#{cursoInscripcionAdministrado.obtenerTodos()}" />
+                                      <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                                      <f:selectItems value="#{cursoInscripcionAdministrado.obtenerDistritoBus()}" var="distritoBus" 
+                                                    itemLabel="#{distritoBus.txtDescripcion}" itemValue="#{distritoBus.nidDistrito}" />
+                                </p:selectOneMenu>                  
+                        </div>       
+                        <div class="ui-g-12 ui-md-3">
+                             <p:outputLabel value="Programación"/> 
+                             <p:selectOneMenu id="selProgramacionBus" value="#{cursoInscripcionAdministrado.nidCursoProgramacion}" autoWidth="false" effect="fade" >
+                                 <p:ajax event="change" process="@this" update="frmBuscar, frmNuevo, formularioPrincipal1"
+                                         listener="#{cursoInscripcionAdministrado.obtenerTodos()}" /> 
+                                <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{cursoInscripcionAdministrado.obtenerProgramacionesActivas()}" var="cursoActivo" 
+                                               itemLabel="#{cursoActivo.detalleProg()}" itemValue="#{cursoActivo.nidCursoProg}" />
+                              </p:selectOneMenu>
+                        </div>    
+                      </div>
+                  </p:fieldset>
+        </h:form>
+        
+          
+          <h:form id="frmNuevo" > 
+               
+                <p:messages id="mensajes" autoUpdate="true" showDetail="false" closable="true" severity="error"  />
+                <p:growl id="messages" widgetVar="messages" showDetail="true" showSummary="false" life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true" severity="warn, info"/>
+       
+ 
+          <p:outputPanel rendered="#{cursoInscripcionAdministrado.modo > 0}">
+         
+                <h1>#{cursoInscripcionAdministrado.titulo()}</h1>
+              
+                <p:outputPanel rendered="#{cursoInscripcionAdministrado.modo  lt 3 }">
+                
+                    <ui:include src="panelFormInsExterna.xhtml" />
+                    <p:outputPanel id="btnGuardarIns">
+                     <div class="ui-g">
+                         <div class="ui-g-12 ui-md-3">
+                             <p:commandButton value="Guardar" actionListener="#{cursoInscripcionAdministrado.save()}" 
+                                       update=":frmNuevo, :frmBuscar, :formularioPrincipal1"  rendered="#{cursoInscripcionAdministrado.permiteIngreso}"
+                                       process="@form"
+                                       icon="ui-icon-disk" title="Guarda los cambios"/>	
+                         </div>
+                     </div>    
+                    </p:outputPanel>     
+                </p:outputPanel>
+                
+                <p:outputPanel rendered="#{cursoInscripcionAdministrado.modo eq 3 }">
+                
+                    <ui:include src="panelFormInsEval.xhtml" />
+                    
+                   
+                </p:outputPanel>
+                
+           <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" >
+               <div class="ui-g">
+                   <div class="ui-md-5 nopad">
+                       <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"  />
+                   </div>
+                   <div class="ui-md-2 nopad"></div>
+                   <div class="ui-md-5 nopad">
+                       <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"  />
+                   </div>
+               </div>
+                
+            </p:confirmDialog> 
+      
+      
+          </p:outputPanel>
+        </h:form>    
+            
+
+        <br />
+        <h:form id="formularioPrincipal1">
+            <p:outputPanel rendered="#{cursoInscripcionAdministrado.nidCursoProgramacion!=null and cursoInscripcionAdministrado.modo eq 0}">
+        
+              <div class="ui-g">
+                 <div class="ui-g-12 ui-md-4">
+                    <p:commandButton value="NUEVA SOLICITUD DE INSCRIPCIÓN"
+                                     actionListener="#{cursoInscripcionAdministrado.nuevo()}" 
+                                     update=":frmNuevo, :frmBuscar, :formularioPrincipal1" 
+                                     process="@form"
+                                     class="sombra">
+                    </p:commandButton>
+                 </div>
+                  <div class="ui-g-12 ui-md-4"></div>
+                  <div class="ui-g-12 ui-md-4">
+                    <p:commandButton value="DESCARGAR EXCEL" ajax="false"
+                                     process="@this"
+                                     class="sombra">
+                         <p:dataExporter type="xlsx" target="tablaCursos" fileName="solicitudes"  postProcessor="#{cursoInscripcionAdministrado.postProcessXLSSolicitudes}" />
+                    </p:commandButton>
+                 </div>
+       
+              </div>     
+                <br />
+                <p:dataTable 
+                    id="tablaCursos"
+                    widgetVar="tablaCursos" 
+                    var="itemCurso" 
+                    value="#{cursoInscripcionAdministrado.listaInscripcion}" 
+                    emptyMessage="No se encontraron registros"
+                    rowIndexVar="index"
+                    scrollable="true"
+                    rows="10" 
+                    paginator="true"
+                    resizableColumns="false"
+                    paginatorPosition="bottom"
+                    paginatorAlwaysVisible="true"
+                    rowsPerPageTemplate="5,10,15"
+                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}">
+                  
+                  <p:column headerText="ACCIONES" width="100" exportable="false">            
+                        
+                     
+                        <p:commandButton update=":frmNuevo, :frmBuscar, :formularioPrincipal1"
+                                         process="@this"
+                                         actionListener="#{cursoInscripcionAdministrado.obtener(itemCurso)}" 
+                                         title="Actualizar la solicitud de inscripción" icon="fa fa-pencil">
+                       </p:commandButton>
+                          
+                       <p:commandButton update=":frmNuevo, :frmBuscar, :formularioPrincipal1"
+                                        process="@this" rendered="#{itemCurso.flgActivo eq 1}"
+                                         actionListener="#{cursoInscripcionAdministrado.obtenerEval(itemCurso)}" 
+                                         title="Evaluar la solicitud de inscripción" icon="fa fa-check">
+                       </p:commandButton>
+                         
+                        <p:commandButton update=":dialogoAnular" 
+                                         oncomplete="PF('dialogoAnular').show();"   process="@this"
+                                         title="Anular" icon="fa fa-trash">
+                            <f:setPropertyActionListener value="#{itemCurso}" target="#{cursoInscripcionAdministrado.cursoInscripcion}"/>
+                        </p:commandButton>
+                        
+                      
+                    </p:column>
+
+                  <p:column headerText="NRO.DOC" class="center" width="80" sortBy="#{itemCurso.persona.nroDoc}">
+                       <h:outputText value="#{itemCurso.persona.nroDoc}" />
+                   </p:column>
+                   <p:column headerText="AP. PATERNO" class="left" width="100" sortBy="#{itemCurso.persona.apePaterno}">
+                       <h:outputText value="#{itemCurso.persona.apePaterno}" />
+                   </p:column>
+                   <p:column headerText="AP. MATERNO" class="left" width="100" sortBy="#{itemCurso.persona.apeMaterno}">
+                       <h:outputText value="#{itemCurso.persona.apeMaterno}" />
+                    </p:column>
+                    <p:column headerText="NOMBRE" class="left" width="100" sortBy="#{itemCurso.persona.nombres}">
+                        <h:outputText value="#{itemCurso.persona.nombres}" />
+                    </p:column>
+                    <p:column headerText="FEC. REG." class="center" width="80" sortBy="#{itemCurso.fecRegistro}">
+                       <h:outputText value="#{itemCurso.fecRegistro}"  ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText>
+                    </p:column>
+                   <p:column headerText="FEC. EVAL." class="center" width="80" sortBy="#{itemCurso.fecEvaluacion}">
+                       <h:outputText value="#{itemCurso.fecEvaluacion}"  ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText>
+                    </p:column>
+                    <p:column headerText="ESTADO" filterBy="#{itemCurso.estado}" filterMatchMode="contains" class="center" width="80" sortBy="#{itemCurso.estado}">
+                         <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('tablaCursos').filter()">
+                                <f:selectItem itemLabel="Todos" itemValue="" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="PREINSCRITO" itemValue="1" />
+                                <f:selectItem itemLabel="OBSERVADO" itemValue="2" />
+                                <f:selectItem itemLabel="RECHAZADO" itemValue="3" />
+                                <f:selectItem itemLabel="INSCRITO" itemValue="4" />
+                           </p:selectOneMenu>
+                        </f:facet>
+                       <h:outputText value="#{itemCurso.estado == 1? 'PREINSCRITO':(itemCurso.estado == 2?'OBSERVADO':((itemCurso.estado == 3)?'RECHAZADO':'INSCRITO'))}">
+                            <f:converter converterId="javax.faces.Character" />                                    
+                        </h:outputText>
+                   </p:column>
+                    <p:column headerText="NOMBRE DE DNA" class="left" width="300" exportable="true" visible="false">
+                        <h:outputText value="#{itemCurso.persona.defensoria.txtNombre}" />
+                    </p:column>  
+                    <p:column headerText="DEPARTAMENTO" class="left" width="100" exportable="true" visible="false">
+                        <h:outputText value="#{departamentoAdministrado.getEntidad(itemCurso.persona.defensoria.nidDepartamento).txtDescripcion}" />
+                    </p:column> 
+                     <p:column headerText="PROVINCIA" class="left" width="100" exportable="true" visible="false">
+                        <h:outputText value="#{provinciaAdministrado.getEntidad(itemCurso.persona.defensoria.nidProvincia).txtDescripcion}" />
+                    </p:column> 
+                     <p:column headerText="DISTRITO" class="left" width="150" exportable="true" visible="false">
+                        <h:outputText value="#{distritoAdministrado.getEntidad(itemCurso.persona.defensoria.nidDistrito).txtDescripcion}" />
+                    </p:column> 
+                    <p:column headerText="RECHAZADA POR" class="left" width="200" exportable="true" visible="false">
+                         <h:outputText value="#{itemCurso.obsRechazo}" />
+                    </p:column> 
+                    <p:column headerText="FEC. OBS." class="center" width="80" exportable="true" visible="false">
+                       <h:outputText value="#{itemCurso.fecObservacion}"  ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText>
+                    </p:column>
+                    <p:column headerText="OBSERVADA POR" class="left" width="200" exportable="true" visible="false">
+                        <h:outputText value="#{itemCurso.obsObserva}" />
+                    </p:column> 
+                    <p:column headerText="ACTIVO" filterBy="#{itemCurso.flgActivo}" filterMatchMode="contains" class="pcenter" width="80" sortBy="#{itemCurso.flgActivo}">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('tablaCursos').filter()">
+                                <f:selectItem itemLabel="Todos" itemValue="" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="Activo" itemValue="1" />
+                                <f:selectItem itemLabel="Inactivo" itemValue="0" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText value="#{itemCurso.flgActivo != 1? 'Inactivo':'Activo'}">
+                            <f:converter converterId="javax.faces.Character" />                                    
+                        </h:outputText>
+                    </p:column>
+
+                </p:dataTable>
+                
+                <br />
+                
+              
+            </p:outputPanel>
+            </h:form>
+      
+         
+        <p:dialog modal="true" dynamic="true" id="dialogoAnular" widgetVar="dialogoAnular" header="Anular Solicitud" draggable="true" resizable="false" 
+                  closable="true" closeOnEscape="true" width="280"
+                  class="dlgdna" position="center center" responsive="true">
+            <h:form>
+                <p:growl id="messages" widgetVar="messages" showDetail="true" showSummary="false" life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true" severity="warn, info"/>
+ 
+                <ui:include src="panelAnular.xhtml" />
+                <br></br>
+                <div class="ui-g">
+                    <div class="ui-md-5 nopad">
+                           <p:commandButton value="Guardar" actionListener="#{cursoInscripcionAdministrado.anular()}" 
+                                            update="@form :formularioPrincipal1:tablaCursos" oncomplete="PF('dialogoAnular').hide()"
+                                            icon="ui-icon-disk" title="Guarda los cambios"/>	
+                 
+                    </div>
+                    <div class="ui-md-2 nopad"> </div>
+                    <div class="ui-md-5 nopad">
+                                <p:commandButton value="Cerrar" onclick="PF('dialogoAnular').hide();" process="@this"
+                                         immediate="true" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                  </div>
+                </div>
+                
+            </h:form>
+        </p:dialog>
+        
+         <p:dialog modal="true" dynamic="true" id="dialogoAprobar" widgetVar="dialogoAprobar" header="Aprobar Solicitud" draggable="true" resizable="false" 
+                  closable="false" closeOnEscape="false" width="480" 
+                  position="center center" responsive="true">
+            <h:form>
+             
+               <div class="ui-g">
+                <div class="ui-g-12 ui-md-6">
+                     <p:fileUpload fileUploadListener="#{cursoInscripcionAdministrado.uploadOficio}" mode="advanced" allowTypes="/(\.|\/)(pdf)$/"
+                                               invalidFileMessage="Sólo puede subir archivos PDF" 
+                               label="Adjuntar documento PDF"  update="descargarOficio, eliminarOficio"
+                               auto="true" requiredMessage="Debe adjuntar un documento" > 
+                     </p:fileUpload>
+                 </div> 
+                  <div class="ui-g-12 ui-md-3">
+                     <p:outputPanel id="descargarOficio">
+                         <p:commandLink ajax="false" process="@this" immediate="true" 
+                                        value="Descargar documento" 
+                                        rendered="#{cursoInscripcionAdministrado.cursoInscripcion.archivoOficio!=null}" >
+                             <p:fileDownload value="#{cursoInscripcionAdministrado.descargarOficio()}" />
+                          </p:commandLink>
+                           </p:outputPanel>    
+                 </div>
+                 <div class="ui-g-12 ui-md-3">
+                     <p:outputPanel id="eliminarOficio">
+                         <p:commandLink  ajax="true" process="@this" rendered="#{cursoInscripcionAdministrado.cursoInscripcion.archivoOficio!=null}"
+                                       value="Eliminar documento"   update="descargarOficio, eliminarOficio"
+                                       actionListener="#{cursoInscripcionAdministrado.eliminarObs()}">
+                               <p:confirm header="Confirmación" message="¿ Está seguro de eliminar el archivo?" icon="pi pi-exclamation-triangle" />    
+                         </p:commandLink>                      
+                     </p:outputPanel>
+                 </div> 
+              </div>
+
+               <br></br>
+               <div class="ui-g">
+                     <div class="ui-g-12 ui-md-5 nopad"> 
+                         <p:commandButton value="Aprobar y Enviar Oficio" actionListener="#{cursoInscripcionAdministrado.aprobar()}" 
+                               process="@form"
+                               update=":frmNuevo, :frmBuscar, :formularioPrincipal1" 
+                               oncomplete="if (!args.validationFailed) PF('dialogoAprobar').hide()" />	
+                     
+                     </div>
+                      <div class="ui-g-12 ui-md-2 nopad"></div> 
+                      <div class="ui-g-12 ui-md-5 nopad"> 
+                                    <p:commandButton value="Cerrar" onclick="PF('dialogoAprobar').hide();"
+                                         immediate="true"  icon="ui-icon-cancel" title="Cierra el dialogo"/>
+              
+                     </div>
+                  </div>
+                <f:event listener="#{cursoInscripcionAdministrado.validarAprobacion}" type="postValidate" />  
+     
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog modal="true" dynamic="true" id="dialogoObservar" widgetVar="dialogoObservar" header="Observar Solicitud" 
+                  draggable="true" resizable="false" 
+                  closable="false" closeOnEscape="false" width="480" 
+                  position="center center" responsive="true">
+            <h:form>
+             
+               <ui:include src="panelFormObs.xhtml" />
+               <br></br>
+               <div class="ui-g">
+                     <div class="ui-g-12 ui-md-5 nopad"> 
+                        <p:commandButton value="Enviar Observación" actionListener="#{cursoInscripcionAdministrado.observar()}" 
+                               process="@form"
+                               update=":frmNuevo, :frmBuscar, :formularioPrincipal1" 
+                               oncomplete="if (!args.validationFailed) PF('dialogoObservar').hide()" />	
+                     
+                     </div>
+                      <div class="ui-g-12 ui-md-2 nopad"></div> 
+                      <div class="ui-g-12 ui-md-5 nopad"> 
+                                    <p:commandButton value="Cerrar" onclick="PF('dialogoObservar').hide();"
+                                         immediate="true"  icon="ui-icon-cancel" title="Cierra el dialogo"/>
+              
+                     </div>
+                  </div>
+               
+              </h:form>
+        </p:dialog>
+        
+        <p:dialog modal="true" dynamic="true" id="dialogoRechazar" widgetVar="dialogoRechazar" header="Rechazar Solicitud" draggable="true" resizable="false" 
+                  closable="false" closeOnEscape="false" width="480" 
+                  position="center center" responsive="true">
+            <h:form>
+             
+               <ui:include src="panelFormRec.xhtml" />
+               <br></br>
+               <div class="ui-g">
+                     <div class="ui-g-12 ui-md-5 nopad"> 
+                        <p:commandButton value="Enviar Rechazo" actionListener="#{cursoInscripcionAdministrado.rechazar()}" 
+                               process="@form"
+                               update=":frmNuevo, :frmBuscar, :formularioPrincipal1" 
+                               oncomplete="if (!args.validationFailed) PF('dialogoRechazar').hide()" />	
+                     
+                     </div>
+                      <div class="ui-g-12 ui-md-2 nopad"></div> 
+                      <div class="ui-g-12 ui-md-5 nopad"> 
+                                    <p:commandButton value="Cerrar" onclick="PF('dialogoRechazar').hide();"
+                                         immediate="true"  icon="ui-icon-cancel" title="Cierra el dialogo"/>
+              
+                     </div>
+                  </div>
+               
+            </h:form>
+        </p:dialog>
+        
+               
+    </ui:define>  
+    
+    
+</ui:composition>

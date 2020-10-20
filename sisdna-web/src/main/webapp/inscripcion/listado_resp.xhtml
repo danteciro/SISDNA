@@ -1,0 +1,248 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="/WEB-INF/templates/default.xhtml">
+    <ui:define name="header">
+    </ui:define>
+    <ui:define name="content" >
+        <ui:include src="/WEB-INF/templates/cargando.xhtml"/>
+        <div class="pcenter">
+            <p:outputLabel class="ptextGradient pred pbold ptitle" value="INSCRIPCIÓN DE DEFENSORÍA"/>    
+        </div>
+        <br></br>
+     
+        <h:form id="formularioPrincipal1">
+            <p:growl id="mensajes" widgetVar="mensajes" showDetail="true" showSummary="false" life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true"/>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
+
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" style="width: 100%" class="boxshadowinside pnoborder">
+
+                <p:dataTable 
+                    id="tablaDocs"
+                    widgetVar="tablaDocs" 
+                    var="item" 
+                    value="#{inscripcionAdministrado.obtenerListaPorResponsable()}" 
+                    rowIndexVar="index"
+                    scrollable="true"
+                    paginator="false"
+                    resizableColumns="false"  
+                    emptyMessage="No se encontraron registros"
+                  >
+
+                    <p:column headerText="ACCIONES" width="20%">            
+                        <p:commandButton   rendered="#{!(item.estado.txtNombre eq 'NUEVA')}" 
+                                           icon="fa fa-file-pdf-o"
+                                           ajax="false" 
+                                           process="@this"  
+                                           title="Descargar Inscripción">
+                                <p:fileDownload value="#{inscripcionAdministrado.downloadInscripcion(item)}" />
+                        </p:commandButton>
+                        
+                        <p:commandButton 
+                                        update=":dialogoVer" 
+                                        process="@this"
+                                        actionListener="#{inscripcionAdministrado.obtenerInscripcionVer(item)}"
+                                        oncomplete="PF('dialogoVer').show();"  
+                                        title="Ver Inscripcion" icon="fa fa-eye">
+                        </p:commandButton>
+                        
+                        <p:commandButton update=":dialogoSubsanar" process="@this" 
+                                         rendered="#{item.estado.txtNombre eq 'OBSERVADA'}"
+                                         actionListener="#{inscripcionAdministrado.obtenerInscripcionSubsnar(item)}" 
+                                         oncomplete="PF('dialogoSubsanar').show();" 
+                                         title="Subsanar Inscripción" icon="fa fa-check-circle-o" value="SUBSANAR">
+                        </p:commandButton>
+                         <p:commandButton   rendered="#{item.estado.txtNombre eq 'DENEGADA'}" icon="fa fa-download"
+                                           ajax="false" process="@this">
+                                <p:fileDownload value="#{inscripcionAdministrado.downloadOficio(item)}" />
+                        </p:commandButton>
+                        
+                    </p:column>
+
+                   <p:column headerText="CONSTANCIA" class="left" width="10%">
+                        <h:outputText value="#{item.dna.txtConstancia}"  />
+                    </p:column>
+                    <p:column headerText="ESTADO" class="left" width="10%">
+                        <h:outputText value="#{item.estado.txtNombre}" />
+                    </p:column>
+                    <p:column headerText="TIPO" class="left" width="6%">
+                        <h:outputText value="#{item.dna.txtTipo}" />
+                    </p:column>
+                   <p:column headerText="FECHA" class="left" width="15%">
+                       REGISTRO:<h:outputText value="#{item.fecRegistro}"  ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText><br/>
+                       <p:outputPanel rendered="#{item.fecObservado!=null}">
+                            OBSERVACIÓN:<h:outputText value="#{item.fecObservado}" ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText><br/>
+                        </p:outputPanel>
+                        <p:outputPanel rendered="#{item.fecSubsanado!=null}">
+                          SUBSANACIÓN:<h:outputText value="#{item.fecSubsanado}" ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText><br/>
+                        </p:outputPanel>
+                    </p:column>
+
+                    <p:column headerText="NOMBRE" class="left" width="50%">
+                        <h:outputText value="#{item.dna.txtNombre}" />
+                    </p:column>
+
+                    <p:column headerText="ACTIVO" filterBy="#{item.flgActivo}" filterMatchMode="contains" class="pcenter" width="10%">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('tablaDocs').filter()">
+                                <f:selectItem itemLabel="Todos" itemValue="" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="Activo" itemValue="1" />
+                                <f:selectItem itemLabel="Inactivo" itemValue="0" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText value="#{item.flgActivo != 1? 'Inactivo':'Activo'}">
+                            <f:converter converterId="javax.faces.Character" />                                    
+                        </h:outputText>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:panelGrid>
+        </h:form>
+         <p:outputPanel id="pTodo" />
+      
+        <p:dialog modal="true" id="dialogoActualizar" widgetVar="dialogoActualizar" header="Actualizar Documento" closeOnEscape="true" resizable="false" 
+                  width="900px" dynamic="false" class="dlgdna" position="center center" responsive="true">
+            <h:form id="formularioPrincipal">
+              <ui:include src="panelForm.xhtml" />
+               <br></br>
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pright">
+                    <p:column>
+                        <p:commandButton value="Guardar" 
+                                         actionListener="#{inscripcionAdministrado.create()}" 
+                                         update="@form :formularioPrincipal1:tablaDocs" 
+                                         oncomplete="if (!args.validationFailed) PF('dialogoActualizar').hide()" 
+                                         icon="ui-icon-disk" title="Guarda los cambios"/>	
+                        <p:commandButton value="Cerrar" onclick="PF('dialogoActualizar').hide();" immediate="true" type="button" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                    </p:column>
+                </p:panelGrid>
+            </h:form>        
+        </p:dialog>
+      
+        <!-- Subsnar -->
+        <p:dialog modal="true" id="dialogoSubsanar" widgetVar="dialogoSubsanar" header="Subsanar Observaciones" 
+                  closeOnEscape="true" resizable="false" dynamic="false"
+                  width="90%" height="760px" class="dlgdna" position="center center" responsive="true">
+            <h:form id="formSubsanarInscripcion">
+                <ui:include src="panelSubsanar.xhtml" />
+                 <br></br>
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pright">
+                    <p:column>
+                        <p:commandButton value="Subsanar las Observaciones" 
+                                         title="Guarda los cambios" 
+                                         oncomplete="if (!args.validationFailed) PF('dialogoSubsanar').hide()" 
+                                         update=":formularioPrincipal1:tablaDocs"
+                                         actionListener="#{inscripcionAdministrado.subsanar()}" 
+                                         process="@form"
+                                         icon="ui-icon-check">
+                            <p:confirm header="Confirmación" message="¿ Está seguro de subsanar la inscripción ?" />  
+                        </p:commandButton>
+
+                        <p:commandButton value="Cerrar" onclick="PF('dialogoSubsanar').hide();" immediate="true" type="button" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                        
+                    </p:column>
+                </p:panelGrid>
+                 <f:event listener="#{inscripcionAdministrado.validarSubsanar}" type="postValidate" />
+            </h:form>    
+        </p:dialog>
+
+        <p:dialog height="500px"  modal="true" id="dialogoPersonaSubsanar" widgetVar="dialogoPersonaSubsanar" header="Subsanar Personal DNA" 
+                  closeOnEscape="true" resizable="false" dynamic="false"  class="dlgdna" position="center center" responsive="true">
+            <h:form>
+               <ui:include src="panelPersonaSubsanar.xhtml"/>
+                 <br></br>
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pright">
+                    <p:column >
+                        <p:commandButton value="Subsanar Observaciones de Persona" 
+                                         title="Guarda los cambios" 
+                                         oncomplete="if (!args.validationFailed) PF('dialogoPersonaSubsanar').hide()"
+                                         actionListener="#{inscripcionAdministrado.subsanarPersona()}" 
+                                         process="@form"
+                                         icon="ui-icon-check"/>    
+
+                        <p:commandButton value="Cerrar" onclick="PF('dialogoPersonaSubsanar').hide();" immediate="true" type="button" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                        
+                    </p:column>
+                </p:panelGrid>
+            </h:form>    
+        </p:dialog>
+        
+        <p:dialog modal="true" id="dialogoAnularPersonaSubsanar" widgetVar="dialogoAnularPersonaSubsanar" header="Personal DNA" 
+                  closeOnEscape="true" resizable="false" dynamic="false"  class="dlgdna" position="center center" responsive="true">
+            <h:form>
+                ¿ Está seguro de eliminar la persona ?
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pright">
+                    <p:column>
+                        <p:commandButton value="SÍ" 
+                                         actionListener="#{inscripcionAdministrado.removerPersonaSubsanar()}" 
+                                         update=":formSubsanarInscripcion:tablaPersonasSubsanar" 
+                                         oncomplete="if (!args.validationFailed) PF('dialogoAnularPersonaSubsanar').hide()" 
+                                         icon="ui-icon-disk" title="Guarda los cambios"/>	
+                        <p:commandButton value="NO" onclick="PF('dialogoAnularPersonaSubsanar').hide();" immediate="true" type="button" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                    </p:column>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog  modal="true" id="dialogoPersonalDnaSub" widgetVar="dialogoPersonalDnaSub" width="90%" height="500px" 
+                   header="Personal DNA" closeOnEscape="true" resizable="false" dynamic="false"  
+                   class="dlgdna" position="center center" responsive="true">
+            <h:form id="frmPersonalDnaSub">
+               <ui:include src="panelPersonal.xhtml"/>
+                 <br></br>
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pright">
+                    <p:column>
+                        <p:commandButton value="Guardar" 
+                                         icon="ui-icon-disk" 
+                                         title="Guarda los datos de las persona" 
+                                         actionListener="#{inscripcionAdministrado.agregarPersonaSubsanar()}"
+                                         oncomplete="if (!args.validationFailed) PF('dialogoPersonalDnaSub').hide()"
+                                         update=":formSubsanarInscripcion:tablaPersonasSubsanar"/>	
+                        <p:commandButton value="Cerrar" onclick="PF('dialogoPersonalDnaSub').hide();" immediate="true" type="button" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                    </p:column>
+                </p:panelGrid>
+                 <f:event listener="#{inscripcionAdministrado.validarPanelPersona}" type="postValidate" />
+            </h:form>    
+        </p:dialog>
+         
+         <!-- Ver -->
+        <p:dialog modal="true" id="dialogoVer" widgetVar="dialogoVer" header="Ver Inscripción" closeOnEscape="true" resizable="false" width="900px" dynamic="false"
+                   class="dlgdna" position="center center" responsive="true">
+            <h:form>
+              <ui:include src="panelVer.xhtml" />
+               <br></br>
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pright">
+                    <p:column>	
+                        <p:commandButton value="Cerrar" onclick="PF('dialogoVer').hide();" immediate="true" type="button" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                    </p:column>
+                </p:panelGrid>
+            </h:form>        
+
+        </p:dialog>
+
+        <p:dialog modal="true" id="dialogoVerPersonaEquipo" widgetVar="dialogoVerPersonaEquipo" header="Persona" closeOnEscape="true" resizable="false" dynamic="false"
+                   class="dlgdna" position="center center" responsive="true">
+            <h:form>
+                <ui:include src="panelPersonaVer.xhtml" />
+                <br></br>
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pright">
+                    <p:column>
+                        <p:commandButton value="Cerrar" onclick="PF('dialogoVerPersonaEquipo').hide();" immediate="true" type="button" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                    </p:column>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+        
+        <ui:include src="panelDialogPersonal.xhtml" />
+    
+        
+
+    </ui:define>           
+</ui:composition>

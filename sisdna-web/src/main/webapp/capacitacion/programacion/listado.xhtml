@@ -1,0 +1,364 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="/WEB-INF/templates/default.xhtml">
+    <ui:define name="header">
+    </ui:define>
+    <ui:define name="content" >
+        <ui:include src="/WEB-INF/templates/cargando.xhtml"/>
+        <div class="pcenter">
+            <p:outputLabel class="pred pbold ptitle" value="PROGRAMACIÓN DE CURSOS"/>    
+        </div>
+        <br></br>
+          <p:messages id="mensajes" autoUpdate="true" showDetail="false" closable="true" severity="error" />
+          <p:growl id="messages" widgetVar="messages"  globalOnly="false" showDetail="true" showSummary="false" life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true" severity="warn, info"/>
+  
+        <h:form id="frmNuevo" > 
+          <p:outputPanel rendered="#{cursoProgramacionAdministrado.modo > 0}">
+               <div class="ui-g">
+                    <div class="ui-g-12 ui-md-3">
+                        <p:commandLink ajax="true" actionListener="#{cursoProgramacionAdministrado.regresar()}"  immediate="true" process="@this" class="sback"
+                                       update=":frmNuevo, :frmBuscar, :formularioPrincipal1" >
+                            
+                            <span>Regresar al Listado</span>
+                        </p:commandLink>
+
+                    </div>
+                </div>    
+                <h1>#{cursoProgramacionAdministrado.titulo()}</h1>
+                <ui:include src="panelFormProgramacion.xhtml" />
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-3">
+                        <p:commandButton value="Guardar" actionListener="#{cursoProgramacionAdministrado.create()}" 
+                                  update=":frmNuevo, :frmBuscar, :formularioPrincipal1" 
+                                  process="@form"
+                                  icon="ui-icon-disk" title="Guarda los cambios"/>	
+                    </div>
+                </div>    
+                
+         
+      
+      
+          </p:outputPanel>
+        </h:form>    
+            
+        <h:form id="frmBuscar" >
+          <p:outputPanel rendered="#{cursoProgramacionAdministrado.modo eq 0}">
+            
+             <div class="ui-g">
+                <div class="ui-g-12 ui-md-4">
+                   <p:commandButton value="NUEVA PROGRAMACIÓN DE CURSO" 
+                                    actionListener="#{cursoProgramacionAdministrado.nuevo()}" 
+                                    update=":frmNuevo, :frmBuscar, :formularioPrincipal1" 
+                                    process="@form"
+                                    title="Nueva Programación" class="sombra">
+                   </p:commandButton>
+                </div>
+             </div>
+              
+                <p:fieldset legend="Datos del Curso">
+                      <div class="ui-g">
+                        <div class="ui-g-12 ui-md-6">
+                             <p:outputLabel value="Curso"/> 
+                             <p:selectOneMenu value="#{cursoProgramacionAdministrado.busCurso}" autoWidth="false"
+                                        effect="fade" >
+                                <p:ajax event="change" process="@this" 
+                                         listener="#{cursoProgramacionAdministrado.obtenerTodos()}" update="formularioPrincipal1" />
+                                <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{cursoAdministrado.obtenerCursosActivos()}" var="cursoActivo" 
+                                               itemLabel="#{cursoActivo.nombre}" itemValue="#{cursoActivo.nidCurso}" />
+                              </p:selectOneMenu>
+                        </div>    
+                          
+                        <div class="ui-g-12 ui-md-6">
+                            <p:outputLabel value="Tutor" rendered="#{authAdministrado.authTutor == null}"/> 
+                                <p:selectOneMenu   autoWidth="false"  required="false"  rendered="#{authAdministrado.authTutor == null}"
+                                                   value="#{cursoProgramacionAdministrado.busTutor}">
+                                       <p:ajax  event="change" process="@this" 
+                                                 listener="#{cursoProgramacionAdministrado.obtenerTodos()}" update="formularioPrincipal1" />
+                                     
+                                       <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+                                       <f:selectItems value="#{usuarioAdministrado.getEntidadesModuloPerfil('DSLD')}"
+                                                      var="itemPer"
+                                                      itemValue="#{itemPer.nidUsuario}"
+                                                      itemLabel="#{itemPer.persona.nombreApellidos()}"/>
+                                    </p:selectOneMenu>
+                          </div>  
+                      </div>    
+                     
+                      <div>
+                        <div class="ui-g-12 ui-md-3"> 
+                                <p:outputLabel value="Departamento"/> 
+                                <p:selectOneMenu id="busDepartamento" value="#{cursoProgramacionAdministrado.busDepartamento}" autoWidth="false"
+                                                 effect="fade">
+                                       <p:ajax event="change"  process="@this" listener="#{cursoProgramacionAdministrado.obtenerTodos()}" 
+                                               update="formularioPrincipal1, busProvincia" />
+                                       <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                                       <f:selectItems value="#{cursoInscripcionAdministrado.obtenerDepartamentos()}" var="departamentoBus" 
+                                                    itemLabel="#{departamentoBus.txtDescripcion}" itemValue="#{departamentoBus.nidDepartamento}" />
+                                </p:selectOneMenu>
+                         </div>
+                         <div class="ui-g-12 ui-md-3">
+                                <p:outputLabel value="Provincia"/> 
+                                <p:selectOneMenu id="busProvincia" value="#{cursoProgramacionAdministrado.busProvincia}" autoWidth="false"
+                                      effect="fade">
+                                      <p:ajax event="change" process="@this" listener="#{cursoProgramacionAdministrado.obtenerTodos()}" 
+                                              update="formularioPrincipal1, busDistrito" />
+                                      <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                                      <f:selectItems value="#{cursoProgramacionAdministrado.obtenerProvinciasBus()}" var="provinciaBus" 
+                                                    itemLabel="#{provinciaBus.txtDescripcion}" itemValue="#{provinciaBus.nidProvincia}" />
+                                </p:selectOneMenu>                  
+                        </div>   
+                        <div class="ui-g-12 ui-md-3">
+                                <p:outputLabel value="Distrito"/> 
+                                <p:selectOneMenu id="busDistrito" value="#{cursoProgramacionAdministrado.busDistrito}" autoWidth="false"
+                                      effect="fade">
+                                    <p:ajax event="change" process="@this" listener="#{cursoProgramacionAdministrado.obtenerTodos()}" 
+                                            update="formularioPrincipal1" />
+                                      <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                                      <f:selectItems value="#{cursoProgramacionAdministrado.obtenerDistritoBus()}" var="distritoBus" 
+                                                    itemLabel="#{distritoBus.txtDescripcion}" itemValue="#{distritoBus.nidDistrito}" />
+                                </p:selectOneMenu>                  
+                        </div>         
+                      </div>
+                </p:fieldset>     
+                          
+              
+          </p:outputPanel>
+        </h:form>
+        <br />
+        <h:form id="formularioPrincipal1">
+            <p:outputPanel rendered="#{cursoProgramacionAdministrado.modo eq 0}">
+        
+               <p:dataTable 
+                    id="tablaCursos"
+                    widgetVar="tablaCursos" 
+                    var="itemCurso" 
+                    value="#{cursoProgramacionAdministrado.lista}" 
+                    emptyMessage="No se encontraron registros"
+                    rowIndexVar="index"
+                    scrollable="true"
+                    rows="20" 
+                    paginator="true"
+                    resizableColumns="false"
+                    paginatorPosition="bottom"
+                    paginatorAlwaysVisible="true"
+                    rowsPerPageTemplate="20,30,40"
+                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}">
+                  >
+                  <p:column headerText="ACCIONES" width="15%">            
+                        
+                     
+                        <p:commandButton update=":frmNuevo, :frmBuscar, :formularioPrincipal1"
+                                         process="@this"
+                                         actionListener="#{cursoProgramacionAdministrado.obtener(itemCurso)}" 
+                                         title="Actualizar Datos del Curso" icon="fa fa-pencil">
+                       </p:commandButton>
+                          
+                        
+                        <p:commandButton update=":dialogoAnular" 
+                                         oncomplete="PF('dialogoAnular').show();"   process="@this"
+                                         title="Anular" icon="fa fa-trash">
+                            <f:setPropertyActionListener value="#{itemCurso}" target="#{cursoProgramacionAdministrado.cursoProgramacion}"/>
+                        </p:commandButton>
+                        
+                        <p:commandButton  
+                                     process="@this" rendered="#{itemCurso.flgGenerard and itemCurso.estado eq 1}"
+                                     actionListener="#{cursoProgramacionAdministrado.obtener(itemCurso)}" 
+                                     oncomplete="PF('dialogoDownloadRD').show();"  
+                                     title="Descargar Resolución Directoral" icon="fa fa-download">
+                             
+                        </p:commandButton>
+                      
+                        <p:commandButton  
+                            process="@this" rendered="#{itemCurso.rdInforme != null}"
+                                     actionListener="#{cursoProgramacionAdministrado.obtener(itemCurso)}" 
+                                     oncomplete="PF('dialogoUploadRD').show();"  
+                                     title="Subir Resolución Directoral firmada" icon="fa fa-upload">
+                             
+                        </p:commandButton>
+                      
+                    </p:column>
+
+                    <p:column headerText="NOMBRE" class="left" width="200" sortBy="#{itemCurso.curso.nombre}">
+                        <h:outputText value="#{itemCurso.curso.nombre}" />
+                    </p:column>
+                    <p:column headerText="CIUDAD" class="left" width="100" filterBy="#{itemCurso.ciudad}" filterMatchMode="contains" sortBy="#{itemCurso.ciudad}">
+                        <h:outputText value="#{itemCurso.ciudad}" />
+                    </p:column>
+                    <p:column headerText="FEC. INICIO" styleClass="center" width="80" sortBy="#{itemCurso.fechaIni}">
+                        <h:outputText value="#{itemCurso.fechaIni}"  >
+                        <f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText><br/>
+                    </p:column>
+                    <p:column headerText="FEC. FIN" styleClass="center" width="80" sortBy="#{itemCurso.fechaFin}">
+                        <h:outputText value="#{itemCurso.fechaFin}"  >
+                        <f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText><br/>
+                    </p:column>
+                    <p:column headerText="ESTADO" styleClass="center" width="80" filterBy="#{itemCurso.estado}" filterMatchMode="contains"  >
+                         <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('tablaCursos').filter()">
+                                <f:selectItem itemLabel="Todos" itemValue="" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="PENDIENTE" itemValue="0" />
+                                <f:selectItem itemLabel="CONCLUIDO" itemValue="1" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText value="#{itemCurso.estado != 1? 'PENDIENTE':'CONCLUIDO'}">
+                            <f:converter converterId="javax.faces.Character" />                                    
+                        </h:outputText>
+                   </p:column>
+                   <p:column headerText="ACTIVO" filterBy="#{itemCurso.flgActivo}" filterMatchMode="contains" class="pcenter" width="80" >
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('tablaCursos').filter()">
+                                <f:selectItem itemLabel="Todos" itemValue="" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="Activo" itemValue="1" />
+                                <f:selectItem itemLabel="Inactivo" itemValue="0" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText value="#{itemCurso.flgActivo != 1? 'Inactivo':'Activo'}">
+                            <f:converter converterId="javax.faces.Character" />                                    
+                        </h:outputText>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:outputPanel>
+            </h:form>
+       
+       
+         
+        <p:dialog modal="true" dynamic="true" id="dialogoAnular" widgetVar="dialogoAnular" header="Anular Programación" draggable="true" resizable="false" 
+                  closable="true" closeOnEscape="true" width="280"
+                  class="dlgdna" position="center center" responsive="true">
+            <h:form  onkeypress="return event.keyCode != 13;">
+                <ui:include src="panelAnular.xhtml" />
+                <br></br>
+                <div class="ui-g">
+                    <div class="ui-md-5 nopad">
+                           <p:commandButton value="Guardar" actionListener="#{cursoProgramacionAdministrado.anular()}" update="@form :formularioPrincipal1:tablaCursos" oncomplete="PF('dialogoAnular').hide()" icon="ui-icon-disk" title="Guarda los cambios"/>	
+                 
+                    </div>
+                    <div class="ui-md-2 nopad"> </div>
+                    <div class="ui-md-5 nopad">
+                            <p:commandButton value="Cerrar" onclick="PF('dialogoAnular').hide();" process="@this"
+                             immediate="true" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+          
+                  </div>
+                </div>
+             
+            </h:form>
+        </p:dialog>
+        
+         <p:dialog modal="true" dynamic="true" id="dialogoDownloadRD" widgetVar="dialogoDownloadRD" header="Descargar Resolución Directoral" draggable="true" resizable="false" 
+                  closable="true" closeOnEscape="true" width="380" 
+                  position="center center" responsive="true">
+            <h:form  onkeypress="return event.keyCode != 13;">
+             
+                 <div class="ui-g">
+                        <div class="ui-g-12">
+                            <p:outputLabel value="Número de Informe"/> 
+                            <p:inputText value="#{cursoProgramacionAdministrado.cursoProgramacion.rdInforme}" maxlength="50" 
+                                         required="true" requiredMessage="Debe ingresar el informe de la resolución directoral">
+                                <p:ajax event="change" update="descargarSinFirmaRD" />
+                            </p:inputText> 
+                        </div>    
+               </div>
+              
+               <br></br>
+               <div class="ui-g">
+                     <div class="ui-g-12"> 
+                         <p:outputPanel id="descargarSinFirmaRD">
+                
+                            <p:commandLink ajax="false" process="@this" immediate="true" 
+                                        value="Guardar Informe y Descargar Resolución Directoral" 
+                                        rendered="#{cursoProgramacionAdministrado.cursoProgramacion.rdInforme!=null}" >
+                             <p:fileDownload value="#{cursoProgramacionAdministrado.downloadRD()}" />
+                            </p:commandLink>
+                         </p:outputPanel>       
+                     </div>
+                </div>
+               
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog modal="true" dynamic="true" id="dialogoUploadRD" widgetVar="dialogoUploadRD" header="Subir Resolución Directoral" draggable="true" resizable="false" 
+                  closable="true" closeOnEscape="true" width="480" 
+                  position="center center" responsive="true">
+            <h:form   onkeypress="return event.keyCode != 13;">
+                <p:messages id="mensajes" autoUpdate="true" showDetail="false" closable="true" severity="error" />
+       
+                 <div class="ui-g">
+                        <div class="ui-g-12 ui-md-7">
+                            <p:outputLabel value="Número de Resolución"/> 
+                            <p:inputText value="#{cursoProgramacionAdministrado.cursoProgramacion.rdNro}" maxlength="50" 
+                                         required="true" requiredMessage="Debe ingresar el número de la resolución directoral" />
+                        </div>    
+                        <div class="ui-g-12 ui-md-5">
+                            <p:outputLabel value="Fecha"/> 
+                            <p:calendar value="#{cursoProgramacionAdministrado.cursoProgramacion.rdFecha}" required="true"
+                                        pattern="dd/MM/yyyy" navigator="true" mask="true" locale="es" maxdate="today"
+                                        requiredMessage="Debe ingresar la fecha de la resolución directoral" >
+
+                            </p:calendar>   
+                        </div>    
+                 </div>
+                <div class="ui-g">
+                        <div class="ui-g-12 ui-md-8">
+                             <p:fileUpload fileUploadListener="#{cursoProgramacionAdministrado.uploadRD}" mode="advanced" allowTypes="/(\.|\/)(pdf)$/"
+                                           invalidFileMessage="Sólo puede subir archivos PDF" 
+                                       label="Adjuntar Resolución Directoral en PDF"  update="descargarRd, eliminarRd"
+                                       auto="true" requiredMessage="Debe adjuntar un documento" > 
+                             </p:fileUpload>
+                         </div> 
+                          <div class="ui-g-12 ui-md-2">
+                             <p:outputPanel id="descargarRd">
+                                 <p:commandLink ajax="false" process="@this" immediate="true" 
+                                                value="Descargar Resolución" 
+                                                rendered="#{cursoProgramacionAdministrado.cursoProgramacion.archivoRd!=null}" >
+                                     <p:fileDownload value="#{cursoProgramacionAdministrado.descargarRD()}" />
+                                  </p:commandLink>
+                                   </p:outputPanel>    
+                         </div>
+                         <div class="ui-g-12 ui-md-2">
+                             <p:outputPanel id="eliminarRd">
+                                 <p:commandLink  ajax="true" process="@this" rendered="#{cursoProgramacionAdministrado.cursoProgramacion.archivoRd!=null}"
+                                               value="Eliminar Resolución"   update="descargarRd, eliminarRd"
+                                               actionListener="#{cursoProgramacionAdministrado.eliminarRD()}">
+                                       <p:confirm header="Confirmación" message="¿ Está seguro de eliminar el archivo?" icon="pi pi-exclamation-triangle" />    
+                                 </p:commandLink>                      
+                             </p:outputPanel>
+                         </div> 
+               </div>
+               <br></br>
+               <div class="ui-g">
+                     <div class="ui-g-12 ui-md-5"> 
+                        <p:commandButton value="Guardar" actionListener="#{cursoProgramacionAdministrado.update()}" 
+                               process="@form"
+                               oncomplete="if (!args.validationFailed) PF('dialogoUploadRD').hide()" />	
+                     
+                     </div>
+                </div>
+                 <f:event listener="#{cursoProgramacionAdministrado.validarUploadRd}" type="postValidate" />
+                 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" >
+               <div class="ui-g">
+                   <div class="ui-md-5 nopad">
+                       <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"  />
+                   </div>
+                   <div class="ui-md-2 nopad"></div>
+                   <div class="ui-md-5 nopad">
+                       <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"  />
+                   </div>
+               </div>
+                
+            </p:confirmDialog> 
+            </h:form>
+        </p:dialog>
+                
+    </ui:define>  
+    
+    
+</ui:composition>

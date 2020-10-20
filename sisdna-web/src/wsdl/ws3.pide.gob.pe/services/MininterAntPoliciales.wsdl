@@ -1,0 +1,88 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://ws.mi.com/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://ws.mi.com/">
+   <wsdl:types>
+      <xsd:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://ws.mi.com/" version="1.0">
+         <xsd:element name="consultaDniGeneral" type="tns:consultaDniGeneral"/>
+         <xsd:element name="consultaDniGeneralResponse" type="tns:consultaDniGeneralResponse"/>
+         <xsd:element name="consultaNombreGeneral" type="tns:consultaNombreGeneral"/>
+         <xsd:element name="consultaNombreGeneralResponse" type="tns:consultaNombreGeneralResponse"/>
+         <xsd:complexType name="consultaDniGeneral">
+            <xsd:sequence>
+               <xsd:element minOccurs="0" name="vUsuario" type="xsd:string"/>
+               <xsd:element minOccurs="0" name="vClave" type="xsd:string"/>
+               <xsd:element minOccurs="0" name="vDNI" type="xsd:string"/>
+               <xsd:element minOccurs="0" name="vEntidadconsulta" type="xsd:string"/>
+               <xsd:element minOccurs="0" name="vDNIconsulta" type="xsd:string"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="consultaDniGeneralResponse">
+            <xsd:sequence>
+               <xsd:element minOccurs="0" name="return" type="xsd:string"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="consultaNombreGeneral">
+            <xsd:sequence>
+               <xsd:element minOccurs="0" name="vUsuario" type="xsd:string"/>
+               <xsd:element minOccurs="0" name="vClave" type="xsd:string"/>
+               <xsd:element minOccurs="0" name="vNom" type="xsd:string"/>
+               <xsd:element minOccurs="0" name="vApe_p" type="xsd:string"/>
+               <xsd:element minOccurs="0" name="vApe_m" type="xsd:string"/>
+               <xsd:element minOccurs="0" name="vEntidadconsulta" type="xsd:string"/>
+               <xsd:element minOccurs="0" name="vDNIconsulta" type="xsd:string"/>
+            </xsd:sequence>
+         </xsd:complexType>
+         <xsd:complexType name="consultaNombreGeneralResponse">
+            <xsd:sequence>
+               <xsd:element minOccurs="0" name="return" type="xsd:string"/>
+            </xsd:sequence>
+         </xsd:complexType>
+      </xsd:schema>
+   </wsdl:types>
+   <wsdl:message name="consultaDniGeneral">
+      <wsdl:part name="parameters" element="tns:consultaDniGeneral"/>
+   </wsdl:message>
+   <wsdl:message name="consultaDniGeneralResponse">
+      <wsdl:part name="parameters" element="tns:consultaDniGeneralResponse"/>
+   </wsdl:message>
+   <wsdl:message name="consultaNombreGeneral">
+      <wsdl:part name="parameters" element="tns:consultaNombreGeneral"/>
+   </wsdl:message>
+   <wsdl:message name="consultaNombreGeneralResponse">
+      <wsdl:part name="parameters" element="tns:consultaNombreGeneralResponse"/>
+   </wsdl:message>
+   <wsdl:portType name="MininterAntPolicialesPortType">
+      <wsdl:operation name="consultaDniGeneral">
+         <wsdl:input message="tns:consultaDniGeneral" wsaw:Action="consultaDniGeneral"/>
+         <wsdl:output message="tns:consultaDniGeneralResponse" wsaw:Action="http://ws.mi.com/WS_persona_rq_ant/consultaDniGeneralResponse"/>
+      </wsdl:operation>
+      <wsdl:operation name="consultaNombreGeneral">
+         <wsdl:input message="tns:consultaNombreGeneral" wsaw:Action="consultaNombreGeneral"/>
+         <wsdl:output message="tns:consultaNombreGeneralResponse" wsaw:Action="http://ws.mi.com/WS_persona_rq_ant/consultaNombreGeneralResponse"/>
+      </wsdl:operation>
+   </wsdl:portType>
+   <wsdl:binding name="MininterAntPolicialesSoap11Binding" type="tns:MininterAntPolicialesPortType">
+      <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+      <wsdl:operation name="consultaDniGeneral">
+         <soap:operation soapAction="consultaDniGeneral" style="document"/>
+         <wsdl:input>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="consultaNombreGeneral">
+         <soap:operation soapAction="consultaNombreGeneral" style="document"/>
+         <wsdl:input>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+   </wsdl:binding>
+   <wsdl:service name="MininterAntPoliciales">
+      <wsdl:port name="MininterAntPolicialesHttpsSoap11Endpoint" binding="tns:MininterAntPolicialesSoap11Binding">
+         <soap:address location="https://ws3.pide.gob.pe/services/MininterAntPoliciales.MininterAntPolicialesHttpsSoap11Endpoint"/>
+      </wsdl:port>
+   </wsdl:service>
+</wsdl:definitions>

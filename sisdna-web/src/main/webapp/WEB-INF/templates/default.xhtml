@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <f:view contentType="text/html">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+         <meta name="apple-mobile-web-app-capable" content="yes" />
+   
+        <title>Sistema de Información de las Defensorías de la Niña, Niño y Adolescente</title>
+        <h:head>
+            <h:outputStylesheet name="css/raiz.css" />
+            <h:outputScript name="js/auxiliar.js"/>
+            <h:outputScript name="jquery/jquery.js" library="primefaces"/>
+            <link rel="shortcut icon" type="image/png" href="#{request.contextPath}/resources/imagen/icon.png"/>
+            <ui:insert name="header" ></ui:insert>
+        </h:head>
+
+        <h:body onload="noBackButton();">
+            <ui:include src="/WEB-INF/templates/IdleMonitor.xhtml"/>
+
+             <div class="cabeceraContenedor" >
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-9 ui-lg-10" style="padding-bottom: 0px;">
+                        <h1 style="margin-left: 12px">Sistema de Información de las Defensorías de la Niña, Niño y Adolescente</h1>
+                    </div>
+                     <div class="ui-g-12 ui-md-3 ui-lg-2" style="padding-bottom: 0px; padding-right: 0px;">
+                         <ul id="nav" class="user">
+                    <h:form>
+                        <p:commandLink id="logout" onclick="PF('contrasena').show();" >
+                            <span class="userico" ></span>
+                            <h:outputText value="#{usuarioAdministrado.entidadSeleccionada.txtUsuario}" />
+                        </p:commandLink>
+                        <p:tooltip for="logout" value="#{usuarioAdministrado.getNombrePersona(usuarioAdministrado.entidad.persona)}" />
+                    </h:form>
+                </ul>
+                     </div>
+                   
+             </div>
+                 
+            </div>
+            <h:form>
+                <p:menubar model="#{usuarioAdministrado.menuBar}" id="menubar" class="pnoradius">
+                    <f:facet name="options">
+                        <!--<p:commandButton value="Perfil" update="@(.dialogoPerfil)" oncomplete="PF('dialogoPerfil').show()" action="#{familiaAdministrado.cargarPerfil()}" icon="fa fa-gear" class="plogout" rendered="#{usuarioAdministrado.usuarioActivoEsAdministrador(usuarioAdministrado.entidadSeleccionada) == false}"/>-->
+                        <p:commandButton value="Cerrar Sesión" actionListener="#{usuarioAdministrado.logout}" 
+                                         oncomplete="logout(xhr, status, args)" icon="fa fa-sign-out" class="plogout" style=" background: transparent !important; border: 0px !important; padding: 4px !important;"/>
+                    </f:facet>
+                </p:menubar>
+            </h:form>
+
+            <div id="content" >
+                <ui:insert name="content">
+                    [Template content will be inserted here]
+                </ui:insert>
+            </div>
+
+            <div class="pfooter">
+                <p:outputLabel value="© Ministerio de la Mujer y Poblaciones Vulnerables"/>
+            </div>  
+
+            <p:dialog modal="true" dynamic="true" id="contrasena" widgetVar="contrasena" header="Cambiar Contraseña" draggable="true" resizable="false" closable="true" closeOnEscape="true" showEffect="puff" hideEffect="puff" width="400">
+                <h:form>
+                    <ui:include src="../../contrasena.xhtml"/>
+                    <div class="ui-g">
+                    <div class="ui-g-12 ui-md-5 nopad">
+                       <p:commandButton value="Guardar" actionListener="#{usuarioAdministrado.actualizarContrasena(usuarioAdministrado.entidadSeleccionada)}" update="@form" oncomplete="if (!args.validationFailed) PF('dialogoContrasena').hide()" icon="ui-icon-disk" title="Guarda los cambios"/>
+                    </div>
+                    <div class="ui-g-12 ui-md-2 nopad"> </div>
+                    <div class="ui-g-12 ui-md-5 nopad">
+                       <p:commandButton value="Cerrar" onclick="PF('dialogoContrasena').hide();" icon="ui-icon-cancel" title="Cierra el dialogo" immediate="true"/>
+                    </div>
+                </div>
+                   
+                </h:form>
+            </p:dialog>
+
+          
+
+        </h:body>
+
+    </f:view>
+</html>

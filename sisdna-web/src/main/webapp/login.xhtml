@@ -1,0 +1,36 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/WEB-INF/templates/defaultBlanco.xhtml">
+    <ui:define name="header">
+        <script type="text/javascript"></script>
+    </ui:define>
+    <ui:define name="content" >
+
+        <h:form id="formularioPrincipal">    
+            <p:growl id="mensajes" widgetVar="mensajes" showDetail="true" life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true"/>            
+            <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" class="loginform pshadow">
+                <f:facet name="header">
+                    Ingreso al Sistema de Defensorías de la Niña, Niño y Adolescente
+                </f:facet>
+                <p:panelGrid columns="2" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pcenter">
+                    <img id="logologin" src="${facesContext.externalContext.requestContextPath}/resources/imagen/icon.png"/>
+                </p:panelGrid>
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder">
+                    <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" class="pnoborder">
+                        <h:outputLabel for="username" value="Usuario:" />
+                        <p:inputText id="username" value="#{usuarioAdministrado.entidadSeleccionada.txtUsuario}" />
+
+                        <h:outputLabel for="password" value="Contraseña:" />
+                        <p:password id="password" value="#{usuarioAdministrado.entidadSeleccionada.txtPassword}" />
+                    </p:panelGrid>
+                    <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder">
+                        <p:commandButton value="Aceptar" update="mensajes" actionListener="#{authAdministrado.login}" oncomplete="handleLoginRequest(xhr, status, args)" style="width:100%"/>
+                    </p:panelGrid>
+                </p:panelGrid>
+            </p:panelGrid>
+        </h:form>
+    </ui:define>           
+</ui:composition>

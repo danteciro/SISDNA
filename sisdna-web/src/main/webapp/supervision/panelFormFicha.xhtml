@@ -1,0 +1,596 @@
+<f:view contentType="text/html"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <div class="ui-g">
+         <div class="ui-g-12 ui-md-2">
+              <p:outputLabel for="txtFecha" value="Fecha"/>  
+              <p:calendar id="txtFecha" value="#{supervisionAdministrado.supervision.fecha}" required="true" maxdate="today"
+                          pattern="dd/MM/yyyy" navigator="true" mask="true" locale="es"
+                          requiredMessage="Debe ingresar la fecha de la supervisión.">
+             </p:calendar>   
+         </div>
+         <div class="ui-g-12 ui-md-2">
+             <p:outputLabel for="txtHora" value="Hora"/> 
+             <p:calendar id="txtHora" value="#{supervisionAdministrado.supervision.hora}" pattern="HH:mm" locale="es"
+                         timeOnly="true" required="true" requiredMessage="Debe ingresar la hora de la supervisión" />
+     
+         </div>
+         <div class="ui-g-12 ui-md-8">
+              <p:outputLabel for="selSupervisor" value="Supervisor:"/> 
+               <p:selectOneMenu id="selSupervisor"  autoWidth="false"  required="true" 
+                                 requiredMessage="Debe seleccionar el supervisor"
+                                 value="#{supervisionAdministrado.supervision.nidSupervisor}">
+                     <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+                     <f:selectItems value="#{usuarioAdministrado.getEntidadesModuloPerfil('DSLD')}"
+                                    var="itemPer"
+                                    itemValue="#{itemPer.nidUsuario}"
+                                    itemLabel="#{itemPer.persona.nombreApellidos()}"/>
+                </p:selectOneMenu>
+         </div>
+    </div>
+
+    <p:fieldset legend="I. DATOS GENERALES DE LA DNA" >
+        <div class="ui-g">
+             <div class="ui-g-12 ui-md-2">
+                    <p:outputLabel for="txtCodigo" value="Código de la DNA:"/>
+                    <p:inputText id="txtCodigo" converter="maskConCero" value="#{supervisionAdministrado.dnaCodigo}" maxlength="8" 
+                                 required="true" requiredMessage="Debe ingresar el código de la DNA"
+                                 onkeypress="if (event.keyCode == 13) {onchange(); return false; }"
+                                 validator="#{supervisionAdministrado.validarDna}" >
+                         <p:keyFilter regEx="/[\d]/"/>
+                        <p:ajax event="change" process="@this" update="opDna" />
+                    </p:inputText>
+
+             </div>
+              <p:outputPanel class="ui-g-12 ui-md-4">
+                  <p:outputPanel rendered="#{supervisionAdministrado.listaSedes!=null and supervisionAdministrado.listaSedes.size()>1}">
+                     <p:outputLabel for="selSede" value="Sede:"/>
+                     <p:selectOneMenu id="selSede"  autoWidth="false"  required="true" 
+                                 requiredMessage="Debe seleccionar la sede"
+                                 value="#{supervisionAdministrado.supervision.defensoria.nidDna}">
+                            <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+                            <f:selectItems value="#{supervisionAdministrado.listaSedes}"
+                                           var="itemSede"
+                                           itemValue="#{itemSede.nidDna}"
+                                           itemLabel="#{itemSede.txtNombre}"/>
+                     </p:selectOneMenu>
+                  </p:outputPanel>
+              </p:outputPanel>
+        </div>
+        <p:outputPanel id="opDna">
+            <p:outputPanel rendered="#{supervisionAdministrado.supervision.defensoria.nidDna!=null}">
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-8">
+                    <p:outputLabel value="Nombre de la DNA:"/>
+                    <p:inputText value="#{supervisionAdministrado.supervision.defensoria.txtNombre}" readonly="true" required="false" />
+
+                </div>    
+               <div class="ui-g-12 ui-md-4">
+                    <p:outputLabel value="Origen"/>
+                    <p:inputText value="#{supervisionAdministrado.supervision.defensoria.origen.txtNombre}" readonly="true" required="false" />
+                </div>    
+            </div>     
+            <div class="ui-g">
+                 <div class="ui-g-12">
+                    <p:outputLabel value="Dirección de la DNA:"/>
+                    <p:inputText value="#{supervisionAdministrado.supervision.defensoria.defensoriaInfo.txtDireccion}" readonly="true" required="false" />
+                 </div>
+            </div>   
+            <div class="ui-g">
+                 <div class="ui-g-12 ui-md-4">
+                    <p:outputLabel value="Departamento:"/>
+                    <p:inputText value="#{supervisionAdministrado.nomDepartamento}" readonly="true" required="false" />
+                 </div>
+                 <div class="ui-g-12 ui-md-4">
+                     <p:outputLabel value="Provincia:"/>
+                     <p:inputText value="#{supervisionAdministrado.nomProvincia}" readonly="true" required="false" />
+                 </div>
+                 <div class="ui-g-12 ui-md-4">
+                     <p:outputLabel value="Distrito:"/>
+                     <p:inputText value="#{supervisionAdministrado.nomDistrito}" readonly="true" required="false" />
+                 </div>
+            </div>   
+             <div class="ui-g">
+                 <div class="ui-g-12 ui-md-4">
+                    <p:outputLabel value="Teléfonos:"/>
+                    <p:inputText value="#{supervisionAdministrado.supervision.dnaTelefono}" maxlength="150" />
+                 </div>
+                 <div class="ui-g-12 ui-md-4">
+                    <p:outputLabel value="Correo electrónico:"/>
+                    <p:inputText value="#{supervisionAdministrado.supervision.dnaCorreo}" maxlength="150"  />
+                 </div>
+                 <div class="ui-g-12 ui-md-4">
+                    <p:outputLabel value="Horario de atención DNA:"/>
+                    <p:inputText value="#{supervisionAdministrado.supervision.dnaHorario}" maxlength="150"  />
+                 </div>
+            </div>   
+           
+            <p:fieldset legend="Datos del Responsable">
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-2">
+                        <p:outputLabel value="DNI:"/>
+                        <p:inputText value="#{supervisionAdministrado.supervision.respDni}" 
+                                     maxlength="8" required="true"
+                                     validator="#{supervisionAdministrado.verificarReniecResponsable}"
+                                     requiredMessage="Debe ingresar el DNI del responsable" >
+                            <p:keyFilter regEx="/[\d\.]/"/> 
+                            <p:ajax event="blur" update="txtRespPat,txtRespMat,txtRespNombre1,txtRespNombre2,txtRespNombre3" />
+                        </p:inputText>
+                    </div>
+                    <div class="ui-g-12 ui-md-2">
+                        <p:outputLabel value="Apellido Paterno:"/>
+                        <p:inputText id="txtRespPat" value="#{supervisionAdministrado.supervision.respApePat}" readonly="true" required="false" />
+                    </div>
+                    <div class="ui-g-12 ui-md-2">
+                        <p:outputLabel value="Apellido Materno:"/>
+                        <p:inputText id="txtRespMat" value="#{supervisionAdministrado.supervision.respApeMat}" readonly="true" required="false" />
+                    </div>
+                    <div class="ui-g-12 ui-md-2">
+                        <p:outputLabel value="Primer Nombre:"/>
+                        <p:inputText id="txtRespNombre1" value="#{supervisionAdministrado.supervision.respNombre1}" readonly="true" required="false" />
+                    </div>
+                    <div class="ui-g-12 ui-md-2">
+                        <p:outputLabel value="Segundo Nombre:"/>
+                        <p:inputText id="txtRespNombre2" value="#{supervisionAdministrado.supervision.respNombre2}" readonly="true" required="false" />
+                    </div>
+                    <div class="ui-g-12 ui-md-2">
+                        <p:outputLabel value="Tercer Nombre:"/>
+                        <p:inputText id="txtRespNombre3" value="#{supervisionAdministrado.supervision.respNombre3}" readonly="true" required="false" />
+                    </div>
+                </div>   
+                
+            <div class="ui-g">
+                 <div class="ui-g-12 ui-md-4">
+                    <p:outputLabel value="Profesión:"/>
+                    <p:selectOneMenu value="#{supervisionAdministrado.supervision.respProfesion.nidCatalogo}"
+                                    autoWidth="false" required="true" 
+                                    requiredMessage="Debe seleccionar la profesión">
+                        <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{catalogoAdministrado.obtenerProfesiones()}"
+                                       var="profesion" 
+                                       itemLabel="#{profesion.txtNombre}"
+                                       itemValue="#{profesion.nidCatalogo}" />
+                        
+                    </p:selectOneMenu>
+                 </div>
+                 <div class="ui-g-12 ui-md-4">
+                    <p:outputLabel value="Colegiatura:"/>
+                    <p:inputText value="#{supervisionAdministrado.supervision.respColegiatura}" maxlength="150"  />
+                 </div>
+                 <div class="ui-g-12 ui-md-4">
+                    <p:outputLabel value="Colegio:"/>
+                    <p:inputText value="#{supervisionAdministrado.supervision.respColegio}" maxlength="150"  />
+                 </div>
+            </div>   
+             <div class="ui-g">
+                 <div class="ui-g-12 ui-md-4">
+                    <p:outputLabel value="Correo electrónico:"/>
+                    <p:inputText value="#{supervisionAdministrado.supervision.respCorreo}" maxlength="150"  />
+                 </div>
+                 <div class="ui-g-12 ui-md-4">
+                    <p:outputLabel value="Teléfonos:"/>
+                    <p:inputText value="#{supervisionAdministrado.supervision.respTelefono}" maxlength="150"  />
+                 </div>
+                  <div class="ui-g-12 ui-md-4">
+                    <p:outputLabel for="txtFechaCargo" value="Fecha desde que ejerce el cargo:"/>
+                    <p:calendar id="txtFechaCargo" value="#{supervisionAdministrado.supervision.respFechaCargo}" required="true"
+                          pattern="dd/MM/yyyy" navigator="true" mask="true" locale="es"
+                          requiredMessage="Debe ingresar la fecha desde que ejerce el cargo">
+                    </p:calendar>   
+                  </div>
+            </div>   
+            </p:fieldset>   
+             <div class="ui-g">
+                <div class="ui-g-12 ui-md-6">
+                    <p:outputLabel value="Máxima autoridad de la entidad responsable:"/>
+                    <p:inputText value="#{supervisionAdministrado.supervision.entidadAutoridad}" maxlength="150" required="true"
+                                 requiredMessage="Debe ingresar la máxima autoridad de la entidad responsable"/>
+                 </div>
+                 <div class="ui-g-12 ui-md-6">
+                    <p:outputLabel value="Dirección de la entidad responsable:"/>
+                    <p:inputText value="#{supervisionAdministrado.supervision.entidadDireccion}" maxlength="150" required="true"
+                                 requiredMessage="Debe ingresar la dirección de la entidad responsable"/>
+                 </div>
+            </div>       
+            </p:outputPanel>
+        </p:outputPanel>    
+    </p:fieldset>      
+     
+   
+    <p:fieldset legend="II. INFRAESTRUCTURA">
+         <div class="ui-g">
+             <div class="ui-g-12 ui-md-4 ui-lg-3"><p:outputLabel value="El local de la DNA es:" class="labelLh25" /> </div>
+             <div class="ui-g-12 ui-md-4 ui-lg-3"> 
+                 <p:selectOneRadio  value="#{supervisionAdministrado.supervision.tipoLocal}" required="true"
+                                    requiredMessage="Debe seleccionar la infraestructura del local">
+                     <f:selectItem itemValue="1" itemLabel="Privado" />
+                     <f:selectItem itemValue="2" itemLabel="Compartido" />
+                 </p:selectOneRadio>
+             </div>
+            <div class="ui-g-12 ui-md-3 ui-lg-2"><p:outputLabel value="N° de ambientes:"  class="labelLh25" /> </div>
+            <div class="ui-g-12 ui-md-1">
+                <p:inputNumber value="#{supervisionAdministrado.supervision.nroAmbientes}" minValue="0" maxValue="100" 
+                               required="true" requiredMessage="Debe ingresar el número de ambientes"/>
+            </div>
+        </div>       
+        <div class="ui-g">
+             <div class="ui-g-12 ui-md-4 ui-lg-3"><p:outputLabel value="El estado de conservación de la sede DNA es:"  class="labelLh25" /> </div>
+             <div class="ui-g-12 ui-md-5"> 
+                 <p:selectOneRadio 
+                     value="#{supervisionAdministrado.supervision.estadoCons.nidCatalogo}"
+                                  required="true" requiredMessage="Debe seleccionar el estado de conservación">
+                    <f:selectItems value="#{catalogoAdministrado.obtenerSupervisionEstadosConservacion()}"
+                                   var="itemSupEstadoCons" 
+                                   itemValue="#{itemSupEstadoCons.nidCatalogo}"
+                                   itemLabel="#{itemSupEstadoCons.txtNombre}"/>
+                 </p:selectOneRadio>
+             </div>
+        </div>
+    </p:fieldset>    
+    
+   <p:fieldset legend="III. RECURSOS HUMANOS">
+       Indique el número de integrantes por casilla<br /><br />
+        <p:dataTable 
+                    var="itemRh" 
+                    value="#{supervisionAdministrado.supervision.listaRrhh}" 
+                    rowIndexVar="index"
+                    scrollable="true"
+                    rows="20" 
+                    paginator="false"
+                    resizableColumns="false" >
+                    
+                    
+                   <p:columnGroup type="header">
+                          <p:row>
+                              <p:column rowspan="1" headerText="PROFESIÓN"   style="width: 80px" />
+                              <p:column colspan="2" headerText="DERECHO" style="width: 100px" />
+                              <p:column colspan="2" headerText="TRABAJO SOCIAL" style="width: 100px" />
+                              <p:column colspan="2" headerText="PSICOLOGÍA" style="width: 100px" />
+                              <p:column colspan="2" headerText="EDUCACIÓN" style="width: 100px" />
+                              <p:column colspan="2" headerText="OTRO" style="width: 100px" >
+                                   <f:facet name="header">
+                                       OTRO
+                                       <p:inputText value="#{supervisionAdministrado.supervision.otraProfesion}" maxlength="50" style="width:100%" />
+                                   </f:facet>  
+                              </p:column>    
+                              <p:column colspan="2" headerText="TOTAL DE PERSONAL" style="width: 100px" />
+                          </p:row>
+                          <p:row>
+                              <p:column headerText="FUNCIÓN" />
+                              <p:column headerText="M" />
+                              <p:column headerText="H" />
+                              <p:column headerText="M" />
+                              <p:column headerText="H" />
+                              <p:column headerText="M" />
+                              <p:column headerText="H" />
+                              <p:column headerText="M" />
+                              <p:column headerText="H" />
+                              <p:column headerText="M" />
+                              <p:column headerText="H" />
+                              <p:column headerText="M" />
+                              <p:column headerText="H" />
+                          </p:row>
+                   </p:columnGroup>    
+                    <p:column>   <h:outputText value="#{itemRh.funcion.txtNombre}" />    </p:column> 
+                    <p:column styleClass="pcenter">  
+                        <p:inputNumber  minValue="0" decimalPlaces="0" maxValue="100" inputStyle="width:40px !important"
+                                        value="#{itemRh.derechoM}" decimalSeparator="." emptyValue="zero" 
+                             maxlength="2" thousandSeparator="">
+                            <p:ajax event="blur" update="txtTotalH, txtTotalM" listener="#{supervisionAdministrado.calcularTotal(itemRh)}" />
+                        </p:inputNumber> 
+                    </p:column> 
+                    <p:column styleClass="pcenter">  
+                        <p:inputNumber  minValue="0" decimalPlaces="0" maxValue="100" inputStyle="width:40px !important"
+                                        value="#{itemRh.derechoH}" decimalSeparator="."  emptyValue="zero" 
+                             maxlength="2" thousandSeparator="">
+                              <p:ajax event="blur" update="txtTotalH, txtTotalM" listener="#{supervisionAdministrado.calcularTotal(itemRh)}" />
+                        </p:inputNumber> 
+                    </p:column> 
+                    <p:column styleClass="pcenter">  
+                        <p:inputNumber  minValue="0" decimalPlaces="0" maxValue="100" inputStyle="width:40px !important"
+                                        value="#{itemRh.trabSocM}" decimalSeparator="."  emptyValue="zero" 
+                             maxlength="2" thousandSeparator="">
+                              <p:ajax event="blur" update="txtTotalH, txtTotalM" listener="#{supervisionAdministrado.calcularTotal(itemRh)}" />
+                        </p:inputNumber> 
+                    </p:column> 
+                   <p:column styleClass="pcenter">  
+                        <p:inputNumber  minValue="0" decimalPlaces="0" maxValue="100" inputStyle="width:40px !important"
+                                        value="#{itemRh.trabSocH}" decimalSeparator="."  emptyValue="zero" 
+                             maxlength="2" thousandSeparator="">
+                              <p:ajax event="blur" update="txtTotalH, txtTotalM" listener="#{supervisionAdministrado.calcularTotal(itemRh)}" />
+                        </p:inputNumber> 
+                    </p:column> 
+                    <p:column styleClass="pcenter">  
+                        <p:inputNumber  minValue="0" decimalPlaces="0" maxValue="100" inputStyle="width:40px !important"
+                                        value="#{itemRh.psicologiaM}" decimalSeparator="."  emptyValue="zero" 
+                             maxlength="2" thousandSeparator="">
+                              <p:ajax event="blur" update="txtTotalH, txtTotalM" listener="#{supervisionAdministrado.calcularTotal(itemRh)}" />
+                        </p:inputNumber> 
+                    </p:column> 
+                    <p:column styleClass="pcenter">  
+                        <p:inputNumber  minValue="0" decimalPlaces="0" maxValue="100" inputStyle="width:40px !important"
+                                        value="#{itemRh.psicologiaH}" decimalSeparator="."  emptyValue="zero" 
+                             maxlength="2" thousandSeparator="">
+                              <p:ajax event="blur" update="txtTotalH, txtTotalM" listener="#{supervisionAdministrado.calcularTotal(itemRh)}" />
+                        </p:inputNumber> 
+                    </p:column> 
+                    <p:column styleClass="pcenter">  
+                        <p:inputNumber  minValue="0" decimalPlaces="0" maxValue="100" inputStyle="width:40px !important"
+                                        value="#{itemRh.educacionM}" decimalSeparator="."  emptyValue="zero" 
+                             maxlength="2" thousandSeparator="">
+                              <p:ajax event="blur" update="txtTotalH, txtTotalM" listener="#{supervisionAdministrado.calcularTotal(itemRh)}" />
+                        </p:inputNumber> 
+                    </p:column> 
+                    <p:column styleClass="pcenter">  
+                        <p:inputNumber  minValue="0" decimalPlaces="0" maxValue="100" inputStyle="width:40px !important"
+                                        value="#{itemRh.educacionH}" decimalSeparator="."  emptyValue="zero" 
+                             maxlength="2" thousandSeparator="">
+                              <p:ajax event="blur" update="txtTotalH, txtTotalM" listener="#{supervisionAdministrado.calcularTotal(itemRh)}" />
+                        </p:inputNumber> 
+                    </p:column> 
+                    <p:column styleClass="pcenter">  
+                        <p:inputNumber  minValue="0" decimalPlaces="0" maxValue="100" inputStyle="width:40px !important"
+                                        value="#{itemRh.otroM}" decimalSeparator="." 
+                             maxlength="2" thousandSeparator="">
+                              <p:ajax event="blur" update="txtTotalH, txtTotalM" listener="#{supervisionAdministrado.calcularTotal(itemRh)}" />
+                        </p:inputNumber> 
+                    </p:column> 
+                     <p:column styleClass="pcenter">  
+                        <p:inputNumber  minValue="0" decimalPlaces="0" maxValue="100" inputStyle="width:40px !important"
+                                        value="#{itemRh.otroH}" decimalSeparator="."  emptyValue="zero" 
+                             maxlength="2" thousandSeparator="">
+                              <p:ajax event="blur" update="txtTotalH, txtTotalM" listener="#{supervisionAdministrado.calcularTotal(itemRh)}" />
+                        </p:inputNumber> 
+                    </p:column> 
+                      <p:column>  
+                        <p:inputNumber  id="txtTotalM" minValue="0" decimalPlaces="0" maxValue="100" inputStyle="width:40px !important"
+                                        value="#{itemRh.totalM}" decimalSeparator="." readonly="true"
+                             maxlength="2" thousandSeparator="">
+                        </p:inputNumber> 
+                    </p:column> 
+                      <p:column styleClass="pcenter">  
+                        <p:inputNumber  id="txtTotalH" minValue="0" decimalPlaces="0" maxValue="100" inputStyle="width:40px !important"
+                                        value="#{itemRh.totalH}" decimalSeparator="." readonly="true"
+                             maxlength="2" thousandSeparator="">
+                        </p:inputNumber> 
+                    </p:column> 
+        </p:dataTable>     
+   </p:fieldset> 
+    
+   <p:fieldset legend="IV. ACTIVIDADES DE LA DNA">
+         <div class="ui-g">
+             <div class="ui-g-12 ui-md-3"><p:outputLabel value="Cuenta con Plan de Trabajo vigente:" /> </div>
+             <div class="ui-g-12 ui-md-4"> 
+                 <p:selectOneRadio  value="#{supervisionAdministrado.supervision.planVigente}" required="true" 
+                                    requiredMessage="Debe seleccionar si cuenta con Plan de Trabajo vigente">
+                     <f:selectItem itemValue="1" itemLabel="Sí" />
+                     <f:selectItem itemValue="0" itemLabel="No" />
+                 </p:selectOneRadio>
+             </div>
+         </div>    
+        <div class="ui-g">
+              <div class="ui-g-12"> 
+                 <p:outputLabel for="txtActividades" value="¿Qué actividades de promoción/difusión viene ejecutando?" /> 
+                 <p:inputTextarea id="txtActividades" value="#{supervisionAdministrado.supervision.activProm}"
+                                  rows="3" maxlength="500"   />
+             </div>
+         </div> 
+         <div class="ui-g">
+             <div class="ui-g-12 ui-md-3"><p:outputLabel value="¿Cuenta con COMUDENA?" /> </div>
+             <div class="ui-g-12 ui-md-4"> 
+                 <p:selectOneRadio  value="#{supervisionAdministrado.supervision.cuentaComudena}" required="true" 
+                                    requiredMessage="Debe seleccionar si cuenta con COMUDENA">
+                     <f:selectItem itemValue="1" itemLabel="Sí" />
+                     <f:selectItem itemValue="0" itemLabel="No" />
+                 </p:selectOneRadio>
+             </div>
+         </div>    
+         <div class="ui-g">
+             <div class="ui-g-12 ui-md-3"><p:outputLabel value="¿Cuenta con Coordinador de DNA?" /> </div>
+             <div class="ui-g-12 ui-md-4"> 
+                 <p:selectOneRadio  value="#{supervisionAdministrado.supervision.cuentaCoord}" required="true" 
+                                    requiredMessage="Debe seleccionar si cuenta con Coordinador de DNA">
+                     <f:selectItem itemValue="1" itemLabel="Sí" />
+                     <f:selectItem itemValue="0" itemLabel="No" />
+                 </p:selectOneRadio>
+             </div>
+         </div>    
+         <div class="ui-g">
+             <div class="ui-g-12"> 
+                 <p:outputLabel for="txtCoordinadora" value="¿En qué OTROS espacios de coordinación multisectorial participa la DNA?" />
+                 <p:inputTextarea id="txtCoordinadora" value="#{supervisionAdministrado.supervision.otrosEspacios}"
+                                  rows="3" maxlength="500"   />
+             </div>
+         </div>    
+    </p:fieldset>    
+  
+    <p:fieldset legend="V. OBSERVACIONES">                   
+    <p:tabView>
+        <p:tab title="RESPECTO A LA ENTIDAD RESPONSABLE">
+            
+           <div class="ui-g">
+               <div class="ui-g-8 ui-md-10 ui-lg-10"> </div>
+               <div class="ui-g-4 ui-md-2 ui-lg-2"> 
+                   <table width="100%" style="table-layout: fixed;"><tr><td >Con- forme</td><td>Obser-vado</td><td>No aplica</td></tr></table>
+               </div>
+           </div>                 
+           <p:dataList value="#{supervisionAdministrado.listaObsEntidad}" rowIndexVar="indexObsEntidad"
+                    emptyMessage="No existen requisitos para inscribirse en el curso"  styleClass="bcsuper"
+                         var="itemObsEntidad">
+                   
+                    <div class="ui-g bOut">
+                       <div class="ui-g-8 ui-md-10 ui-lg-10 pad8"> 
+                            #{itemObsEntidad.descripcion}
+                       </div>
+                       <div class="ui-g-4 ui-md-2 ui-lg-2 bLeft"> 
+                         <p:selectOneRadio  value="#{itemObsEntidad.estado}" style="width:100%">
+                               <f:selectItem itemValue="1" />
+                                <f:selectItem itemValue="2" />
+                                <f:selectItem itemValue="3" />
+                            </p:selectOneRadio>
+                       </div>
+
+                    </div>         
+
+            </p:dataList>
+
+        </p:tab>       
+        <p:tab title="RESPECTO A LA DEFENSORÍA">
+              <div class="ui-g">
+               <div class="ui-g-8 ui-md-10 ui-lg-10"> </div>
+               <div class="ui-g-4 ui-md-2 ui-lg-2"> 
+                   <table width="100%" style="table-layout: fixed;"><tr><td>Conforme</td><td>Observado</td><td>No aplica</td></tr></table>
+               </div>
+           </div> 
+            <p:dataList value="#{supervisionAdministrado.listaObsDna}" rowIndexVar="indexObsDna"
+                    emptyMessage="No existen requisitos para inscribirse en el curso"  styleClass="bcsuper"
+                         var="itemObsDna">
+                    <div class="ui-g bOut">
+                       <div class="ui-g-8 ui-md-10 ui-lg-10 pad8"> 
+                           #{itemObsDna.descripcion}
+                       </div>
+                       <div class="ui-g-4 ui-md-2 ui-lg-2 bLeft"> 
+                           <p:selectOneRadio  value="#{itemObsDna.estado}" style="width:100%">
+                                <f:selectItem itemValue="1" />
+                                <f:selectItem itemValue="2" />
+                                <f:selectItem itemValue="3" />
+                            </p:selectOneRadio>
+                       </div>
+
+                    </div>         
+
+            </p:dataList>
+           
+        </p:tab>
+        
+        <p:tab title="RESPECTO A LOS INTEGRANTES DEL SERVICIO DNA">
+             <div class="ui-g">
+               <div class="ui-g-8 ui-md-10 ui-lg-10"> </div>
+               <div class="ui-g-4 ui-md-2 ui-lg-2"> 
+                   <table width="100%" style="table-layout: fixed;"><tr><td>Con- forme</td><td>Obser- vado</td><td>No aplica</td></tr></table>
+               </div>
+           </div>      
+            <p:dataList value="#{supervisionAdministrado.listaObsIntegrantes}" rowIndexVar="indexObsInt"
+                    emptyMessage="No existen requisitos para inscribirse en el curso"  styleClass="bcsuper"
+                         var="itemObsInt">
+                    <div class="ui-g bOut">
+                         <div class="ui-g-8 ui-md-10 ui-lg-10 pad8"> 
+                           #{itemObsInt.descripcion}
+                       </div>
+                       <div class="ui-g-4 ui-md-2 ui-lg-2 bLeft"> 
+                           <p:selectOneRadio  value="#{itemObsInt.estado}" style="width:100%">
+                                <f:selectItem itemValue="1" />
+                                <f:selectItem itemValue="2" />
+                                <f:selectItem itemValue="3" />
+                            </p:selectOneRadio>
+                       </div>
+
+                    </div>         
+
+            </p:dataList>
+           
+        </p:tab>
+     </p:tabView>
+   </p:fieldset>    
+                       
+    <p:fieldset legend="VI. COMENTARIOS">
+        <p:inputTextarea value="#{supervisionAdministrado.supervision.comentarios}" maxlength="500" rows="3" />
+     </p:fieldset>
+    
+       
+      
+      <p:fieldset legend="ENTREVISTADO/A">
+        <div class="ui-g">
+            <div class="ui-g-12 ui-md-2">
+                <p:outputLabel for="txtEntDni" value="DNI:" /> 
+                <p:inputText id="txtEntDni"  
+                             value="#{supervisionAdministrado.supervision.entNroDni}" maxlength="8" required="true"
+                            validator="#{supervisionAdministrado.verificarReniec}"
+                            requiredMessage="Debe ingresar el DNI del entrevistado" >
+                  <p:keyFilter regEx="/[\d\.]/"/> 
+                  <p:ajax event="blur" update="txtEntPat, txtEntMat, txtEntNombres, txtEntCargo"/>
+              </p:inputText>
+            </div>
+            <div class="ui-g-12 ui-md-2">
+                <p:outputLabel for="txtEntPat" value="Apellido Paterno:" /> 
+                <p:inputText id="txtEntPat"  
+                             value="#{supervisionAdministrado.supervision.entApePat}" maxlength="50" readonly="true"
+                             required="true" requiredMessage="Debe ingresar el apellido paterno del entrevistado" >
+                </p:inputText>
+            </div>
+            <div class="ui-g-12 ui-md-2">
+                <p:outputLabel for="txtEntMat" value="Apellido Materno:" /> 
+                <p:inputText id="txtEntMat"  
+                             value="#{supervisionAdministrado.supervision.entApeMat}"  maxlength="50"  readonly="true"
+                             required="true" requiredMessage="Debe ingresar el apellido materno del entrevistado">
+                </p:inputText>
+            </div>
+            <div class="ui-g-12 ui-md-3">
+                <p:outputLabel for="txtEntNombres" value="Nombres:" /> 
+                <p:inputText id="txtEntNombres"  
+                             value="#{supervisionAdministrado.supervision.entNombres}"  maxlength="50"  readonly="true"
+                             required="true" requiredMessage="Debe ingresar los nombres del entrevistado">
+                </p:inputText>
+            </div>
+            <div class="ui-g-12 ui-md-3">
+                <p:outputLabel for="txtEntCargo" value="Cargo:" /> 
+                <p:inputText id="txtEntCargo"  
+                             value="#{supervisionAdministrado.supervision.entCargo}" maxlength="50" 
+                             required="true" requiredMessage="Debe ingresar el cargo del entrevistado" >
+                </p:inputText>
+            </div>
+        </div>     
+      </p:fieldset>    
+    
+     <div class="ui-g">
+             <div class="ui-g-12 ui-md-4 ui-lg-3">
+                 <p:outputLabel for="selEstado" value="Estado:" /> 
+                 <p:selectOneMenu id="selEstado" autoWidth="false" 
+                                  value="#{supervisionAdministrado.supervision.estado.nidCatalogo}"
+                                  required="true" requiredMessage="Debe ingresar el estado de la ficha">
+                    <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+                    <f:selectItems value="#{catalogoAdministrado.obtenerSupervisionEstados()}"
+                                   var="itemSupEstado" 
+                                   itemValue="#{itemSupEstado.nidCatalogo}"
+                                   itemLabel="#{itemSupEstado.txtNombre}"/>
+                 </p:selectOneMenu>
+             </div>
+         
+            <div class="ui-g-12 ui-md-4 ui-lg-3" style="margin-top:16px;margin-left:24px">
+                <p:selectBooleanCheckbox id="chkFunciona" value="#{supervisionAdministrado.supervision.flgNoFunciona}"  itemLabel="¿ La DNA no funciona ?" />
+                  
+             </div>
+       </div>       
+       <div class="ui-g">
+            <div class="ui-g-12 ui-md-4 ui-lg-3">
+                 <p:fileUpload fileUploadListener="#{supervisionAdministrado.uploadFicha}" mode="advanced" allowTypes="/(\.|\/)(pdf)$/"
+                                           invalidFileMessage="Sólo puede subir archivos PDF" 
+                           label="Adjuntar Ficha en PDF"  update="descargarFicha, eliminarFicha"
+                           auto="true" requiredMessage="Debe adjuntar la ficha" > 
+                 </p:fileUpload>
+             </div> 
+              <div class="ui-g-12 ui-md-3 pcenter">
+                 <p:outputPanel id="descargarFicha">
+                     <p:commandLink ajax="false" process="@this" immediate="true" 
+                                    value="Descargar #{supervisionAdministrado.supervision.archivoNombre}" 
+                                    rendered="#{supervisionAdministrado.supervision.archivoFicha!=null}" >
+                         <p:fileDownload value="#{supervisionAdministrado.descargarFicha()}" />
+                      </p:commandLink>
+                       </p:outputPanel>    
+             </div>
+             <div class="ui-g-12 ui-md-3 pcenter">
+                 <p:outputPanel id="eliminarFicha">
+                     <p:commandLink  ajax="true" process="@this" rendered="#{supervisionAdministrado.supervision.archivoFicha!=null}"
+                                   value="Eliminar #{supervisionAdministrado.supervision.archivoNombre}"   update="descargarFicha, eliminarFicha"
+                                   actionListener="#{supervisionAdministrado.eliminarFicha()}">
+                           <p:confirm header="Confirmación" message="¿ Está seguro de eliminar el archivo?" icon="pi pi-exclamation-triangle" />    
+                     </p:commandLink>                      
+                 </p:outputPanel>
+             </div> 
+    </div>
+</f:view>

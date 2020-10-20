@@ -1,0 +1,95 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                template="/WEB-INF/templates/defaultExterno.xhtml">
+
+    <ui:define name="header">        
+    </ui:define>
+    <ui:define name="content" >
+        <ui:include src="/WEB-INF/templates/cargando.xhtml"/>
+      
+        <h2>LISTA DE CURSOS</h2>
+        <br />
+        
+       
+        <h:form id="formularioPrincipal">
+       
+        <p:fieldset legend="FILTRO">
+         <div class="ui-g">
+           <div class="ui-g-12 ui-md-4 ui-lg-3"> 
+                  <p:outputLabel value="Departamento"/> 
+                  <p:selectOneMenu id="busDepartamento" value="#{cursoProgramacionAdministrado.nidDepartamento}" autoWidth="false"
+                        effect="fade" >
+                         <p:ajax listener="#{cursoProgramacionAdministrado.obtenerProvinciasFiltro()}" update="busProvincia, busDistrito, dlCursos" />
+                         <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                         <f:selectItems value="#{cursoProgramacionAdministrado.obtenerDepartamentos()}" var="departamentoBus" 
+                                      itemLabel="#{departamentoBus.txtDescripcion}" itemValue="#{departamentoBus.nidDepartamento}" />
+                  </p:selectOneMenu>
+           </div>
+           <div class="ui-g-12 ui-md-4 ui-lg-3">
+                  <p:outputLabel value="Provincia"/> 
+                  <p:selectOneMenu id="busProvincia" value="#{cursoProgramacionAdministrado.nidProvincia}" autoWidth="false"
+                        effect="fade" >
+                        <p:ajax listener="#{cursoProgramacionAdministrado.obtenerDistritosFiltro()}" update="busDistrito, dlCursos" />
+                        <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{cursoProgramacionAdministrado.listaProvincias}" var="provinciaBus" 
+                                      itemLabel="#{provinciaBus.txtDescripcion}" itemValue="#{provinciaBus.nidProvincia}" />
+                  </p:selectOneMenu>                  
+            </div>   
+            <div class="ui-g-12 ui-md-4 ui-lg-3">
+                   <p:outputLabel value="Distrito"/> 
+                   <p:selectOneMenu id="busDistrito" value="#{cursoProgramacionAdministrado.nidDistrito}" autoWidth="false"
+                        effect="fade" >
+                         <p:ajax process="@this" update="dlCursos" /> 
+                         <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                         <f:selectItems value="#{cursoProgramacionAdministrado.listaDistritos}" var="distritoBus" 
+                                      itemLabel="#{distritoBus.txtDescripcion}" itemValue="#{distritoBus.nidDistrito}" />
+                   </p:selectOneMenu>
+            </div>   
+            <div class="ui-g-12 ui-lg-3">
+                   <p:outputLabel value="Curso"/> 
+                   <p:selectOneMenu id="busCurso" value="#{cursoProgramacionAdministrado.nidCurso}" autoWidth="false"
+                        effect="fade" >
+                        <p:ajax process="@this" update="dlCursos" /> 
+                         <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                         <f:selectItems value="#{cursoAdministrado.obtenerCursosActivos()}" var="cursoActivo" 
+                                        itemLabel="#{cursoActivo.nombre}" itemValue="#{cursoActivo.nidCurso}" />
+                   </p:selectOneMenu>
+            </div>   
+        </div>   
+        </p:fieldset>
+            
+        <p:dataList id="dlCursos" value="#{cursoProgramacionAdministrado.cursosParaPublicar()}" 
+                     emptyMessage="No existen cursos disponibles en este momento"
+                     var="itemCurso" styleClass="bccursos">
+            <div class="ui-g">
+                <div class="ui-g-12 l24">
+                    <span class="bcurfecha">
+                     <h:outputText value="#{itemCurso.fechaIni}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                     </h:outputText> al 
+                     <h:outputText value="#{itemCurso.fechaFin}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                     </h:outputText>
+                    </span>
+                     <br/>
+                     <h:link outcome="/curso_inscripcion.xhtml" styleClass="bcurtitulo" includeViewParams="true" value="#{itemCurso.curso.nombre}">
+                         <f:param name="idc" value="#{itemCurso.nidCursoProg}"/>
+                     </h:link>
+                      <br/>
+                      Ciudad: <h:outputText value="#{itemCurso.ciudad}" /> 
+                      - Capacidad: <h:outputText value="#{itemCurso.capacidad}" />
+                </div>
+            </div>
+        </p:dataList>
+      
+       </h:form>
+               
+   </ui:define>
+</ui:composition> 
+
+

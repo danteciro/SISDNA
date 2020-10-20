@@ -1,0 +1,16 @@
+<f:view contentType="text/html"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <p:panelGrid columns="2" columnClasses="ui-grid-col-6,ui-grid-col-6 " layout="grid" class="pnoborder">
+        <p:outputLabel for="anularEstado" value="Estado: " />
+        <p:selectOneMenu id="anularEstado" value="#{inscripcionAdministrado.defensoria.flgActivo}">
+            <f:selectItem itemLabel="Inactivo" itemValue="0" />
+            <f:selectItem itemLabel="Activo" itemValue="1" />
+        </p:selectOneMenu>
+    </p:panelGrid>
+
+</f:view>

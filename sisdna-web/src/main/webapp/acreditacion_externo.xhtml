@@ -1,0 +1,133 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                template="/WEB-INF/templates/defaultExterno.xhtml">
+    <ui:define name="header">        
+    </ui:define>
+    <ui:define name="content" >
+         <ui:include src="/WEB-INF/templates/cargando.xhtml"/>
+      
+        <h2>FORMULARIO 004-DLSD</h2>
+        <h3>SOLICITUD DE ACREDITACIÓN DE DEFENSORÍA MUNICIPAL DE LA NIÑA, NIÑO Y ADOLESCENTE (DEMUNA) PARA ACTUAR EN EL PROCEDIMIENTO POR RIESGO DE DESPROTECCIÓN FAMILIAR</h3>
+        <br /><br />
+   <p:outputPanel id="pTodo">
+        <p:panelGrid id="pRespuesta" rendered="#{acreditacionAdministrado.verMensajeOK}" columns="1" layout="grid" columnClasses="ui-grid-col-12" class="pwhite" style="max-width: 1000px" >
+             <ui:include src="acreditacion/respuesta.xhtml"/>
+        </p:panelGrid>    
+        <p:growl id="mensajes" widgetVar="mensajes" showDetail="true" showSummary="false" life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true"/>
+           
+        <p:panelGrid id="pSolicitud" rendered="#{!acreditacionAdministrado.verMensajeOK}" columns="1" layout="grid" columnClasses="ui-grid-col-12" class="pnoborder" style="max-width: 1000px" >
+     
+        <p:fieldset legend="Búsqueda de Inscripciòn" style="width: 100%">
+          <h:form id="busInscripcion">
+              <p:tabView activeIndex="#{acreditacionAdministrado.indexTab}" >
+                 <p:ajax event="tabChange" listener="#{acreditacionAdministrado.cambiarBusqueda}" update="pSolicitud"></p:ajax>
+                 <p:tab title="Por Código de Defensoría"   >
+                    <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4,ui-grid-col-2" class="pnoborder" >
+                       <p:outputLabel for="txtCodigo" value="Ingrese el código de su defensoría: "/>
+                       <p:inputText id="txtCodigo" value="#{acreditacionAdministrado.busCodigo}" maxlength="5" converter="maskConCero"
+                                    required="#{acreditacionAdministrado.indexTab==0}"
+                                    title="Campo Obligatorio" style="width: 150px">
+                            <p:ajax event="blur" update="@this"/>
+                       </p:inputText>
+                         <pe:tooltip for="txtCodigo" value="Debe ingresar el código de la DNA" atPosition="bottom left" />
+       
+                    </p:panelGrid>
+                </p:tab>
+                
+                <p:tab title="Por Ubicación">
+                 <p:panelGrid columns="6" layout="grid" columnClasses="ui-grid-col-2,ui-grid-col-2,ui-grid-col-1,ui-grid-col-3,ui-grid-col-1,ui-grid-col-3" class="pnoborder">
+                
+                    <p:outputLabel for="busDepartamento" value="Departamento: "/>
+                    <p:selectOneMenu id="busDepartamento" value="#{acreditacionAdministrado.busDepartamento}" 
+                         effect="fade" required="#{acreditacionAdministrado.indexTab==1}" >
+                          <p:ajax listener="#{acreditacionAdministrado.obtenerProvinciasBus()}" update="busProvincia" />
+              
+                          <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                          <f:selectItems value="#{acreditacionAdministrado.obtenerDepartamentos()}" var="departamentoBus" 
+                                       itemLabel="#{departamentoBus.txtDescripcion}" itemValue="#{departamentoBus.nidDepartamento}" />
+                   </p:selectOneMenu>
+                                      
+                    <p:outputLabel for="busProvincia" value="Provincia "/>
+                    <p:selectOneMenu id="busProvincia" value="#{acreditacionAdministrado.busProvincia}"
+                         effect="fade" >
+                         <p:ajax listener="#{acreditacionAdministrado.obtenerDistritosBus()}" update="busDistrito" />
+              
+                         <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                         <f:selectItems value="#{acreditacionAdministrado.provinciasBus}" var="provinciaBus" 
+                                       itemLabel="#{provinciaBus.txtDescripcion}" itemValue="#{provinciaBus.nidProvincia}" />
+                   </p:selectOneMenu>
+                    
+                    <p:outputLabel for="busDistrito" value="Distrito "/>
+                    <p:selectOneMenu id="busDistrito" value="#{acreditacionAdministrado.busDistrito}" 
+                         effect="fade" >
+                          <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                          <f:selectItems value="#{acreditacionAdministrado.distritosBus}" var="distritoBus" 
+                                       itemLabel="#{distritoBus.txtDescripcion}" itemValue="#{distritoBus.nidDistrito}" />
+                   </p:selectOneMenu>
+                    </p:panelGrid>    
+                </p:tab>    
+             
+            </p:tabView>
+             <br /> 
+            <p:commandButton value="Buscar" process="@form"
+                             icon="ui-icon-disk" title="Guardar"
+                             actionListener="#{acreditacionAdministrado.buscarExterno()}" ajax="false" update="@this,fResDna,pForm"/>
+           
+          </h:form>
+        </p:fieldset>
+          <br /> 
+             <h:form id="fResDna">
+                <p:panelGrid  rendered="#{acreditacionAdministrado.inscripcionesEncontradas.size()==0}" columns="1" layout="grid" columnClasses="ui-grid-col-12" class="pnoborder" style="max-width: 1000px" >
+                     No se encontraron Defensorías registradas según el criterio de búsqueda. Por favor, envíenos un correo electrónico a correo@mimp.gob.pe solicitando el registro de su DNA.
+                </p:panelGrid>    
+                <p:panelGrid  rendered="#{acreditacionAdministrado.inscripcionesEncontradas.size()>0}" id="pResDna" columns="1" layout="grid" columnClasses="ui-grid-col-12" class="pnoborder" style="max-width: 1000px" >
+             <p:dataTable 
+                    id="resDna"
+                    widgetVar="resDna" 
+                    var="item" 
+                    value="#{acreditacionAdministrado.inscripcionesEncontradas}" 
+                    emptyMessage="No se encontraron registros"
+                    rowIndexVar="index"
+                    scrollable="true"
+                    rows="10" 
+                    paginator="true"
+                    resizableColumns="false"
+                    paginatorPosition="bottom"
+                    paginatorAlwaysVisible="true"
+                    rowsPerPageTemplate="5,10,15"
+                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}">
+                  >
+                     
+                       
+                    <f:facet name="header">
+                         SELECCIONE DEFENSORÍA
+                    </f:facet>
+                    <p:column headerText="CÓDIGO" class="left" width="10%">
+                        <h:outputText value="#{item.dna.txtConstancia}"  />
+                    </p:column>
+                    <p:column headerText="NOMBRE DE DNA" class="left" width="90%">
+                            <p:commandLink process="@this" update="@all" action="#{acreditacionAdministrado.generarAcreditacionExterna(item)}" title="Carga Datos de Defensoría" >
+                            <h:outputText value="#{item.dna.txtNombre}" />
+                        </p:commandLink>
+                    </p:column>
+                   
+                 </p:dataTable>
+                </p:panelGrid>
+             </h:form>   
+                <br />
+                <p:panelGrid id="pForm" rendered="#{acreditacionAdministrado.inscripcionSeleccionada.nidInscripcion!=null}"
+                     columns="1" layout="grid" columnClasses="ui-grid-col-12" class="pnoborder" style="max-width: 1000px" >
+            <ui:include src="acreditacion/panelFormExterno.xhtml"/>
+        </p:panelGrid>     
+    </p:panelGrid>      
+        </p:outputPanel>    
+   </ui:define>
+</ui:composition> 
+
+

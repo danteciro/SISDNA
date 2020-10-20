@@ -1,0 +1,43 @@
+<f:view contentType="text/html"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <div class="ui-g">
+        <div class="ui-g-12"> 
+               <p:outputLabel value="Observaciones"/> 
+               <p:inputTextarea rows="4" value="#{cursoInscripcionAdministrado.cursoInscripcion.obsObserva}" 
+                                required="true" requiredMessage="Debe ingresar las observaciones" />
+        </div>
+    </div>
+    <div class="ui-g">
+            <div class="ui-g-12 ui-md-6">
+                 <p:fileUpload fileUploadListener="#{cursoInscripcionAdministrado.uploadObs}" mode="advanced" allowTypes="/(\.|\/)(pdf)$/"
+                                           invalidFileMessage="Sólo puede subir archivos PDF" 
+                           label="Adjuntar documento PDF"  update="descargarObs, eliminarObs"
+                           auto="true" requiredMessage="Debe adjuntar un documento" > 
+                 </p:fileUpload>
+             </div> 
+              <div class="ui-g-12 ui-md-3">
+                 <p:outputPanel id="descargarObs">
+                     <p:commandLink ajax="false" process="@this" immediate="true" 
+                                    value="Descargar documento" 
+                                    rendered="#{cursoInscripcionAdministrado.cursoInscripcion.archivoObs!=null}" >
+                         <p:fileDownload value="#{cursoInscripcionAdministrado.descargarObs()}" />
+                      </p:commandLink>
+                       </p:outputPanel>    
+             </div>
+             <div class="ui-g-12 ui-md-3">
+                 <p:outputPanel id="eliminarObs">
+                     <p:commandLink  ajax="true" process="@this" rendered="#{cursoInscripcionAdministrado.cursoInscripcion.archivoObs!=null}"
+                                   value="Eliminar documento"   update="descargarObs, eliminarObs"
+                                   actionListener="#{cursoInscripcionAdministrado.eliminarObs()}">
+                           <p:confirm header="Confirmación" message="¿ Está seguro de eliminar el archivo?" icon="pi pi-exclamation-triangle" />    
+                     </p:commandLink>                      
+                 </p:outputPanel>
+             </div> 
+    </div>
+
+</f:view>

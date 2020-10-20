@@ -1,0 +1,121 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="/WEB-INF/templates/default.xhtml">
+    <ui:define name="header">
+    </ui:define>
+    <ui:define name="content" >
+        <ui:include src="/WEB-INF/templates/cargando.xhtml"/>
+        <div class="pcenter">
+            <p:outputLabel class="ptextGradient pred pbold ptitle" value="ACREDITACIÓN"/>    
+        </div>
+        <br></br>
+     
+        <h:form id="formularioPrincipal">
+            <p:growl id="mensajes" widgetVar="mensajes" showDetail="true" showSummary="false" life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true"/>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
+
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" style="width: 100%" class="boxshadowinside pnoborder">
+
+                <p:dataTable 
+                    id="tablaDocs"
+                    widgetVar="tablaDocs" 
+                    var="item" 
+                    value="#{acreditacionAdministrado.obtenerListaPorResponsable()}" 
+                    selection="#{acreditacionAdministrado.acreditacionSubsanar}"
+                    rowIndexVar="index"
+                    scrollable="true"
+                    paginator="false"
+                    resizableColumns="false"
+                    emptyMessage="No se encontraron registros"
+                  >
+
+                    <p:column headerText="ACCIONES" width="20%">                 
+                        <p:commandButton   rendered="#{!(item.estado.txtNombre eq 'NUEVA')}" 
+                                           icon="fa fa-file-pdf-o"
+                                           ajax="false" 
+                                           process="@this"  
+                                           title="Descargar Acreditación">
+                                <p:fileDownload value="#{acreditacionAdministrado.downloadAcreditacion(item)}" />
+                        </p:commandButton>
+                        
+                        <p:commandButton 
+                                        update=":dialogoVer" 
+                                        process="@this"
+                                        actionListener="#{acreditacionAdministrado.obtenerAcreditacionVer(item)}"
+                                        oncomplete="PF('dialogoVer').show();"  
+                                        title="Ver Acreditacion" icon="fa fa-eye">
+                        </p:commandButton>
+                        
+                        <p:commandButton update=":dialogoSubsanar" rendered="#{item.estado.txtNombre eq 'OBSERVADA'}"
+                                         actionListener="#{acreditacionAdministrado.obtenerAcreditacionActualizar(item)}" 
+                                         oncomplete="PF('dialogoSubsanar').show();" 
+                                         title="Subsanar" icon="fa fa-check-circle-o" value="SUBSANAR">
+                        </p:commandButton>
+                        
+                        <p:commandButton   rendered="#{item.estado.txtNombre eq 'DENEGADA'}" icon="fa fa-download"
+                                          ajax="false" process="@this">
+                               <p:fileDownload value="#{inscripcionAdministrado.downloadOficio(item)}" />
+                        </p:commandButton>
+                        
+                    </p:column>
+                   
+                    <p:column headerText="CÓDIGO" class="left" width="10%">
+                        <h:outputText value="#{item.padre.dna.txtConstancia}"  converter="maskConCero" />
+                    </p:column>
+                   <p:column headerText="ESTADO" class="left" width="10%">
+                        <h:outputText value="#{item.estado.txtNombre}" />
+                    </p:column>
+                    <p:column headerText="FECHA" class="left" width="15%">
+                       REGISTRO:<h:outputText value="#{item.fecRegistro}"  ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText><br/>
+                       <p:outputPanel rendered="#{item.fecObservado!=null}">
+                            OBSERVACIÓN:<h:outputText value="#{item.fecObservado}" ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText><br/>
+                       </p:outputPanel>
+                       <p:outputPanel rendered="#{item.fecSubsanado!=null}">
+                             SUBSANACIÓN:<h:outputText value="#{item.fecSubsanado}" ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText><br/>
+                       </p:outputPanel>
+                    </p:column>
+
+                    <p:column headerText="NOMBRE" class="left" width="45%">
+                        <h:outputText value="#{item.padre.dna.txtNombre}" />
+                    </p:column>
+                    <p:column headerText="NRO ORDENANZA" class="left" width="10%">
+                        <h:outputText value="#{item.txtNroOrdenanza}" />
+                    </p:column>
+                    
+                    <p:column headerText="ACTIVO" filterBy="#{item.flgActivo}" filterMatchMode="contains" class="pcenter" width="10%">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('tablaDocs').filter()">
+                                <f:selectItem itemLabel="Todos" itemValue="" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="Activo" itemValue="1" />
+                                <f:selectItem itemLabel="Inactivo" itemValue="0" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText value="#{item.flgActivo != 1? 'Inactivo':'Activo'}">
+                            <f:converter converterId="javax.faces.Character" />                                    
+                        </h:outputText>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:panelGrid>
+        </h:form>
+        <p:outputPanel id="pTodo" />
+         
+        <!-- Ver -->
+        <ui:include src="panelDialogVer.xhtml" />
+        <!-- Modals Subsanar -->
+        <ui:include src="panelDialogSubsanar.xhtml" />
+        
+        
+        
+
+    </ui:define>           
+</ui:composition>

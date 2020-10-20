@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="https://ws3.pide.gob.pe/services/PJAntecedentesPenales?wsdl" uri="wsdl/ws3.pide.gob.pe/services/PJAntecedentesPenales.wsdl"/>
+    <system systemId="https://ws3.pide.gob.pe/services/INPEAJudiciales?wsdl" uri="wsdl/ws3.pide.gob.pe/services/INPEAJudiciales.wsdl"/>
+    <system systemId="https://ws5.pide.gob.pe/services/ReniecConsultaDni?wsdl" uri="wsdl/ws5.pide.gob.pe/services/ReniecConsultaDni.wsdl"/>
+    <system systemId="https://ws3.pide.gob.pe/services/MininterAntPoliciales?wsdl" uri="wsdl/ws3.pide.gob.pe/services/MininterAntPoliciales.wsdl"/>
+</catalog>

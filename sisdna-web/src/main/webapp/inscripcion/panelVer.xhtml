@@ -1,0 +1,146 @@
+<f:view contentType="text/html"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-3"><p:outputLabel value="Código de la DNA:"/>  </div>
+                    <div class="ui-g-9"><p:outputLabel  value="#{inscripcionAdministrado.inscripcionVer.dna.txtConstancia}"/>  </div>
+                </div>
+               <div class="ui-g">
+                    <div class="ui-g-12 ui-md-3"><p:outputLabel value="Nombre de la entidad responsable:"/>  </div>
+                    <div class="ui-g-9"><p:outputLabel  value="#{inscripcionAdministrado.inscripcionVer.dna.txtEntidad}"/>  </div>
+                </div>
+                <div class="ui-g">
+                    <div class="ui-g-3"><p:outputLabel value="Nombre de la DNA:"/></div>
+                    <div class="ui-g-9"><p:outputLabel value="#{inscripcionAdministrado.inscripcionVer.dna.txtNombre}"/></div>
+                </div>
+                 <div class="ui-g">
+                    <div class="ui-g-12 ui-md-3"><p:outputLabel value="Departamento:"/> </div>
+                    <div class="ui-g-12 ui-md-2"><p:outputLabel value="#{inscripcionAdministrado.getNombreDepartamentoInsVer()}" />  </div>
+                    <div class="ui-g-12 ui-md-1"><p:outputLabel value="Provincia:"/></div>
+                    <div class="ui-g-12 ui-md-2"><p:outputLabel value="#{inscripcionAdministrado.getNombreProvinciaInsVer()}" /></div>
+                    <div class="ui-g-12 ui-md-1"><p:outputLabel value="Distrito:"/></div>
+                    <div class="ui-g-12 ui-md-3"><p:outputLabel value="#{inscripcionAdministrado.getNombreDistritoInsVer()}" /></div>
+                </div>
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-3"> <p:outputLabel for="txtDocumento" value="Documento de Creación / Constitución de la DNA"/> </div>
+                    <div class="ui-g-12 ui-md-9">
+                        <p:inputText readonly="true" id="txtDocumento" value="#{inscripcionAdministrado.inscripcionVer.txtDocumento}"/>
+                    </div>
+                </div>
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-3"> <p:outputLabel for="txtDireccion" value="Dirección de la DNA"/> </div>
+                    <div class="ui-g-12 ui-md-9">
+                            <p:inputText readonly="true" id="txtDireccion" value="#{inscripcionAdministrado.inscripcionVer.txtDireccion}"/>
+                    </div>
+                </div>
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-3">    <p:outputLabel for="txtCorreo" value="Correo electrónico de contacto"/> </div>
+                    <div class="ui-g-12 ui-md-5">
+                        <p:inputText readonly="true" id="txtCorreo"  value="#{inscripcionAdministrado.inscripcionVer.txtCorreo}"/>
+                    </div>
+                    <div class="ui-g-12 ui-md-2"> <p:outputLabel for="txtTelefono" value="Teléfono(s)"/></div>
+                    <div class="ui-g-12 ui-md-2">  
+                        <p:inputText readonly="true" id="txtTelefono"  value="#{inscripcionAdministrado.inscripcionVer.txtTelefono}"/>
+                    </div>    
+                </div>
+              
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-3"> <p:outputLabel for="txtGerencia" value="Dirección o Gerencia a la que pertenece la DNA"/> </div>
+                    <div class="ui-g-12 ui-md-9">
+                        <p:inputText readonly="true" id="txtGerencia"  value="#{inscripcionAdministrado.inscripcionVer.txtGerencia}"/>
+                    </div>
+                </div>
+              
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-3"><p:outputLabel for="txtDias" value="Días y horas de Atención"/></div>
+                    <div class="ui-g-12 ui-md-3">
+                        <p:inputText readonly="true" id="txtDias"  value="#{inscripcionAdministrado.inscripcionVer.dias}"/>
+                    </div>
+                    <div class="ui-g-12 ui-md-4"><p:outputLabel for="txtPresupuesto" value="Presupuesto asignado a la DNA (en Soles)"/></div>
+                    <div class="ui-g-12 ui-md-2">  
+                        <p:inputNumber readonly="true" id="txtPresupuesto"  value="#{inscripcionAdministrado.inscripcionVer.presupuesto}"/>
+                     </div>    
+                </div>
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-3"><p:outputLabel for="txtAmbientes" value="Número de ambientes con los que cuenta la DNA"/></div>
+                    <div class="ui-g-12 ui-md-1">
+                        <p:inputNumber readonly="true" id="txtAmbientes"  value="#{inscripcionAdministrado.inscripcionVer.ambientes}"/>
+                    </div>
+                    <div class="ui-g-12 ui-md-5"><p:outputLabel for="txtAmbientesPrivadas" value="Número de ambientes para audiencias privadas"/></div>
+                    <div class="ui-g-12 ui-md-1">  
+                        <p:inputNumber readonly="true" id="txtAmbientesPrivadas"  value="#{inscripcionAdministrado.inscripcionVer.ambientesPriv}"/>
+                     </div>    
+                </div>
+           
+             <p:panelGrid id="pTabla" columns="1" columnClasses="ui-grid-col-12" layout="grid" class="boxshadowinside pnoborder">
+
+                <p:dataTable 
+                    id="tablaVer"
+                    widgetVar="tablaVer" 
+                    var="itemPersonal" 
+                    value="#{inscripcionAdministrado.personalVer}" 
+                    rowIndexVar="index"
+                    scrollable="true"
+                    paginator="false"
+                    resizableColumns="false"
+                    emptyMessage="No ha sido agregado el personal de la DNA">
+
+                    <p:column headerText="ACCIONES"  class="pcenter" width="10%">                                       	                                
+                        <p:commandButton update=":dialogoVerPersonaEquipo"  process="@this"
+                                    actionListener="#{inscripcionAdministrado.obtenerPersonaVer(itemPersonal)}" 
+                                    oncomplete="PF('dialogoVerPersonaEquipo').show();"  
+                                    title="Ver Persona" icon="fa fa-eye">
+                        </p:commandButton>
+                     
+                    </p:column>
+
+                    <p:column headerText="FUNCIÓN"  class="pcenter" width="15%">
+                        <h:outputText value="#{itemPersonal.funcion.txtNombre}" />
+                    </p:column>
+                    <p:column headerText="NOMBRES"  class="pcenter" width="20%">
+                        <h:outputText value="#{itemPersonal.txtNombre1}" />
+                    </p:column>
+
+                    <p:column headerText="APELLIDO PATERNO" class="pcenter" width="15%">
+                        <h:outputText value="#{itemPersonal.txtApellidoPaterno}" />
+                    </p:column>
+
+                    <p:column headerText="APELLIDO MATERNO" class="pcenter" width="15%">
+                        <h:outputText value="#{itemPersonal.txtApellidoMaterno}" />
+                    </p:column>
+
+                    <p:column headerText="SEXO" class="pcenter" width="5%">
+                        <h:outputText value="#{itemPersonal.txtSexo}" />
+                    </p:column>
+                </p:dataTable>
+
+            </p:panelGrid>
+             
+            <p:dataList id="dlAdjuntos" value="#{inscripcionAdministrado.adjuntos}" var="doc" type="definition" rowIndexVar="indexDoc"
+                        emptyMessage="No se adjuntaron documentos">
+                <c:set var="nombreFile" value="inscripcionAdministrado.file${indexDoc}" />
+                <f:facet name="header">
+                    Adjuntar Documentos
+                </f:facet>
+                <div class="ui-g">
+                    <div class="ui-g-12 hidden-md">#{doc.tipo.txtNombre}: <h:outputText value="#{inscripcionAdministrado.getFileName(doc)}"/> </div>   
+                    <div class="ui-g-12 hidden-xs ui-md-6">
+                       <p:outputPanel  id="dwArchivo" >
+                            <p:commandLink  ajax="false" process="@this" immediate="true"
+                                 value="Descargar #{inscripcionAdministrado.getFileName(doc)}"
+                                 rendered="#{inscripcionAdministrado.getFileName(doc)!=null}">
+                            <p:fileDownload value="#{inscripcionAdministrado.obtenerNombreAdjunto(doc)}" />
+                        </p:commandLink>
+                        
+                       </p:outputPanel>    
+                    </div>
+                    
+                </div>
+                    
+            </p:dataList>
+</f:view>

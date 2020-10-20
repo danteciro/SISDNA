@@ -1,0 +1,176 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="/WEB-INF/templates/default.xhtml">
+    <ui:define name="header">
+    </ui:define>
+    <ui:define name="content" >
+        <ui:include src="/WEB-INF/templates/cargando.xhtml"/>
+        <div class="pcenter">
+            <p:outputLabel class="ptextGradient pred pbold ptitle" value="Usuarios"/>    
+        </div>
+        <br></br>
+        <h:form>
+            <p:fieldset legend="Filtros/Opciones:">
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-3" layout="grid" class="pnoborder pright">
+                    <p:commandButton value="Nuevo Usuario Interno" onclick="PF('dialogoUsuarioInterno').show();" icon="fa fa-user" title="Crea un nuevo usuario interno" class="sombra">
+                        <p:resetInput target=":dialogoUsuarioInterno" />
+                    </p:commandButton>
+                </p:panelGrid>
+            </p:fieldset>
+        </h:form>
+        <h:form id="formularioPrincipal">
+            <p:growl id="mensajes" widgetVar="mensajes" showDetail="true" life="#{parametroSirnaAdministrado.tiempoAlertas()}" autoUpdate="true"/>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
+
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="boxshadowinside pnoborder">
+
+                <p:dataTable 
+                    id="tablaUsuarios"
+                    widgetVar="tablaUsuarios" 
+                    var="itemUsuario" 
+                    value="#{usuarioAdministrado.obtenerEntidadesModuloTodos()}" 
+                    selection="#{usuarioAdministrado.entidad}"
+                    rowIndexVar="index"
+                    scrollable="true"
+                    rows="10" 
+                    paginator="true"
+                    resizableColumns="false"
+                    paginatorPosition="bottom"
+                    paginatorAlwaysVisible="true"
+                    rowsPerPageTemplate="5,10,15"
+                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}">
+
+                    <p:column headerText="ACCIONES" width="100">                                       	                                
+                        <p:commandButton update=":dialogoPerfil" oncomplete="PF('dialogoPerfil').show();" actionListener="#{perfilAdministrado.obtenerPerfilPorModulo(itemUsuario,2)}" title="Editar Perfil" icon="fa fa-pencil">
+                            <f:setPropertyActionListener value="#{itemUsuario}" target="#{usuarioAdministrado.entidad}"/>
+                        </p:commandButton>
+                        <p:commandButton update=":dialogoContrasena" oncomplete="PF('dialogoContrasena').show();"  title="Cambiar Contraseña" icon="fa fa-key">
+                            <f:setPropertyActionListener value="#{itemUsuario}" target="#{usuarioAdministrado.entidad}"/>
+                            <p:resetInput target=":dialogoContrasena" />
+                        </p:commandButton>
+                        <p:commandButton update=":dialogoAnular" oncomplete="PF('dialogoAnular').show();"  title="Anular" icon="fa fa-trash">
+                            <f:setPropertyActionListener value="#{itemUsuario}" target="#{usuarioAdministrado.entidad}"/>
+                        </p:commandButton>
+                    </p:column>
+
+                    <p:column headerText="Nombre de Usuario" filterBy="#{itemUsuario.txtUsuario}" filterMatchMode="contains" class="pcenter">
+                        <h:outputText id="nombre" value="#{itemUsuario.txtUsuario}" />
+                        <pe:tooltip for="formularioPrincipal:tablaUsuarios:#{index}:nombre" value="#{itemUsuario.txtUsuario}" atPosition="bottom left" />
+                    </p:column>
+
+                    <p:column headerText="Perfil" filterBy="#{perfilAdministrado.obtenerPerfilPorModulo(itemUsuario,1).txtPerfil}"  filterMatchMode="contains" class="pcenter">
+                        <h:outputText value="#{perfilAdministrado.obtenerPerfilPorModulo(itemUsuario,1).txtPerfil}"/>
+                    </p:column>
+
+                    <p:column headerText="Cargo" filterBy="#{itemUsuario.persona.cargo.txtDescripcion}" filterMatchMode="contains" class="pcenter">
+                        <h:outputText value="#{itemUsuario.persona.cargo.txtDescripcion}" />
+                    </p:column>
+
+                    <p:column headerText="Nombres" filterBy="#{itemUsuario.persona.txtNombres}" filterMatchMode="contains" class="pcenter">
+                        <h:outputText value="#{itemUsuario.persona.txtNombres}" />
+                    </p:column>
+
+                    <p:column headerText="Apellido Paterno" filterBy="#{itemUsuario.persona.txtApellidoPaterno}" filterMatchMode="contains" class="pcenter">
+                        <h:outputText value="#{itemUsuario.persona.txtApellidoPaterno}" />
+                    </p:column>
+
+                    <p:column headerText="Apellido Materno" filterBy="#{itemUsuario.persona.txtApellidoMaterno}" filterMatchMode="contains" class="pcenter">
+                        <h:outputText value="#{itemUsuario.persona.txtApellidoMaterno}" />
+                    </p:column>
+
+                    <p:column headerText="ACTIVO" filterBy="#{itemUsuario.flgActivo}" filterMatchMode="contains" class="pcenter" width="120">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('tablaUsuarios').filter()">
+                                <f:selectItem itemLabel="Todos" itemValue="" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="Activo" itemValue="1" />
+                                <f:selectItem itemLabel="Inactivo" itemValue="0" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText value="#{itemUsuario.flgActivo != 1? 'Inactivo':'Activo'}">
+                            <f:converter converterId="javax.faces.Character" />                                    
+                        </h:outputText>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:panelGrid>
+        </h:form>
+
+        <p:dialog modal="true" dynamic="true" id="dialogoContrasena" widgetVar="dialogoContrasena" header="Cambiar Contraseña" draggable="true" resizable="false" closable="true" closeOnEscape="true" showEffect="puff" hideEffect="puff" width="400">
+            <h:form>
+                <ui:include src="../../contrasena.xhtml"/>
+                <br></br>
+                 <div class="ui-g">
+                    <div class="ui-md-5 nopad">
+                       <p:commandButton value="Guardar" actionListener="#{usuarioAdministrado.actualizarContrasena(usuarioAdministrado.entidad)}" update="@form :formularioPrincipal:tablaUsuarios" oncomplete="if (!args.validationFailed) PF('dialogoContrasena').hide()" icon="ui-icon-disk" title="Guarda los cambios"/>
+                     </div>
+                    <div class="ui-md-2 nopad"> </div>
+                    <div class="ui-md-5 nopad">
+                           <p:commandButton value="Cerrar" onclick="PF('dialogoContrasena').hide();" immediate="true" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                    </div>
+                </div>
+              
+            </h:form>
+        </p:dialog>
+
+        <p:dialog modal="true" dynamic="true" id="dialogoPerfil" widgetVar="dialogoPerfil" header="Editar Perfil" draggable="true" resizable="false" closable="true" closeOnEscape="true" showEffect="puff" hideEffect="puff" width="850">
+            <h:form>
+                <ui:include src="../panelPerfil.xhtml"/>
+                <br></br>
+                <div class="ui-g">
+                    <div class="ui-md-5 nopad">
+                       <p:commandButton value="Guardar" actionListener="#{perfilAdministrado.editarPerfil(usuarioAdministrado.entidad)}" update="@form :formularioPrincipal:tablaUsuarios" oncomplete="PF('dialogoPerfil').hide()" icon="ui-icon-disk" title="Guarda los cambios"/>	
+                    </div>
+                    <div class="ui-md-2 nopad"> </div>
+                    <div class="ui-md-5 nopad">
+                      <p:commandButton value="Cerrar" onclick="PF('dialogoPerfil').hide();" immediate="true" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                   </div>
+                </div>
+               
+            </h:form>
+        </p:dialog>
+
+        <p:dialog modal="true" id="dialogoUsuarioInterno" widgetVar="dialogoUsuarioInterno" header="Nuevo Usuario" closeOnEscape="true" resizable="false" width="900px" dynamic="false">
+            <h:form>
+                <ui:include src="../panelUsuario.xhtml" />
+                <br></br>
+                <div class="ui-g">
+                    <div class="ui-md-4 nopad">
+                         <p:commandButton value="Guardar" actionListener="#{usuarioAdministrado.nuevoUsuario()}" update="@form :formularioPrincipal:tablaUsuarios" oncomplete="if (!args.validationFailed) PF('dialogoUsuarioInterno').hide()" icon="ui-icon-disk" title="Guarda los cambios"/>	
+                    </div>
+                    <div class="ui-md-4 nopad"> </div>
+                    <div class="ui-md-4 nopad">
+                         <p:commandButton value="Cerrar" onclick="PF('dialogoUsuarioInterno').hide();" immediate="true" type="button" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                    </div>
+                </div>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog modal="true" dynamic="true" id="dialogoAnular" widgetVar="dialogoAnular" header="Estado del Usuario" draggable="true" resizable="false" closable="true" closeOnEscape="true" width="280" >
+            <h:form>
+                <ui:include src="../panelAnular.xhtml" />
+                <br></br>
+                <div class="ui-g">
+                    <div class="ui-md-5 nopad">
+                       <p:commandButton value="Guardar" actionListener="#{usuarioAdministrado.anular(usuarioAdministrado.entidad)}" update="@form :formularioPrincipal:tablaUsuarios" oncomplete="PF('dialogoAnular').hide()" icon="ui-icon-disk" title="Guarda los cambios"/>	
+                    </div>
+                    <div class="ui-md-2 nopad"> </div>
+                    <div class="ui-md-5 nopad">
+                       <p:commandButton value="Cerrar" onclick="PF('dialogoAnular').hide();" immediate="true" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                    </div>
+                </div>
+              
+            </h:form>
+        </p:dialog>
+
+    </ui:define>           
+</ui:composition>
