@@ -434,7 +434,7 @@ public class ReporteAdministrado extends AdministradorAbstracto implements Seria
             cell.setCellStyle(style);
             
             Usuario u = usuarioAdministrado.getEntidad(this.busTutor.toPlainString());
-//            cell.setCellValue(u.getPersona().nombreApellidos());
+            cell.setCellValue(u.getPersona().nombreApellidos());
         }
     
         if(this.busEstadoEval!=null) {

@@ -307,7 +307,7 @@ public class CursoInscripcionAdministrado extends AdministradorAbstracto impleme
             cell.setCellStyle(style);
             
             Usuario u = usuarioAdministrado.getEntidad(this.busTutor.toPlainString());
-           // cell.setCellValue(u.getPersona().nombreApellidos());
+            cell.setCellValue(u.getPersona().nombreApellidos());
             sheet.addMergedRegion(new CellRangeAddress(num-1,num-1, 1, 4));
         }
     
@@ -1606,7 +1606,7 @@ public class CursoInscripcionAdministrado extends AdministradorAbstracto impleme
         salida.setNroRd(cprog.getRdNro());
         
         UsuarioAdministrado usuarioAdministrado = (UsuarioAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{usuarioAdministrado}", UsuarioAdministrado.class);
-//        salida.setNombreTutor(usuarioAdministrado.getUsuarioPorId(cprog.getNidTutor()).getPersona().nombreApellidos());
+        salida.setNombreTutor(usuarioAdministrado.getUsuarioPorId(cprog.getNidTutor()).getPersona().nombreApellidos());
         salida.setNotaFinal(item.getNotaEval().toPlainString());
         
         DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.ENGLISH);
@@ -1746,7 +1746,7 @@ public class CursoInscripcionAdministrado extends AdministradorAbstracto impleme
             correoDnaAdministrado.getCorreo().setHtml(true);
             
             if(this.cursoInscripcion.getArchivoObs()!=null)
-            //    correoDnaAdministrado.getCorreo().addAttach(this.cursoInscripcion.getArchivoObs(), "documento.pdf");
+                correoDnaAdministrado.getCorreo().addAttach(this.cursoInscripcion.getArchivoObs(), "documento.pdf");
             
             correoDnaAdministrado.getCorreo().enviarCorreo();
             
@@ -1777,7 +1777,7 @@ public class CursoInscripcionAdministrado extends AdministradorAbstracto impleme
             correoDnaAdministrado.getCorreo().setHtml(true);
             
             if(this.cursoInscripcion.getArchivoRechazo()!=null)
-         //       correoDnaAdministrado.getCorreo().addAttach(this.cursoInscripcion.getArchivoRechazo(), "documento.pdf");
+                correoDnaAdministrado.getCorreo().addAttach(this.cursoInscripcion.getArchivoRechazo(), "documento.pdf");
             
             correoDnaAdministrado.getCorreo().enviarCorreo();
             
@@ -1808,7 +1808,7 @@ public class CursoInscripcionAdministrado extends AdministradorAbstracto impleme
             correoDnaAdministrado.getCorreo().setHtml(true);
             
             if(this.cursoInscripcion.getArchivoOficio()!=null)
-//                correoDnaAdministrado.getCorreo().addAttach(this.cursoInscripcion.getArchivoOficio(), "oficio.pdf");
+                correoDnaAdministrado.getCorreo().addAttach(this.cursoInscripcion.getArchivoOficio(), "oficio.pdf");
             
             correoDnaAdministrado.getCorreo().enviarCorreo();
             
@@ -1862,10 +1862,10 @@ public class CursoInscripcionAdministrado extends AdministradorAbstracto impleme
             correoDnaAdministrado.getCorreo().setTitulo(MimeUtility.encodeText("Notificación de Aprobación del Curso", "utf-8", "B"));
             correoDnaAdministrado.getCorreo().setContenido(contenido);
             correoDnaAdministrado.getCorreo().setHtml(true);
-//            correoDnaAdministrado.getCorreo().addAttach(this.cursoInscripcion.getArchivoCert(),"certificado.pdf");
+            correoDnaAdministrado.getCorreo().addAttach(this.cursoInscripcion.getArchivoCert(),"certificado.pdf");
             
             if(this.cursoInscripcion.getCursoProgramacion().isFlgGenerard() && this.cursoInscripcion.getCursoProgramacion().getArchivoRd()!=null)
-              //  correoDnaAdministrado.getCorreo().addAttach(this.cursoInscripcion.getCursoProgramacion().getArchivoRd(),"resdirectoral.pdf");
+                correoDnaAdministrado.getCorreo().addAttach(this.cursoInscripcion.getCursoProgramacion().getArchivoRd(),"resdirectoral.pdf");
             
             correoDnaAdministrado.getCorreo().enviarCorreo();
             
