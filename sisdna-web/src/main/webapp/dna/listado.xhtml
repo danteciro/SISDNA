@@ -19,6 +19,18 @@
           <p:growl id="messages" widgetVar="messages"  globalOnly="false" showDetail="true" showSummary="false" life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true" severity="warn, info"/>
   
         <h:form id="frmNuevo" > 
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" >
+               <div class="ui-g">
+                   <div class="ui-md-5 nopad">
+                       <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"  />
+                   </div>
+                   <div class="ui-md-2 nopad"></div>
+                   <div class="ui-md-5 nopad">
+                       <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"  />
+                   </div>
+               </div>
+                
+            </p:confirmDialog> 
           <p:outputPanel rendered="#{defensoriaAdministrado.modo > 0}">
                <div class="ui-g">
                     <div class="ui-g-12 ui-md-3">
