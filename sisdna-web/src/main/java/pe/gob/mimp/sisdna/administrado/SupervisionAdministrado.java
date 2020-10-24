@@ -288,7 +288,7 @@ public class SupervisionAdministrado extends AdministradorAbstracto implements S
             cell = row.createCell(1);
             cell.setCellStyle(style);
             Usuario u = usuarioAdministrado.getEntidad(this.busSupervisor.toPlainString());
-          //  cell.setCellValue(u.getPersona().nombreApellidos());
+            cell.setCellValue(u.getPersona().getTxtNombres());
             sheet.addMergedRegion(new CellRangeAddress(num-1,num-1, 1, 4));
         }
     

@@ -17,6 +17,7 @@ import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ComponentSystemEvent;
 import javax.faces.validator.ValidatorException;
+import org.apache.commons.lang.StringUtils;
 import pe.gob.mimp.core.Internet;
 import pe.gob.mimp.general.fachada.DistritoFacadeLocal;
 import pe.gob.mimp.general.fachada.ProvinciaFacadeLocal;
@@ -24,6 +25,7 @@ import pe.gob.mimp.general.fachada.administrado.AdministradorAbstracto;
 import pe.gob.mimp.general.modelo.Departamento;
 import pe.gob.mimp.general.modelo.Distrito;
 import pe.gob.mimp.general.modelo.Provincia;
+import pe.gob.mimp.general.util.ParametroNodo;
 import pe.gob.mimp.general.util.ParametroNodoObject;
 import pe.gob.mimp.seguridad.administrado.UsuarioAdministrado;
 import pe.gob.mimp.sisdna.fachada.CatalogoFacadeLocal;
@@ -54,14 +56,22 @@ public class DefensoriaAdministrado extends AdministradorAbstracto implements Se
     private List<DefensoriaPersona> personalRemover;
     
     private int modo;
-  
+    
     private BigDecimal busDepartamento;
     private BigDecimal busProvincia;
     private BigDecimal busDistrito;
     private String busCodigo;
- 
+    private BigInteger busEstado;
+   
     private IdentificacionReniec identificacionReniec;
- 
+    private String codigo;
+    private boolean verOrigen;
+    private String nombreSede;
+    private List<Provincia> provincias;
+    private List<Distrito> distritos;
+    private List<Provincia> provinciasDna;
+    private List<Distrito> distritosDna;
+    
     @EJB
     private DefensoriaFacadeLocal defensoriaFacade;
    
@@ -81,8 +91,26 @@ public class DefensoriaAdministrado extends AdministradorAbstracto implements Se
     public void initLoad() {
       this.modo = Constantes.MODO_LISTADO;
       this.identificacionReniec = new IdentificacionReniec();
+      this.verOrigen = true;
+      this.nombreSede = "";
+   
+  }
+    
+    
+        
+    /**
+     * Nueva dna
+     */
+    public void nuevaDna(){
+       this.defensoria = new Defensoria();
+       this.defensoria.setTxtTipo(Constantes.TIPO_SEDE_CENTRAL);
+       this.verOrigen = true;
+       this.codigo = null;
+       this.nombreSede = "";
+        
     }
     
+   
      /**
      * cambia para regresar al modo listado
      */
@@ -107,7 +135,188 @@ public class DefensoriaAdministrado extends AdministradorAbstracto implements Se
     
     public void obtener(BigInteger nidDna) {
         this.defensoria = this.defensoriaFacade.find(nidDna);
+        this.listaDefensoriaPersona = this.defensoria.getListaPersonaDna(); 
+        if(this.listaDefensoriaPersona==null)
+            this.listaDefensoriaPersona = new ArrayList<>();
+        
         this.modo = Constantes.MODO_UPDATE;
+    }
+    
+      /**
+     * Obtener defensoria
+     * @param item - Defensoria
+     */
+    public void obtenerDefensoria(Defensoria item) {
+        this.defensoria = item;
+        this.verOrigen = this.defensoria.getTxtTipo().equals("CEN");
+        if(item.getTxtTipo().equals("ANX")) {
+            this.codigo = item.getTxtConstancia();
+            this.nombreSede = item.getCentral().getTxtNombre();       
+        }
+        this.obtenerProvincias();
+        this.obtenerDistritos();
+    }
+    
+    
+      /**
+    * Validar el formulario de defensoria. 
+    * Si seleccionó ANEXO entonces debe buscar una sede central antes de guardar
+    * @param event - ComponentSystemEvent - evento posterior a la validación de componentes
+    */
+   public void validarDna(final ComponentSystemEvent event) {
+       
+        FacesContext fc = FacesContext.getCurrentInstance();
+        final UIComponent formulario = event.getComponent();
+        final UIInput txtCodigo = (UIInput) formulario.findComponent("txtCodigo");
+       
+        if(this.defensoria.getTxtTipo().equals(Constantes.TIPO_SEDE_ANEXO) && this.nombreSede.equals("")) {
+            adicionarMensajeError("Error","Debe ingresar el código de DNA de la sede central");
+            txtCodigo.setValid(false);
+            fc.validationFailed();
+            fc.renderResponse(); 
+        }
+
+    }
+   
+      /**
+     * Crear Dna
+     */
+    public void createDna() {
+        
+        try {
+            
+            Catalogo estado = new Catalogo();
+            estado.setNidCatalogo(Constantes.CATALOGO_DNA_NUEVO);// id catalogo para estado NUEVO
+            UsuarioAdministrado usuarioAdministrado = (UsuarioAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{usuarioAdministrado}", UsuarioAdministrado.class);
+            
+            if(this.defensoria.getTxtTipo().equals(Constantes.TIPO_SEDE_CENTRAL)) {
+                String cidDepartamento = StringUtils.leftPad(String.valueOf(this.defensoria.getNidDepartamento()), 2, '0') ;
+                String numero = StringUtils.leftPad(String.valueOf(800 + this.defensoriaFacade.getNroConstancia(this.defensoria.getNidDepartamento())),3,'0');
+                this.defensoria.setTxtConstancia(cidDepartamento.concat(numero));
+            } else 
+                this.defensoria.setTxtConstancia(this.codigo);
+            
+            this.defensoria.setMigrado(0);
+            this.defensoria.setNidUsuarioReg(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
+            this.defensoria.setEstado(estado);
+            this.defensoria.setTxtPc(Internet.obtenerNombrePC());
+            this.defensoria.setTxtIp(Internet.obtenerIPPC());
+            this.defensoria.setFecRegistro(new Date());
+            this.defensoria.setFlgActivo(BigInteger.ONE);
+            this.defensoria.setDefensoriaInfo(null);
+            this.defensoriaFacade.create(this.defensoria);
+            
+            // muestra el listado de defensorias nuevas
+          //  this.tabView.setActiveIndex(2);
+           // this.busEstado = Constantes.CATALOGO_ESTADO_NUEVO;
+           // this.busTipo = "1"; // buscar defensorias
+           // this.cargarNuevasDna();
+             adicionarMensaje("","La defensoría ha sido registrada con éxito.");
+             
+        } catch (Exception e) {
+            adicionarMensajeError("Error al crear la defensoría", e.getMessage());
+        }
+  
+    }
+    
+      
+      /**
+     * Acutalizar los datos de la defensoría
+     */
+    public void update() {
+         try {
+            
+            UsuarioAdministrado usuarioAdministrado = (UsuarioAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{usuarioAdministrado}", UsuarioAdministrado.class);
+            this.defensoria.setNidUsuarioMod(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
+            this.defensoria.setTxtPc(Internet.obtenerNombrePC());
+            this.defensoria.setTxtIp(Internet.obtenerIPPC());
+            this.defensoria.setFecModificacion(new Date());
+            this.defensoria.setFlgActivo(BigInteger.ONE);
+            this.defensoriaFacade.edit(this.defensoria);
+            this.modo = Constantes.MODO_LISTADO;
+            adicionarMensaje("", "La Defensoría ha sido actualizada con éxito");
+            
+        } catch (Exception e) {
+            adicionarMensajeWarning("", "Error al actualizar la Defensoría");
+        }
+    }
+    
+      public void updateTodo() {
+         try {
+            
+            UsuarioAdministrado usuarioAdministrado = (UsuarioAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{usuarioAdministrado}", UsuarioAdministrado.class);
+            this.defensoria.setNidUsuarioMod(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
+            this.defensoria.setTxtPc(Internet.obtenerNombrePC());
+            this.defensoria.setTxtIp(Internet.obtenerIPPC());
+            this.defensoria.setFecModificacion(new Date());
+            this.defensoria.setFlgActivo(BigInteger.ONE);
+            this.defensoriaFacade.edit(this.defensoria);
+            
+            List<DefensoriaPersona> listaFinal = new ArrayList<>();
+           
+             
+            for (DefensoriaPersona personal : this.listaDefensoriaPersona) {
+                   
+                if(!personal.getFuncion().getNidCatalogo().equals(Constantes.CATALOGO_FUNCION_RESPONSABLE))
+                      personal.setTxtDocDesignacion(null);
+                
+                personal.setNidUsuarioReg(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
+                personal.setTxtPc(Internet.obtenerNombrePC());
+                personal.setTxtIp(Internet.obtenerIPPC());
+                personal.setFecRegistro(new Date());
+                personal.setFlgActivo(BigInteger.ONE);
+                listaFinal.add(personal);
+            }
+            
+            // cambiar a inactivo el personal removido
+            for (DefensoriaPersona personal : this.personalRemover) {
+                personal.setNidUsuarioMod(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
+                personal.setTxtPc(Internet.obtenerNombrePC());
+                personal.setTxtIp(Internet.obtenerIPPC());
+                personal.setFecModificacion(new Date());
+                personal.setFlgActivo(BigInteger.ZERO);
+                listaFinal.add(personal);
+               
+            }
+            
+            this.defensoria.setListaPersonaDna(listaFinal);
+            
+            this.modo = Constantes.MODO_LISTADO;
+            adicionarMensaje("", "La Defensoría ha sido actualizada con éxito");
+            
+        } catch (Exception e) {
+            adicionarMensajeWarning("", "Error al actualizar la Defensoría");
+        }
+    }
+         
+   
+    /**
+     * Anular Dna
+     */
+    public void anular() {
+        try {
+            UsuarioAdministrado usuarioAdministrado = (UsuarioAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{usuarioAdministrado}", UsuarioAdministrado.class);
+            this.defensoria.setNidUsuarioMod(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
+            this.defensoria.setTxtPc(Internet.obtenerNombrePC());
+            this.defensoria.setTxtIp(Internet.obtenerIPPC());
+            this.defensoria.setFecModificacion(new Date());
+            this.defensoriaFacade.edit(this.defensoria);
+             adicionarMensaje("","La defensoría ha cambiado su estado con éxito.");
+        } catch (Exception e) {
+           adicionarMensajeError("","Error al anular DNA");
+        }
+    }
+    
+    /**
+     * Cargar nuevas Dna
+     */
+    public void cargarNuevasDna(){
+         ParametroNodoObject param = new ParametroNodoObject();
+         Catalogo estado = new Catalogo();
+         estado.setNidCatalogo(Constantes.CATALOGO_ESTADO_NUEVO);
+         param.adicionar("estado", estado);
+         this.listaDefensoria = this.defensoriaFacade.obtenerPorParametrosObject(param, true, "txtNombre", true);
+
     }
     
      /**
@@ -163,33 +372,17 @@ public class DefensoriaAdministrado extends AdministradorAbstracto implements Se
         if(this.busDistrito!=null)
             param.adicionar("nidDistrito", this.busDistrito);
 
+         if(this.busEstado!=null) {
+            Catalogo c = new Catalogo();
+            c.setNidCatalogo(this.busEstado);
+            param.adicionar("estado", c);
+         }
         if(param.getParametros().size()>0) 
            this.listaDefensoria = this.defensoriaFacade.obtenerPorFiltro(param, true, "txtNombre", true);
 
        
     }
-    
-      /**
-     * Acutalizar los datos de la defensoría
-     */
-    public void update() {
-         try {
-            
-            UsuarioAdministrado usuarioAdministrado = (UsuarioAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{usuarioAdministrado}", UsuarioAdministrado.class);
-            this.defensoria.setNidUsuarioMod(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
-            this.defensoria.setTxtPc(Internet.obtenerNombrePC());
-            this.defensoria.setTxtIp(Internet.obtenerIPPC());
-            this.defensoria.setFecModificacion(new Date());
-            this.defensoria.setFlgActivo(BigInteger.ONE);
-            this.defensoriaFacade.edit(this.defensoria);
-            this.modo = Constantes.MODO_LISTADO;
-            adicionarMensaje("", "La Defensoría ha sido actualizada con éxito");
-            
-        } catch (Exception e) {
-            adicionarMensajeWarning("", "Error al actualizar la Defensoría");
-        }
-    }
-    
+ 
     /**
      * Obtener el nombre del departamento
      * @param nidDepartamento el id del departamento
@@ -238,16 +431,37 @@ public class DefensoriaAdministrado extends AdministradorAbstracto implements Se
                this.defensoriaPersona.setProfesion(new Catalogo());
            if(item.getFuncion()==null) 
                this.defensoriaPersona.setFuncion(new Catalogo());
+            if(item.getInstruccion()==null) 
+               this.defensoriaPersona.setInstruccion(new Catalogo());
            
-            /*
+            
             this.obtenerProvinciasDna();
             this.obtenerDistritosDna();       
-            */
+            
         }catch(Exception ex) {
             
         }    
     }
 
+     
+    /**
+     * Obtener provincias
+     */
+    public void obtenerProvinciasDna() {
+        Departamento departamento = new Departamento();
+        departamento.setNidDepartamento(this.defensoriaPersona.getNidDepartamento());
+        this.provinciasDna = provinciaFacade.obtenerProvincias(departamento);
+    }
+    
+    /**
+     * Obteer distritos
+     */
+    public void obtenerDistritosDna() {
+        Provincia provincia = new Provincia();
+        provincia.setNidProvincia(this.defensoriaPersona.getNidProvincia());
+        this.distritosDna = distritoFacade.obtenerDistritos(provincia);
+    }
+    
      /**
      * Agrega Persona a la lista de personas de la defensoría
      */
@@ -272,12 +486,90 @@ public class DefensoriaAdministrado extends AdministradorAbstracto implements Se
      */
     public void eliminarPersona() { 
       this.listaDefensoriaPersona.remove(this.defensoriaPersona);
+      if(this.personalRemover == null)
+          this.personalRemover = new ArrayList<>();
       this.personalRemover.add(this.defensoriaPersona);
       if(this.defensoriaPersona.isResponsable()){
-            this.adicionarMensajeError("Se removió Responsable", "Debe agregar un nuevo responsable.");
+            this.adicionarMensajeError("Se removió Responsable, debe agregar un nuevo responsable.","");
         }
     }
+     /**
+     * Obtener provincias
+     */
+    public void obtenerProvincias() {
+        Departamento departamento = new Departamento();
+        departamento.setNidDepartamento(this.defensoria.getNidDepartamento());
+        this.provincias = provinciaFacade.obtenerProvincias(departamento);
+    }
     
+    /**
+     * Obtener distritos
+     */
+    public void obtenerDistritos() {
+        Provincia provincia = new Provincia();
+        provincia.setNidProvincia(this.defensoria.getNidProvincia());
+        this.distritos = distritoFacade.obtenerDistritos(provincia);
+    }
+    
+       /**
+    * En el panelDna realiza la búsqueda de la DNA del tipo sede central para poder crear el anexo
+    * @param fc - FacesContext
+    * @param component - UIComponent
+    * @param value - valor de componente
+    * @throws ValidatorException  - excepción generada cuando existe un error en la validación
+    */
+      public void buscarDna(FacesContext fc, UIComponent component, Object value) throws ValidatorException {
+       
+      
+        if(value!=null && !String.valueOf(value).equals("") && !String.valueOf(value).equals("00000") 
+                && (this.defensoria.getTxtConstancia()==null || !((String)value).equals(this.defensoria.getTxtConstancia())) ) {
+          
+               ParametroNodo param = new ParametroNodo();
+               param.adicionar("txtConstancia", String.valueOf(value));
+               param.adicionar("txtTipo", Constantes.TIPO_SEDE_CENTRAL);
+
+               List<Defensoria> listaDna;            
+               try {
+                   listaDna = this.defensoriaFacade.obtenerPorParametros(param);
+               }catch(Exception ex){
+                  throw new ValidatorException(new FacesMessage("Error al buscar la DNA"));
+               }    
+
+               if(listaDna!=null && listaDna.size()>0) {
+                   Defensoria resDefensoria = listaDna.get(0);
+                   this.defensoria.setCentral(resDefensoria);
+                   this.defensoria.setTxtConstancia(resDefensoria.getTxtConstancia());
+                   this.defensoria.setOrigen(resDefensoria.getOrigen());
+                   this.defensoria.setNidDepartamento(resDefensoria.getNidDepartamento());
+                   this.defensoria.setTxtEntidad(resDefensoria.getTxtEntidad());
+                   this.obtenerProvincias();
+                   this.defensoria.setNidProvincia(resDefensoria.getNidProvincia());
+                   this.obtenerDistritos();
+                   this.defensoria.setNidDistrito(resDefensoria.getNidDistrito());
+                   this.nombreSede = resDefensoria.getTxtNombre();
+               } else {
+                   this.renderOrigen();
+                   throw new ValidatorException(new FacesMessage("DNA no existe"));
+               }
+         }
+    }
+    
+      /**
+     * muestra los datos referentes al anexo e inicializa si es que es un registro nuevo
+     */
+    public void renderOrigen(){
+        String tipoSede = this.defensoria.getTxtTipo();
+        if(this.defensoria.getNidDna()==null) {
+            this.defensoria = new Defensoria();
+            this.defensoria.setTxtTipo(tipoSede);       
+            this.defensoria.setOrigen(new Catalogo());
+        } else{
+            this.defensoria.setTxtTipo(tipoSede);       
+        }
+        this.verOrigen = tipoSede.equals(Constantes.TIPO_SEDE_CENTRAL);
+        
+    }    
+      
        /**
      * Valida si se ingresó un responsable y los archivos solicitados
      * @param event - ComponentSystemEvent - evento posterior a la validación de componentes
@@ -386,7 +678,35 @@ public class DefensoriaAdministrado extends AdministradorAbstracto implements Se
 
                   this.separarNombres(this.identificacionReniec.getNOMBRES()); 
                   this.defensoriaPersona.setTxtDireccion(this.identificacionReniec.getDIRECCION());
+                 
+                  String[] ubigeo = identificacionReniec.getUBIGEO().split("/");
+                  List<Departamento> ldep = departamentoFacade.findAllByField("txtDescripcion", ubigeo[0]);
+                  if(!ldep.isEmpty()) {
 
+                    this.defensoriaPersona.setNidDepartamento(ldep.get(0).getNidDepartamento());
+                    this.obtenerProvinciasDna();
+
+                    if(this.defensoriaPersona.getNidDepartamento().compareTo(BigDecimal.valueOf((long)7))==0) {
+                        this.defensoriaPersona.setNidProvincia(BigDecimal.valueOf((long)67));
+                        this.obtenerDistritosDna();
+
+                        List<Distrito> ldist = distritoFacade.findAllByField("txtDescripcion", ubigeo[1]);
+                        if(!ldist.isEmpty())
+                            this.defensoriaPersona.setNidDistrito(ldist.get(0).getNidDistrito());
+
+                    } else {
+
+                        List<Provincia> lprov = provinciaFacade.findAllByField("txtDescripcion", ubigeo[1]);
+                        if(!lprov.isEmpty()) {
+                            this.defensoriaPersona.setNidProvincia(lprov.get(0).getNidProvincia());
+                            this.obtenerDistritosDna();
+                        }
+                        List<Distrito> ldist = distritoFacade.findAllByField("txtDescripcion", ubigeo[2]);
+                        if(!ldist.isEmpty())
+                            this.defensoriaPersona.setNidDistrito(ldist.get(0).getNidDistrito());
+
+                   }
+                }
                 }  else {
                      throw new ValidatorException(new FacesMessage("El DNI ingresado no existe"));
                 }
@@ -516,6 +836,70 @@ public class DefensoriaAdministrado extends AdministradorAbstracto implements Se
 
     public void setPersonalRemover(List<DefensoriaPersona> personalRemover) {
         this.personalRemover = personalRemover;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+
+    public boolean isVerOrigen() {
+        return verOrigen;
+    }
+
+    public void setVerOrigen(boolean verOrigen) {
+        this.verOrigen = verOrigen;
+    }
+
+    public String getNombreSede() {
+        return nombreSede;
+    }
+
+    public void setNombreSede(String nombreSede) {
+        this.nombreSede = nombreSede;
+    }
+
+    public List<Provincia> getProvincias() {
+        return provincias;
+    }
+
+    public void setProvincias(List<Provincia> provincias) {
+        this.provincias = provincias;
+    }
+
+    public List<Distrito> getDistritos() {
+        return distritos;
+    }
+
+    public void setDistritos(List<Distrito> distritos) {
+        this.distritos = distritos;
+    }
+
+    public BigInteger getBusEstado() {
+        return busEstado;
+    }
+
+    public void setBusEstado(BigInteger busEstado) {
+        this.busEstado = busEstado;
+    }
+
+    public List<Provincia> getProvinciasDna() {
+        return provinciasDna;
+    }
+
+    public void setProvinciasDna(List<Provincia> provinciasDna) {
+        this.provinciasDna = provinciasDna;
+    }
+
+    public List<Distrito> getDistritosDna() {
+        return distritosDna;
+    }
+
+    public void setDistritosDna(List<Distrito> distritosDna) {
+        this.distritosDna = distritosDna;
     }
     
     

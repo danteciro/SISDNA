@@ -39,7 +39,7 @@ public class DocAcreditacion implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private Acreditacion acreditacion;
     
-    @Size(max = 80)
+    @Size(max = 150)
     @Column(name = "TXT_NOMBRE")
     private String txtNombre;
    

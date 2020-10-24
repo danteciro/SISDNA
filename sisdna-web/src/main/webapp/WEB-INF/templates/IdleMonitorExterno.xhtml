@@ -1,6 +1,4 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:f="http://java.sun.com/jsf/core"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:pe="http://primefaces.org/ui/extensions"
       xmlns:p="http://primefaces.org/ui"> 
@@ -17,18 +15,18 @@
         <h:form>
             <p:idleMonitor timeout="#{parametroDnaAdministrado.tiempoIdle()}" onidle="PF('dialgoSesion').show();PF('timer').start()" />
         </h:form>
-        <p:dialog modal="true" id="dialgoSesion" widgetVar="dialgoSesion" header="Sesión Expirada" draggable="true" resizable="false" closable="false" closeOnEscape="false" showEffect="puff" hideEffect="puff">
+        <p:dialog modal="true" id="dialgoSesion" widgetVar="dialgoSesion" width="400" header="Sesión Expirada" draggable="true" resizable="false" closable="false" closeOnEscape="false" showEffect="puff" hideEffect="puff">
             <h:form class="pright">
                     <pe:timer widgetVar="timer" autoStart="false" ontimercomplete="redirigir()" forward="false" timeout="300" format="HH:mm:ss"/>
                      <br/>
                     <p:outputLabel value="Su sesión ha finalizado, desea actualizar?"/>
                     <br/> <br/>
                     <div class="ui-g">
-                        <div class="ui-md-5">
+                        <div class="ui-g-12 ui-md-4">
                           <p:commandButton value="Si" onclick="location.reload();" icon="fa fa-refresh" title="Actualiza la página"/>
                         </div>
-                        <div class="ui-md-2"></div>
-                        <div class="ui-md-5">
+                        <div class="ui-g-12 ui-md-4"></div>
+                        <div class="ui-g-12 ui-md-4">
                           <p:commandButton value="No" action="/index?faces-redirect=true" icon="fa fa-home" title="Regresa a la página Principal"/>
                         </div>
                     </div>

@@ -29,15 +29,13 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "ACREDITACION")
 @NamedQueries({
-    @NamedQuery(name = "Acreditacion.filtrarPorConstancia", query = "SELECT a FROM Acreditacion as a WHERE a.padre.dna.txtConstancia=:txtConstancia and a.padre.dna.flgActivo = 1"),
-    @NamedQuery(name = "Acreditacion.filtrarDepartamentos", query = "SELECT a FROM Acreditacion as a WHERE a.padre.dna.nidDepartamento=:nidDepartamento and a.padre.flgActivo = 1"),
-    @NamedQuery(name = "Acreditacion.filtrarProvincias", query = "SELECT a FROM Acreditacion as a WHERE a.padre.dna.nidProvincia=:nidProvincia and a.padre.flgActivo = 1"),
-    @NamedQuery(name = "Acreditacion.filtrarDistritos", query = "SELECT a FROM Acreditacion as a WHERE a.padre.dna.nidDistrito=:nidDistrito and a.padre.flgActivo = 1"),
+    @NamedQuery(name = "Acreditacion.filtrarPorConstancia", query = "SELECT a FROM Acreditacion as a WHERE a.dna.txtConstancia=:txtConstancia and a.dna.flgActivo = 1"),
+    @NamedQuery(name = "Acreditacion.filtrarDepartamentos", query = "SELECT a FROM Acreditacion as a WHERE a.dna.nidDepartamento=:nidDepartamento and a.dna.flgActivo = 1"),
+    @NamedQuery(name = "Acreditacion.filtrarProvincias", query = "SELECT a FROM Acreditacion as a WHERE a.dna.nidProvincia=:nidProvincia and a.dna.flgActivo = 1"),
+    @NamedQuery(name = "Acreditacion.filtrarDistritos", query = "SELECT a FROM Acreditacion as a WHERE a.dna.nidDistrito=:nidDistrito and a.dna.flgActivo = 1"),
     
     @NamedQuery(name = "Acreditacion.filtrarObservadasVencidos", query = "SELECT i from Acreditacion as i WHERE i.estado.nidCatalogo = :estadoPorEvaluar and func('TRUNC',i.fecObservado) < func('TRUNC',:hoy)"),
-    @NamedQuery(name = "Acreditacion.filtrarPorEvaluarPorVencer", query = "SELECT i from Acreditacion as i WHERE i.estado.nidCatalogo = :estadoPorEvaluar and func('TRUNC',i.fecRegistro) <= func('TRUNC',:hoy)"),
-    @NamedQuery(name = "Acreditacion.filtrarSubsanadasPorVencer", query = "SELECT i from Acreditacion as i WHERE i.estado.nidCatalogo = :estadoPorEvaluar and func('TRUNC',i.fecSubsanado) <= func('TRUNC',:hoy)"),
-
+ 
 })
 public class Acreditacion implements Serializable{
     
@@ -50,8 +48,50 @@ public class Acreditacion implements Serializable{
     private BigDecimal nidAcreditacion;
     
     @OneToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="NID_PADRE")
-    private Inscripcion padre;
+    @JoinColumn(name="NID_DNA")
+    private Defensoria dna;
+    
+    @JoinColumn(name = "NID_ESTADO", referencedColumnName = "NID_CATALOGO")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Catalogo estado;
+   
+    @Column(name = "FEC_ORDENANZA")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fecOrdenanza; 
+     
+    @Size(max = 150)
+    @Column(name = "TXT_NORMA")
+    private String txtNorma;
+  
+    @Size(max = 150)
+    @Column(name = "TXT_DOCUMENTO")
+    private String txtDocumento;
+
+    @Size(max = 150)
+    @Column(name = "TXT_DIRECCION")
+    private String txtDireccion;
+    
+    @Size(max = 150)
+    @Column(name = "TXT_CORREO")
+    private String txtCorreo;
+
+    @Size(max = 20)
+    @Column(name = "TXT_TELEFONO")
+    private String txtTelefono;
+
+    @Size(max = 150)
+    @Column(name = "TXT_GERENCIA")
+    private String txtGerencia;
+
+    @Column(name = "AMBIENTES")
+    private Integer ambientes;
+
+    @Column(name = "AMBIENTES_PRIV")
+    private Integer ambientesPriv;
+
+    @Size(max = 150)
+    @Column(name = "DIAS")
+    private String dias;
     
     @Column(name = "FLG_EQUIPO_COMPUTO")
     private Boolean flgEquipoComputo;
@@ -71,21 +111,10 @@ public class Acreditacion implements Serializable{
     @Column(name = "FLG_AREA_LUDICA")
     private Boolean flgAreaLudica;
     
-    @Size(max = 50)
-    @Column(name = "TXT_NORMA")
-    private String txtNorma;
-    
+     
     @Size(max = 3)
     @Column(name = "TXT_ESTADO_CONS")
     private String txtEstadoCons;
-    
-    @Column(name = "FEC_ORDENANZA")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fecOrdenanza; 
-    
-    @Size(max = 100)
-    @Column(name = "TXT_NRO_ORDENANZA")
-    private String txtNroOrdenanza;
     
     @Column(name = "FEC_RESOLUCION")
     @Temporal(TemporalType.TIMESTAMP)
@@ -95,9 +124,6 @@ public class Acreditacion implements Serializable{
     @Column(name = "TXT_NRO_RESOLUCION")
     private String txtNroResolucion;
     
-    @JoinColumn(name = "NID_ESTADO", referencedColumnName = "NID_CATALOGO")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Catalogo estado;
     
     @Column(name = "FLG_CONSTANCIA")
     private Integer flagConstancia;
@@ -154,15 +180,7 @@ public class Acreditacion implements Serializable{
     @Size(max = 10)
     @Column(name = "TXT_CONSTANCIA")
     private String txtConstancia;
-    
-    @Column(name = "NID_DEPARTAMENTO")
-    private BigDecimal nidDepartamento;
 
-    @Column(name = "NID_PROVINCIA")
-    private BigDecimal nidProvincia;
-
-    @Column(name = "NID_DISTRITO")
-    private BigDecimal nidDistrito;
     
     @OneToOne(fetch=FetchType.LAZY, mappedBy="acreditacion")
     private AcreditacionEval acreditacionEval;
@@ -191,14 +209,15 @@ public class Acreditacion implements Serializable{
         this.nidAcreditacion = nidAcreditacion;
     }
 
-    public Inscripcion getPadre() {
-        return padre;
+    public Defensoria getDna() {
+        return dna;
     }
 
-    public void setPadre(Inscripcion padre) {
-        this.padre = padre;
+    public void setDna(Defensoria dna) {
+        this.dna = dna;
     }
-    
+
+  
     public String getTxtEstadoCons() {
         return txtEstadoCons;
     }
@@ -409,30 +428,7 @@ public class Acreditacion implements Serializable{
         this.txtConstancia = txtConstancia;
     }
 
-    public BigDecimal getNidDepartamento() {
-        return nidDepartamento;
-    }
-
-    public void setNidDepartamento(BigDecimal nidDepartamento) {
-        this.nidDepartamento = nidDepartamento;
-    }
-
-    public BigDecimal getNidProvincia() {
-        return nidProvincia;
-    }
-
-    public void setNidProvincia(BigDecimal nidProvincia) {
-        this.nidProvincia = nidProvincia;
-    }
-
-    public BigDecimal getNidDistrito() {
-        return nidDistrito;
-    }
-
-    public void setNidDistrito(BigDecimal nidDistrito) {
-        this.nidDistrito = nidDistrito;
-    }
-
+   
     public Integer getFlagConstancia() {
         return flagConstancia;
     }
@@ -457,14 +453,6 @@ public class Acreditacion implements Serializable{
         this.fecOrdenanza = fecOrdenanza;
     }
 
-    public String getTxtNroOrdenanza() {
-        return txtNroOrdenanza;
-    }
-
-    public void setTxtNroOrdenanza(String txtNroOrdenanza) {
-        this.txtNroOrdenanza = txtNroOrdenanza;
-    }
-
     public Date getFecResolucion() {
         return fecResolucion;
     }
@@ -479,6 +467,70 @@ public class Acreditacion implements Serializable{
 
     public void setTxtNroResolucion(String txtNroResolucion) {
         this.txtNroResolucion = txtNroResolucion;
+    }
+
+    public String getTxtDocumento() {
+        return txtDocumento;
+    }
+
+    public void setTxtDocumento(String txtDocumento) {
+        this.txtDocumento = txtDocumento;
+    }
+
+    public String getTxtDireccion() {
+        return txtDireccion;
+    }
+
+    public void setTxtDireccion(String txtDireccion) {
+        this.txtDireccion = txtDireccion;
+    }
+
+    public String getTxtCorreo() {
+        return txtCorreo;
+    }
+
+    public void setTxtCorreo(String txtCorreo) {
+        this.txtCorreo = txtCorreo;
+    }
+
+    public String getTxtTelefono() {
+        return txtTelefono;
+    }
+
+    public void setTxtTelefono(String txtTelefono) {
+        this.txtTelefono = txtTelefono;
+    }
+
+    public String getTxtGerencia() {
+        return txtGerencia;
+    }
+
+    public void setTxtGerencia(String txtGerencia) {
+        this.txtGerencia = txtGerencia;
+    }
+
+    public Integer getAmbientes() {
+        return ambientes;
+    }
+
+    public void setAmbientes(Integer ambientes) {
+        this.ambientes = ambientes;
+    }
+
+    public Integer getAmbientesPriv() {
+        return ambientesPriv;
+    }
+
+    public void setAmbientesPriv(Integer ambientesPriv) {
+        this.ambientesPriv = ambientesPriv;
+    }
+
+    public String getDias() {
+        return dias;
+    }
+
+    public void setDias(String dias) {
+        this.dias = dias;
     }
     
 }

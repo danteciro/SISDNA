@@ -68,6 +68,14 @@ public class ParametroDnaAdministrado extends AdministradorAbstracto implements 
         this.entidadSeleccionada = item;
     }
    
+    public boolean verMigracion() {
+       List<ParametroDna> parametro = fachada.findAllByField("cidParametro", "VER_BOTON_MDB");
+       if(parametro.size()>0) {
+           return  parametro.get(0).getFlgActivo().compareTo(BigInteger.ONE) == 0;
+       }
+       return false;
+    }
+    
     /**
      * Devuelve el tiempo de permanencia en pantalla de los mensajes y alertas
      * @return el tiempo

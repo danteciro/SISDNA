@@ -149,7 +149,7 @@
                                  >
                      <p:ajax update="@this"/>
                      <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
-                     <f:selectItems value="#{acreditacionAdministrado.obtenerGradoInstruccion()}" var="instruccion" 
+                     <f:selectItems value="#{catalogoAdministrado.obtenerGradoInstruccion()}" var="instruccion" 
                                     itemLabel="#{instruccion.txtNombre}" itemValue="#{instruccion.nidCatalogo}" />
                 </p:selectOneMenu>
             </div>
@@ -162,7 +162,7 @@
                                  autoWidth="false" required="true" 
                                  requiredMessage="Debe seleccionar la profesión / oficio">
                      <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
-                     <f:selectItems value="#{inscripcionAdministrado.obtenerOcupaciones()}" var="funcion" 
+                     <f:selectItems value="#{catalogoAdministrado.obtenerOcupaciones()}" var="funcion" 
                                     itemLabel="#{funcion.txtNombre}" itemValue="#{funcion.nidCatalogo}" />
 
                 </p:selectOneMenu>

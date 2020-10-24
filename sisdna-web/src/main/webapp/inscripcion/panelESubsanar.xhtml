@@ -9,159 +9,160 @@
                 
               <div class="ui-g">
                 <div class="ui-g-12 ui-md-12">
-                    <h2>#{inscripcionAdministrado.inscripcionAEvaluar.dna.txtEntidad}</h2>
-                    <h3>#{inscripcionAdministrado.inscripcionAEvaluar.dna.txtConstancia} -
-                        #{inscripcionAdministrado.inscripcionAEvaluar.dna.txtNombre} - 
+                    <h2>#{inscripcionAdministrado.inscripcion.dna.txtEntidad}</h2>
+                    <h3>#{inscripcionAdministrado.inscripcion.dna.txtConstancia} -
+                        #{inscripcionAdministrado.inscripcion.dna.txtNombre} - 
                         #{inscripcionAdministrado.getNombreDepartamentoEvaluar()} -
                         #{inscripcionAdministrado.getNombreProvinciaEvaluar()} -
                         #{inscripcionAdministrado.getNombreDistritoEvaluar()}
                     </h3>
                 </div>
                 <div class="ui-g-12 ui-md-12">
-                    <p:outputLabel value="Teléfono:"/>#{inscripcionAdministrado.inscripcionAEvaluar.txtTelefono}
+                    <p:outputLabel value="Teléfono:"/>#{inscripcionAdministrado.inscripcion.txtTelefono}
                 </div>
             </div>
             <p:separator />
-            <div class="ui-g #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsDocCreacion!=null?'panelObs':''}">
+            <div class="ui-g #{inscripcionAdministrado.inscripcion.inscripcionEval.obsDocCreacion!=null?'panelObs':''}">
        
                 <div class="ui-g-12 ui-md-4">    
-                    <p:outputLabel for="txtDocCreacion" value="Documento de Creación"/> 
+                    <p:outputLabel value="Documento de Creación"/> 
                 </div>
                 <div class="ui-g-12 ui-md-8">
-                    <p:inputText id="txtDocCreacion" value="#{inscripcionAdministrado.inscripcionAEvaluar.txtDocumento}" 
-                                 maxlength="150" readonly="true" title="Campo Obligatorio">
+                    <p:inputText value="#{inscripcionAdministrado.inscripcion.txtDocumento}" 
+                                 maxlength="150" readonly="true" >
                     </p:inputText>
-                </div>
-                <p:outputPanel rendered="#{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsDocCreacion!=null}" >
-                    Original: #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.txtDocumento} <br />
-                    Observación: #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsDocCreacion}
+                 <p:outputPanel rendered="#{inscripcionAdministrado.inscripcion.inscripcionEval.obsDocCreacion!=null}" >
+                    Original: #{inscripcionAdministrado.inscripcion.inscripcionEval.txtDocumento} <br />
+                    Observación: #{inscripcionAdministrado.inscripcion.inscripcionEval.obsDocCreacion}
                 </p:outputPanel>
+                </div>      
             </div>   
             
-            <div class="ui-g #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsCorreo!=null?'panelObs':''}">
+            <div class="ui-g #{inscripcionAdministrado.inscripcion.inscripcionEval.obsCorreo!=null?'panelObs':''}">
        
                 <div class="ui-g-12 ui-md-4">    
-                    <p:outputLabel for="txtCorreo" value="Correo electrónico de contacto"/> 
+                    <p:outputLabel value="Correo electrónico de contacto"/> 
                 </div>
                 <div class="ui-g-12 ui-md-8">
-                    <p:inputText id="txtCorreo" value="#{inscripcionAdministrado.inscripcionAEvaluar.txtCorreo}" 
-                                 maxlength="150" readonly="true" title="Campo Obligatorio">
+                    <p:inputText  value="#{inscripcionAdministrado.inscripcion.txtCorreo}" 
+                                 maxlength="150" readonly="true" >
                     </p:inputText>
-                </div>
-                <p:outputPanel rendered="#{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsCorreo!=null}" >
-                    Original: #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.txtCorreo} <br />
-                    Observación: #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsCorreo}
+                 <p:outputPanel rendered="#{inscripcionAdministrado.inscripcion.inscripcionEval.obsCorreo!=null}" >
+                    Original: #{inscripcionAdministrado.inscripcion.inscripcionEval.txtCorreo} <br />
+                    Observación: #{inscripcionAdministrado.inscripcion.inscripcionEval.obsCorreo}
                 </p:outputPanel>
+                    </div>  
             </div>
            
-            <div class="ui-g #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsDireccion!=null?'panelObs':''}">
+            <div class="ui-g #{inscripcionAdministrado.inscripcion.inscripcionEval.obsDireccion!=null?'panelObs':''}">
        
                 <div class="ui-g-12 ui-md-4">    
-                    <p:outputLabel for="txtDireccion" value="Dirección de la DNA"/> 
+                    <p:outputLabel  value="Dirección de la DNA"/> 
                 </div>
                 <div class="ui-g-12 ui-md-8">
-                    <p:inputText required="true" id="txtDireccion" readonly="true"
-                                      
-                                     value="#{inscripcionAdministrado.inscripcionAEvaluar.txtDireccion}" maxlength="8" title="Campo Obligatorio">
+                    <p:inputText required="true" readonly="true" value="#{inscripcionAdministrado.inscripcion.txtDireccion}" maxlength="8" >
 
                     </p:inputText>
-                </div>
-                <p:outputPanel rendered="#{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsDireccion!=null}" >
-                    Original: #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.txtDireccion} <br />
-                    Observación: #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsDireccion}
+                 <p:outputPanel rendered="#{inscripcionAdministrado.inscripcion.inscripcionEval.obsDireccion!=null}" >
+                    Original: #{inscripcionAdministrado.inscripcion.inscripcionEval.txtDireccion} <br />
+                    Observación: #{inscripcionAdministrado.inscripcion.inscripcionEval.obsDireccion}
                 </p:outputPanel>
+                    </div>  
             </div>
 
-            <div class="ui-g #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsGerencia!=null?'panelObs':''}">
+            <div class="ui-g #{inscripcionAdministrado.inscripcion.inscripcionEval.obsGerencia!=null?'panelObs':''}">
        
                 <div class="ui-g-12 ui-md-4">    
-                    <p:outputLabel for="txtGerencia" value="Dirección o Gerencia a la que pertenece la DNA"/> 
+                    <p:outputLabel value="Dirección o Gerencia a la que pertenece la DNA"/> 
                 </div>
                 <div class="ui-g-12 ui-md-8">
-                    <p:inputText id="txtGerencia" readonly="true" value="#{inscripcionAdministrado.inscripcionAEvaluar.txtGerencia}" maxlength="150" />
-                </div>
-                <p:outputPanel rendered="#{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsGerencia!=null}" >
-                    Original: #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.txtGerencia} <br />
-                    Observación: #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsGerencia}
+                    <p:inputText readonly="true" value="#{inscripcionAdministrado.inscripcion.txtGerencia}" maxlength="150" />
+                 <p:outputPanel rendered="#{inscripcionAdministrado.inscripcion.inscripcionEval.obsGerencia!=null}" >
+                    Original: #{inscripcionAdministrado.inscripcion.inscripcionEval.txtGerencia} <br />
+                    Observación: #{inscripcionAdministrado.inscripcion.inscripcionEval.obsGerencia}
                 </p:outputPanel>
+                     </div>
+              
             </div>
 
-            <div class="ui-g #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsDias!=null?'panelObs':''}">
+            <div class="ui-g #{inscripcionAdministrado.inscripcion.inscripcionEval.obsDias!=null?'panelObs':''}">
             
                 <div class="ui-g-12 ui-md-4">    
-                    <p:outputLabel for="txtDias" value="Días y horas de Atención"/> 
+                    <p:outputLabel value="Días y horas de Atención"/> 
                 </div>
                 <div class="ui-g-12 ui-md-8">
-                     <p:inputText required="true" id="txtDias" readonly="true" value="#{inscripcionAdministrado.inscripcionAEvaluar.dias}" maxlength="50" />
-                </div>
-                 <p:outputPanel rendered="#{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsDias!=null}" >
-                    Original: #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.dias} <br />
-                    Observación: #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsDias}
+                     <p:inputText required="true" readonly="true" value="#{inscripcionAdministrado.inscripcion.dias}" maxlength="50" />
+                    <p:outputPanel rendered="#{inscripcionAdministrado.inscripcion.inscripcionEval.obsDias!=null}" >
+                    Original: #{inscripcionAdministrado.inscripcion.inscripcionEval.dias} <br />
+                    Observación: #{inscripcionAdministrado.inscripcion.inscripcionEval.obsDias}
                 </p:outputPanel>
+                     </div>
+             
             </div>
 
-             <div class="ui-g #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsPresupuesto!=null?'panelObs':''}">
+             <div class="ui-g #{inscripcionAdministrado.inscripcion.inscripcionEval.obsPresupuesto!=null?'panelObs':''}">
                 <div class="ui-g-12 ui-md-4">    
-                     <p:outputLabel for="txtPresupuesto" value="Presupuesto asignado a la DNA (en Soles)"/> 
+                     <p:outputLabel value="Presupuesto asignado a la DNA (en Soles)"/> 
                  </div>
                  <div class="ui-g-12 ui-md-8">
-                     <p:inputNumber minValue="0" required="true" id="txtPresupuesto" readonly="true" value="#{inscripcionAdministrado.inscripcionAEvaluar.presupuesto}">
+                     <p:inputNumber minValue="0" required="true" readonly="true" value="#{inscripcionAdministrado.inscripcion.presupuesto}" inputStyle="width: 100px !important">
                      </p:inputNumber>
-                 </div>
-                 <p:outputPanel rendered="#{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsPresupuesto!=null}" >
-                    Original: #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.presupuesto} <br />
-                    Observación: #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsPresupuesto}
+                  <p:outputPanel rendered="#{inscripcionAdministrado.inscripcion.inscripcionEval.obsPresupuesto!=null}" >
+                    Original: #{inscripcionAdministrado.inscripcion.inscripcionEval.presupuesto} <br />
+                    Observación: #{inscripcionAdministrado.inscripcion.inscripcionEval.obsPresupuesto}
                  </p:outputPanel>
+                     </div>
+                
              </div>  
               
-            <div class="ui-g #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsAmbientes!=null?'panelObs':''}">
+            <div class="ui-g #{inscripcionAdministrado.inscripcion.inscripcionEval.obsAmbientes!=null?'panelObs':''}">
                 <div class="ui-g-12 ui-md-4">    
-                    <p:outputLabel for="txtAmbientes" value="Número de ambientes con los que cuenta la DNA"/> 
+                    <p:outputLabel value="Número de ambientes con los que cuenta la DNA"/> 
                 </div>
                 <div class="ui-g-12 ui-md-8">
-                    <p:inputNumber required="true" id="txtAmbientes" readonly="true" value="#{inscripcionAdministrado.inscripcionAEvaluar.ambientes}">
+                    <p:inputNumber required="true" readonly="true" value="#{inscripcionAdministrado.inscripcion.ambientes}" decimalPlaces="0" inputStyle="width: 100px !important">
                     </p:inputNumber>
+                    <p:outputPanel rendered="#{inscripcionAdministrado.inscripcion.inscripcionEval.obsAmbientes!=null}" >
+                        Original: #{inscripcionAdministrado.inscripcion.inscripcionEval.ambientes} <br />
+                        Observación: #{inscripcionAdministrado.inscripcion.inscripcionEval.obsAmbientes}
+                    </p:outputPanel>
                 </div>
-                <p:outputPanel rendered="#{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsAmbientes!=null}" >
-                    Original: #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.ambientes} <br />
-                    Observación: #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsAmbientes}
-                </p:outputPanel>
-            </div>  
+             </div>  
 
-            <div class="ui-g #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsAmbientesPriv!=null?'panelObs':''}">
+            <div class="ui-g #{inscripcionAdministrado.inscripcion.inscripcionEval.obsAmbientesPriv!=null?'panelObs':''}">
                 <div class="ui-g-12 ui-md-4">    
-                    <p:outputLabel for="txtAmbientesPrivadas" value="Número de ambientes para audiencias privadas"/> 
+                    <p:outputLabel value="Número de ambientes para audiencias privadas"/> 
                 </div>
                 <div class="ui-g-12 ui-md-8">
-                    <p:inputNumber required="true" id="txtAmbientesPrivadas" readonly="true" value="#{inscripcionAdministrado.inscripcionAEvaluar.ambientesPriv}">
+                    <p:inputNumber required="true" readonly="true" value="#{inscripcionAdministrado.inscripcion.ambientesPriv}"  decimalPlaces="0" inputStyle="width: 100px !important">
                     </p:inputNumber>
-                </div>
-                <p:outputPanel rendered="#{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsAmbientesPriv!=null}" >
-                    Original: #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.ambientesPriv} <br />
-                    Observación: #{inscripcionAdministrado.inscripcionAEvaluar.inscripcionEval.obsAmbientesPriv}
-                </p:outputPanel>
+                    <p:outputPanel rendered="#{inscripcionAdministrado.inscripcion.inscripcionEval.obsAmbientesPriv!=null}" >
+                        Original: #{inscripcionAdministrado.inscripcion.inscripcionEval.ambientesPriv} <br />
+                        Observación: #{inscripcionAdministrado.inscripcion.inscripcionEval.obsAmbientesPriv}
+                    </p:outputPanel>
+              </div>
+             
             </div>
 
                 <p:panelGrid id="pTabla" columns="1" columnClasses="ui-grid-col-12" layout="grid" class="boxshadowinside pnoborder">
 
                    <p:dataTable 
-                       id="tablaPersonasEvaluar"
-                       widgetVar="tablaPersonasEvaluar" 
+                       id="tablaPersonasSubsanar"
+                       widgetVar="tablaPersonasSubsanar" 
                        var="itemPersonaEvaluar" 
-                       value="#{inscripcionAdministrado.personalESubsanar}" 
+                       value="#{inscripcionAdministrado.listaPersonal}" 
                        rowIndexVar="index"
                        scrollable="true"
                        rows="10" 
                        paginator="false"
                        resizableColumns="false"
-                       currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}">
+                       emptyMessage="No existen registros">
 
                        <p:column headerText="ACCIONES"  class="pcenter" width="10%">                                       	                                
                            <p:commandButton update=":dialogoEPersonaSubsanar"  process="@this"
                                             oncomplete="PF('dialogoEPersonaSubsanar').show();"  
                                             actionListener="#{inscripcionAdministrado.obtenerPersonalDna(itemPersonaEvaluar)}" 
                                             title="Evaluar" icon="fa fa-check">
-                               <f:setPropertyActionListener value="#{itemPersonaEvaluar}" target="#{inscripcionAdministrado.personaDna}"/>
                            </p:commandButton>
                        </p:column>
 
@@ -187,30 +188,34 @@
                    </p:dataTable>
 
                </p:panelGrid>
-           <p:dataList id="dlAdjuntos" value="#{inscripcionAdministrado.obtenerAdjuntos()}"  var="doc" rowIndexVar="indexDoc" type="definition" class="noborder">
-                <p:outputPanel>
-                    <p:commandButton value="Descargar #{doc.tipo.txtNombre} : #{doc.txtNombre}" ajax="false">
-                        <p:fileDownload value="#{inscripcionAdministrado.obtenerNombreAdjunto(doc)}" />
-                   </p:commandButton>
-                </p:outputPanel><br />
-
+         
+           <div class="ui-g">
+            <div class="ui-g ui-g-12 ui-md-6">
+                  <p:dataList  value="#{inscripcionAdministrado.obtenerAdjuntos()}"  var="doc" rowIndexVar="indexDoc" type="definition" class="noborder">
+                 <p:commandLink  ajax="false" process="@this" immediate="true"
+                          value="Descargar #{doc.tipo.txtNombre} : #{doc.txtNombre}">
+                     <p:fileDownload value="#{inscripcionAdministrado.obtenerNombreAdjunto(doc)}" />
+                 </p:commandLink>
+            
               </p:dataList>
-            <div class="ui-g">
-                    <div class="ui-g-12 ui-md-1">
+                
+            </div>    
+           </div> 
+          
+           <div class="ui-g">
+                    <div class="ui-g-12 ui-md-5">
                         <p:selectBooleanCheckbox value="#{inscripcionAdministrado.flgDenegarInscripcion}" >
-                            <p:ajax update="obsDenegar , btnEvaluar" />
+                            <p:ajax update="obsDenegar , btnEvaluarSub" />
                         </p:selectBooleanCheckbox>
-                    </div>
-                    <div class="ui-g-12 ui-md-4"> Denegar Inscripción  </div>
+                  Denegar Inscripción  </div>
                 </div>
             <p:outputPanel id="obsDenegar">
                 <div class="ui-g">
-                    <div class="ui-g-12 ui-md-1"> </div>   
-                    <div class="ui-g-12 ui-md-11"> 
+                       <div class="ui-g-12 ui-md-12"> 
                         <p:inputTextarea rendered="#{inscripcionAdministrado.flgDenegarInscripcion}"
                                  required="#{inscripcionAdministrado.flgDenegarInscripcion}"
                                  requiredMessage="Debe ingresar la la razón por la cual se denego la inscripción."
-                                 value="#{inscripcionAdministrado.inscripcionAEvaluar.obsDenegado}" 
+                                 value="#{inscripcionAdministrado.inscripcion.obsDenegado}" 
                                  maxlength="150"
                                  rows="5">
                         <p:ajax update="@this"/>

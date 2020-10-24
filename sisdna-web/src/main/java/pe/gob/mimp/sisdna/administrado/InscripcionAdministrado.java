@@ -42,6 +42,7 @@ import org.primefaces.event.TabChangeEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import pe.gob.mimp.core.Archivo;
+import pe.gob.mimp.core.PasswordUtil;
 import pe.gob.mimp.general.fachada.DistritoFacadeLocal;
 import pe.gob.mimp.general.fachada.ProvinciaFacadeLocal;
 import pe.gob.mimp.general.fachada.administrado.AdministradorAbstracto;
@@ -69,10 +70,13 @@ import pe.gob.mimp.sisdna.fachada.DefensoriaFacadeLocal;
 import pe.gob.mimp.sisdna.fachada.DocInscripcionFacadeLocal;
 import pe.gob.mimp.sisdna.fachada.InscripcionEvalFacadeLocal;
 import pe.gob.mimp.sisdna.fachada.InscripcionFacadeLocal;
+import pe.gob.mimp.sisdna.fachada.ParamFiltro;
 import pe.gob.mimp.sisdna.fachada.ParametroDnaFacadeLocal;
 import pe.gob.mimp.sisdna.fachada.PersonaDnaFacadeLocal;
 import pe.gob.mimp.sisdna.modelo.Catalogo;
 import pe.gob.mimp.sisdna.modelo.Defensoria;
+import pe.gob.mimp.sisdna.modelo.DefensoriaInfo;
+import pe.gob.mimp.sisdna.modelo.DefensoriaPersona;
 import pe.gob.mimp.sisdna.modelo.DocInscripcion;
 import pe.gob.mimp.sisdna.modelo.Inscripcion;
 import pe.gob.mimp.sisdna.modelo.InscripcionEval;
@@ -98,14 +102,8 @@ import pe.gob.mimp.webservicemimp.auxiliar.IdentificacionReniec;
 @ViewScoped
 public class InscripcionAdministrado extends AdministradorAbstracto implements Serializable{
 
-    private AntecedentePolicial antecedentePolicial;
-
-    private AntecedentePenal antecedentePenal;
-
-    private AntecedenteJudicial antecedenteJudicial;
-
-    private IdentificacionReniec identificacionReniec;
-    
+    private Logger LOG = Logger.getLogger(InscripcionAdministrado.class.getName());
+   
     private Defensoria defensoria;
     private Inscripcion inscripcion;
     private List<Defensoria> listaDefensoria;
@@ -121,9 +119,6 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
     private BigDecimal busProvincia;
     private BigDecimal busDistrito;
     private BigInteger busEstado;
-    private Inscripcion inscripcionVer;
-    private List<PersonaDna> personalVer;
-    private PersonaDna personaVer;
     private int indexTab = 0;
   
     @EJB
@@ -160,13 +155,13 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
     private PerfilUsuarioFacadeLocal perfilUsuarioFacade;
 
     @EJB
-    private ProvinciaFacadeLocal fachadaProvincia;
+    private ProvinciaFacadeLocal provinciaFacade;
     
     @EJB
-    private DistritoFacadeLocal fachadaDistrito;
+    private DistritoFacadeLocal distritoFacade;
 
     @EJB
-    private DepartamentoFacadeLocal fachadaDepartamento;
+    private DepartamentoFacadeLocal departamentoFacade;
 
     @EJB
     private DocInscripcionFacadeLocal docFacade;
@@ -174,8 +169,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
     @EJB
     private CorreoService correoService;
 
-    private List<Provincia> provincias;
-    private List<Distrito> distritos;
+
     private List<Provincia> provinciasDna;
     private List<Distrito> distritosDna;
     private List<Provincia> provinciasBus;
@@ -190,12 +184,8 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
     private String ruta;
     private List<UploadedFile> archivos;
     private String rutaConstancias;
-    private Inscripcion inscripcionAEvaluar;
-    private List<PersonaDna> personasAEvaluar;
-    private PersonaDna personaAEvaluar;
     private InscripcionEval inscripcionEval;
     private PersonaDnaEval personaDnaEval;
-    private PersonaDnaEval clonePersonaDnaEval;
     private String txtObsPersonaEval;
     private List<PersonaDnaEval> personasDnaEval;
     private List<PersonaDna> personalESubsanar;
@@ -223,28 +213,23 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
     private Boolean flgDocDesignacionObs;
     private Boolean flgDenegarInscripcion;
     private Inscripcion inscripcionSubsanar;
-    private List<PersonaDna> personalSubsanar;
     private List<PersonaDna> personalRemover;
-    private PersonaDna personaSubsanar;
     private PersonaDna responsableSubsanar;
     private PersonaDna personaRemover;
     private String correoResponsable;
     
     private TabView tabView;
-
+    private int modo;
+   
     public InscripcionAdministrado() {
         this.listaPersonal = new ArrayList<>();
         this.listaPersonalRemovidos = new ArrayList<>();
-        this.provincias = new ArrayList<>();
-        this.distritos = new ArrayList<>();
         this.provinciasDna = new ArrayList<>();
         this.distritosDna = new ArrayList<>();
         this.verOrigen = true;
         this.nombreSede = "";
         this.verMensajeOK = false;
         this.dniValido = false;
-        this.personasAEvaluar = new ArrayList<>();
-        this.personaAEvaluar = new PersonaDna();
         this.inscripcionEval =  new InscripcionEval();
         this.personaDnaEval = new PersonaDnaEval();
         this.personasDnaEval = new ArrayList<>();
@@ -271,10 +256,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         this.flgAntecedentePersonaObs = false;
         this.flgDocDesignacionObs = false;
         this.flgDenegarInscripcion = false;
-        this.inscripcionVer = new Inscripcion();
-        this.personalVer = new ArrayList<>();
         this.inscripcionSubsanar = new Inscripcion();
-        this.personalSubsanar = new ArrayList<>();
         this.personalRemover = new ArrayList<>();
         this.inscripcion = new Inscripcion();
         this.inscripcion.setDna(new Defensoria());
@@ -285,7 +267,6 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
     public void initLoad() {
         this.busTipo = "1";
         this.initFiltro();
-        this.nuevaDna();
         this.initAdjuntos();
         List<ParametroDna> parametros = this.parametroFacade.findAllByField("cidParametro", Constantes.RUTA_ARCHIVO);
         this.ruta = parametros.get(0).getTxtValor();
@@ -294,8 +275,31 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         this.rutaConstancias = parametros.get(0).getTxtValor();
         
         this.initPersona();
+        this.modo = Constantes.MODO_LISTADO;
     }
     
+       /**
+     * Muestra el título del formulario según el modo
+     * @return el título del modo
+     */
+    public String titulo() {
+        switch(this.modo) {
+            case Constantes.MODO_NUEVO: return "Nueva Inscripción"; 
+            case Constantes.MODO_UPDATE: return "Actualización de Inscripción";
+            case Constantes.MODO_EVALUACION: return "Evaluación de Inscripción";
+            case Constantes.MODO_EVALUACION_SUBSANACION: return "Evaluación de Inscripción Subsanada";
+        }
+        return "";
+    } 
+   
+    /**
+     * Regresa al modo listado
+     */
+    public void regresar(){this.titulo();
+       this.modo = Constantes.MODO_LISTADO;
+    }
+   
+   
     /**
      * Inicializar los filtros
      */
@@ -334,62 +338,14 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
        
         this.personaDnaEval = new PersonaDnaEval();
         this.personaDnaEval.setFuncion(new Catalogo());
-        this.clonePersonaDnaEval = new PersonaDnaEval();
-        this.clonePersonaDnaEval.setFuncion(new Catalogo());
         
-        //Subsanar
-        this.personaSubsanar = new PersonaDna();
-        this.personaSubsanar.setFuncion(new Catalogo());
-        this.personaSubsanar.setNidDepartamento(BigDecimal.ZERO);
-        this.personaSubsanar.setNidProvincia(BigDecimal.ZERO);
-        this.personaSubsanar.setNidDistrito(BigDecimal.ZERO);
-        this.personaSubsanar.setProfesion(new Catalogo());
-        
-        //Ver
-        this.personaVer = new PersonaDna();
-        this.personaVer.setFuncion(new Catalogo());
-        
+               
         //Remover
         this.personaRemover =new PersonaDna();
         this.personaRemover.setFuncion(new Catalogo());
     }
-    
-    /**
-     * Nueva dna
-     */
-    public void nuevaDna(){
-       this.defensoria = new Defensoria();
-       this.defensoria.setTxtTipo(Constantes.TIPO_SEDE_CENTRAL);
-       this.defensoria.setOrigen(new Catalogo());
-       this.verOrigen = true;
-       this.codigo = null;
-       this.nombreSede = "";
-        
-    }
-    
-    /**
-     * Obtener defensoria
-     * @param item - Defensoria
-     */
-    public void obtenerDefensoria(Defensoria item) {
-        this.defensoria = item;
-        this.verOrigen = this.defensoria.getTxtTipo().equals("CEN");
-        if(item.getTxtTipo().equals("ANX")) {
-            this.codigo = item.getTxtConstancia();
-            this.nombreSede = item.getCentral().getTxtNombre();       
-        }
-        this.obtenerProvincias();
-        this.obtenerDistritos();
-    }
-    
-    /**
-     * Obtener documentos inscripcion
-     * @return lista de catálogos
-     */
-    public List<Catalogo> obtenerDocumentosInscripcion(){
-        List<Catalogo> listaDocumentosInscripcion = this.catalogoFacade.findAllByFieldOrder("nidPadre", Constantes.CATALOGO_DOCUMENTO_INSCRIPCION, true, "txtNombre", false);
-        return listaDocumentosInscripcion;
-    }
+
+  
     
     /**
      * Inicializar nueva defensoria
@@ -399,6 +355,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
          this.inscripcion = new Inscripcion();
          this.inscripcion.setDna(item);
          this.listaPersonal = new ArrayList<>();
+         this.modo = Constantes.MODO_NUEVO;
          this.initAdjuntos();
     }
     
@@ -431,14 +388,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         return this.lista;
     }
    
-    /**
-     * Obtener el origen
-     * @return lista de catálogos
-     */
-    public List<Catalogo> obtenerOrigen() {
-        return  this.catalogoFacade.findAllByFieldOrder("nidPadre", Constantes.CATALOGO_ORIGEN, true, "txtNombre", false);
-    }
-    
+  
     /**
      * Obtener el estado
      * @return  lista de catálogos
@@ -454,21 +404,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         return estadosFiltrados;
     }
     
-    /**
-     * muestra los datos referentes al anexo e inicializa si es que es un registro nuevo
-     */
-    public void renderOrigen(){
-        String tipoSede = this.defensoria.getTxtTipo();
-        if(this.defensoria.getNidDna()==null) {
-            this.defensoria = new Defensoria();
-            this.defensoria.setTxtTipo(tipoSede);       
-            this.defensoria.setOrigen(new Catalogo());
-        } else{
-            this.defensoria.setTxtTipo(tipoSede);       
-        }
-        this.verOrigen = tipoSede.equals(Constantes.TIPO_SEDE_CENTRAL);
-        
-    }   
+   
     
     
     
@@ -479,33 +415,19 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
     public List<Catalogo> obtenerFunciones() {
         List<Catalogo> listaCatalogos = this.catalogoFacade.findAllByFieldOrder("nidPadre", Constantes.CATALOGO_FUNCION, true, "txtNombre", false);
         
-        if(this.verificaResponsable())
-           for(Catalogo funcion: listaCatalogos)
-                if(funcion.getNidCatalogo() == Constantes.CATALOGO_FUNCION_RESPONSABLE) {
-                    listaCatalogos.remove(funcion);
-                    break;
-                }
+        if( this.verificaResponsable() && ( this.personaDna.getFuncion().getNidCatalogo() == null || (this.personaDna.getFuncion().getNidCatalogo() != null &&  this.personaDna.getFuncion().getNidCatalogo().compareTo(Constantes.CATALOGO_FUNCION_RESPONSABLE)!=0) ) )
+                    for(Catalogo funcion: listaCatalogos)
+                         if(funcion.getNidCatalogo().compareTo(Constantes.CATALOGO_FUNCION_RESPONSABLE)==0) {
+                             LOG.info("--- REMOVIENDO RESPONSABLE --- ");
+
+                             listaCatalogos.remove(funcion);
+                             break;
+                         }
         
         return  listaCatalogos;
     }
    
-    /**
-     * Obtener el grado de instruccion
-     * @return  lista de catálogos
-     */
-    public List<Catalogo> obtenerGradoInstruccion() {
-        List<Catalogo> listaCatalogos = this.catalogoFacade.findAllByFieldOrder("nidPadre", Constantes.CATALOGO_GRADO_INSTRUCCION, true, "txtNombre", false);
-        return  listaCatalogos;
-    }
-
-     /**
-     * Obtener las ocupaciones
-     * @return  lista de catálogos
-     */
-    public List<Catalogo> obtenerOcupaciones() {
-        List<Catalogo> listaCatalogos = this.catalogoFacade.findAllByFieldOrder("nidPadre", Constantes.CATALOGO_OCUPACIONES, true, "txtNombre", false);
-        return  listaCatalogos;
-    }
+    
     /**
      * Cambiar el tipo de busqueda
      * @param evt - TabChangeEvent - evento generado al cambiar el TabView
@@ -544,6 +466,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
                 estadoBus.setNidCatalogo(this.busEstado);
                 param.adicionar("estado", estadoBus);
             }
+            
             if(param.getParametros().size()>0) 
                this.listaDefensoria = this.defensoriaFacade.obtenerPorParametrosObject(param, true, "txtNombre", true);
 
@@ -589,16 +512,16 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         this.inscripcion = new Inscripcion();
        
         Catalogo estadoNuevo = new Catalogo();
-        estadoNuevo.setNidCatalogo(Constantes.CATALOGO_ESTADO_NUEVO);
-        Catalogo estadoDenegado = new Catalogo();
-        estadoDenegado.setNidCatalogo(Constantes.CATALOGO_ESTADO_DENEGADA);
+        estadoNuevo.setNidCatalogo(Constantes.CATALOGO_DNA_NUEVO);
+        Catalogo estadoRegistrada = new Catalogo();
+        estadoRegistrada.setNidCatalogo(Constantes.CATALOGO_DNA_REGISTRADA);
      
         ParametroNodo param = new ParametroNodo();
         param.adicionar("flgActivo", BigInteger.ONE);
         
         if(this.indexTab == 0 && this.busCodigo!=null ) {
              param.adicionar("txtConstancia",  this.busCodigo);
-             this.listaDefensoria = this.defensoriaFacade.obtenerPorParametrosAndEstado(param, estadoNuevo, estadoDenegado);
+             this.listaDefensoria = this.defensoriaFacade.obtenerPorParametrosAndEstado(param, estadoNuevo, estadoRegistrada);
              return;
         }
 
@@ -610,7 +533,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
             if(this.busDistrito!=null)
                 param.adicionar("nidDistrito", this.busDistrito);
             
-            this.listaDefensoria = this.defensoriaFacade.obtenerPorParametrosAndEstado(param, estadoNuevo, estadoDenegado);
+            this.listaDefensoria = this.defensoriaFacade.obtenerPorParametrosAndEstado(param, estadoNuevo, estadoRegistrada);
        
         }
 
@@ -618,48 +541,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
           
     }
     
-   /**
-    * En el panelDna realiza la búsqueda de la DNA del tipo sede central para poder crear el anexo
-    * @param fc - FacesContext
-    * @param component - UIComponent
-    * @param value - valor de componente
-    * @throws ValidatorException  - excepción generada cuando existe un error en la validación
-    */
-      public void buscarDna(FacesContext fc, UIComponent component, Object value) throws ValidatorException {
-       
-      
-        if(value!=null && !String.valueOf(value).equals("") && !String.valueOf(value).equals("00000") 
-                && (this.defensoria.getTxtConstancia()==null || !((String)value).equals(this.defensoria.getTxtConstancia())) ) {
-          
-               ParametroNodo param = new ParametroNodo();
-               param.adicionar("txtConstancia", String.valueOf(value));
-               param.adicionar("txtTipo", Constantes.TIPO_SEDE_CENTRAL);
 
-               List<Defensoria> listaDna;            
-               try {
-                   listaDna = this.defensoriaFacade.obtenerPorParametros(param);
-               }catch(Exception ex){
-                  throw new ValidatorException(new FacesMessage("Error al buscar la DNA"));
-               }    
-
-               if(listaDna!=null && listaDna.size()>0) {
-                   Defensoria resDefensoria = listaDna.get(0);
-                   this.defensoria.setCentral(resDefensoria);
-                   this.defensoria.setTxtConstancia(resDefensoria.getTxtConstancia());
-                   this.defensoria.setOrigen(resDefensoria.getOrigen());
-                   this.defensoria.setNidDepartamento(resDefensoria.getNidDepartamento());
-                   this.defensoria.setTxtEntidad(resDefensoria.getTxtEntidad());
-                   this.obtenerProvincias();
-                   this.defensoria.setNidProvincia(resDefensoria.getNidProvincia());
-                    this.obtenerDistritos();
-                   this.defensoria.setNidDistrito(resDefensoria.getNidDistrito());
-                   this.nombreSede = resDefensoria.getTxtNombre();
-               } else {
-                   this.renderOrigen();
-                   throw new ValidatorException(new FacesMessage("DNA no existe"));
-               }
-         }
-    }
     
     /**
      * Obtener nombre departamento
@@ -667,7 +549,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      */
     public String getNombreDepartamento() {
         if(this.inscripcion.getDna() == null || this.inscripcion.getDna().getNidDepartamento() == null){ return "";}
-        return (this.inscripcion.getDna().getNidDepartamento()!=null)?fachadaDepartamento.find(this.inscripcion.getDna().getNidDepartamento()).getTxtDescripcion():"";
+        return (this.inscripcion.getDna().getNidDepartamento()!=null)?departamentoFacade.find(this.inscripcion.getDna().getNidDepartamento()).getTxtDescripcion():"";
     }
     
     /**
@@ -676,7 +558,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      */
     public String getNombreProvincia() {
         if(this.inscripcion.getDna() == null || this.inscripcion.getDna().getNidProvincia() == null){ return "";}
-        return (this.inscripcion.getDna().getNidProvincia()!=null)?fachadaProvincia.find(this.inscripcion.getDna().getNidProvincia()).getTxtDescripcion():"";
+        return (this.inscripcion.getDna().getNidProvincia()!=null)?provinciaFacade.find(this.inscripcion.getDna().getNidProvincia()).getTxtDescripcion():"";
     }
     
     /**
@@ -685,7 +567,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      */
     public String getNombreDistrito() {
         if(this.inscripcion.getDna() == null || this.inscripcion.getDna().getNidDistrito() == null){ return "";}
-        return (this.inscripcion.getDna().getNidDistrito()!=null)?fachadaDistrito.find(this.inscripcion.getDna().getNidDistrito()).getTxtDescripcion():"";
+        return (this.inscripcion.getDna().getNidDistrito()!=null)?distritoFacade.find(this.inscripcion.getDna().getNidDistrito()).getTxtDescripcion():"";
     }
     
     /**
@@ -700,26 +582,10 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
             this.personaDna.setNidProvincia(BigDecimal.ZERO);
             this.personaDna.setNidDistrito(BigDecimal.ZERO);
         }
-        return  fachadaDepartamento.obtenerDepartamentos();
+        return  departamentoFacade.obtenerDepartamentos();
     }
 
-    /**
-     * Obtener provincias
-     */
-    public void obtenerProvincias() {
-        Departamento departamento = new Departamento();
-        departamento.setNidDepartamento(this.defensoria.getNidDepartamento());
-        this.provincias = fachadaProvincia.obtenerProvincias(departamento);
-    }
-    
-    /**
-     * Obtener distritos
-     */
-    public void obtenerDistritos() {
-        Provincia provincia = new Provincia();
-        provincia.setNidProvincia(this.defensoria.getNidProvincia());
-        this.distritos = fachadaDistrito.obtenerDistritos(provincia);
-    }
+   
     
     /**
      * Obtener provincias
@@ -727,7 +593,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
     public void obtenerProvinciasDna() {
         Departamento departamento = new Departamento();
         departamento.setNidDepartamento(this.personaDna.getNidDepartamento());
-        this.provinciasDna = fachadaProvincia.obtenerProvincias(departamento);
+        this.provinciasDna = provinciaFacade.obtenerProvincias(departamento);
     }
     
     /**
@@ -736,7 +602,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
     public void obtenerDistritosDna() {
         Provincia provincia = new Provincia();
         provincia.setNidProvincia(this.personaDna.getNidProvincia());
-        this.distritosDna = fachadaDistrito.obtenerDistritos(provincia);
+        this.distritosDna = distritoFacade.obtenerDistritos(provincia);
     }
     
     /**
@@ -745,7 +611,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      public void obtenerProvinciasBus() {
         Departamento departamento = new Departamento();
         departamento.setNidDepartamento(this.busDepartamento);
-        this.provinciasBus = fachadaProvincia.obtenerProvincias(departamento);
+        this.provinciasBus = provinciaFacade.obtenerProvincias(departamento);
     }
     
      /**
@@ -754,7 +620,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
     public void obtenerDistritosBus() {
         Provincia provincia = new Provincia();
         provincia.setNidProvincia(this.busProvincia);
-        this.distritosBus = fachadaDistrito.obtenerDistritos(provincia);
+        this.distritosBus = distritoFacade.obtenerDistritos(provincia);
     }
     
     /**
@@ -773,13 +639,17 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @return true si existe responsable en la lista del personal
      */
     public boolean verificaResponsable() {
-        if(this.personaDna.getFuncion() != null && this.personaDna.getFuncion().getNidCatalogo() != null){
-           for(PersonaDna personal : this.listaPersonal){
-                if(personal.getFuncion().getNidCatalogo().equals(Constantes.CATALOGO_FUNCION_RESPONSABLE)) {
-                     return true;
-                }
-            }
-        }
+        LOG.info("--- Verificando Responsable --- ");
+        
+        for(PersonaDna personal : this.listaPersonal)
+          if(personal.getFuncion() != null && 
+                 personal.getFuncion().getNidCatalogo() != null &&
+                     personal.getFuncion().getNidCatalogo().equals(Constantes.CATALOGO_FUNCION_RESPONSABLE)) {
+              LOG.info("--- Existe Responsable --- ");
+               return true;
+          }
+           
+        
         return false;
     }
     
@@ -830,126 +700,37 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         this.personaDnaOriginal.actualizar(this.personaDna);
     }
     
-    /**
-     * Cargar nuevas Dna
-     */
-    public void cargarNuevasDna(){
-         ParametroNodoObject param = new ParametroNodoObject();
-         Catalogo estado = new Catalogo();
-         estado.setNidCatalogo(Constantes.CATALOGO_ESTADO_NUEVO);
-         param.adicionar("estado", estado);
-         this.listaDefensoria = this.defensoriaFacade.obtenerPorParametrosObject(param, true, "txtNombre", true);
-
-    }
-   
-    /**
-     * Anular Dna
-     */
-    public void anularDna() {
-        try {
-            UsuarioAdministrado usuarioAdministrado = (UsuarioAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{usuarioAdministrado}", UsuarioAdministrado.class);
-            this.defensoria.setNidUsuarioMod(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
-            this.defensoria.setTxtPc(Internet.obtenerNombrePC());
-            this.defensoria.setTxtIp(Internet.obtenerIPPC());
-            this.defensoria.setFecModificacion(new Date());
-            this.defensoriaFacade.edit(this.defensoria);
-        } catch (Exception e) {
-           
-        }
-    }
-   
-      /**
-    * Validar el formulario de defensoria. 
-    * Si seleccionó ANEXO entonces debe buscar una sede central antes de guardar
-    * @param event - ComponentSystemEvent - evento posterior a la validación de componentes
-    */
-   public void validarDna(final ComponentSystemEvent event) {
-       
-        FacesContext fc = FacesContext.getCurrentInstance();
-        final UIComponent formulario = event.getComponent();
-        final UIInput txtCodigo = (UIInput) formulario.findComponent("txtCodigo");
-       
-        if(this.defensoria.getTxtTipo().equals(Constantes.TIPO_SEDE_ANEXO) && this.nombreSede.equals("")) {
-            adicionarMensajeError("Error","Debe ingresar el código de DNA de la sede central");
-            txtCodigo.setValid(false);
-            fc.validationFailed();
-            fc.renderResponse(); 
-        }
-
-    }
+    
    
     
-    /**
-     * Crear Dna
-     */
-    public void createDna() {
-        
-        try {
-            
-            Catalogo estado = new Catalogo();
-            estado.setNidCatalogo(Constantes.CATALOGO_ESTADO_NUEVO);// id catalogo para estado NUEVO
-            UsuarioAdministrado usuarioAdministrado = (UsuarioAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{usuarioAdministrado}", UsuarioAdministrado.class);
-            
-            if(this.defensoria.getTxtTipo().equals(Constantes.TIPO_SEDE_CENTRAL)) {
-                String cidDepartamento = StringUtils.leftPad(String.valueOf(this.defensoria.getNidDepartamento()), 2, '0') ;
-                String numero = StringUtils.leftPad(String.valueOf(800 + this.defensoriaFacade.getNroConstancia(this.defensoria.getNidDepartamento())),3,'0');
-                this.defensoria.setTxtConstancia(cidDepartamento.concat(numero));
-            } else 
-                this.defensoria.setTxtConstancia(this.codigo);
-            
-            this.defensoria.setMigrado(0);
-            this.defensoria.setNidUsuarioReg(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
-            this.defensoria.setEstado(estado);
-            this.defensoria.setTxtPc(Internet.obtenerNombrePC());
-            this.defensoria.setTxtIp(Internet.obtenerIPPC());
-            this.defensoria.setFecRegistro(new Date());
-            this.defensoria.setFlgActivo(BigInteger.ONE);
-            this.defensoriaFacade.create(this.defensoria);
-            
-            // muestra el listado de defensorias nuevas
-            this.tabView.setActiveIndex(2);
-            this.busEstado = Constantes.CATALOGO_ESTADO_NUEVO;
-            this.busTipo = "1"; // buscar defensorias
-            this.cargarNuevasDna();
-           
-        } catch (Exception e) {
-            adicionarMensajeError("Error al crear DNA", e.getMessage());
-        }
   
-    }
-    
-    /**
-     * Acutalizar Dna
-     */
-    public void updateDna() {
-         try {
-            
-            UsuarioAdministrado usuarioAdministrado = (UsuarioAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{usuarioAdministrado}", UsuarioAdministrado.class);
-            this.defensoria.setNidUsuarioMod(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
-            this.defensoria.setTxtPc(Internet.obtenerNombrePC());
-            this.defensoria.setTxtIp(Internet.obtenerIPPC());
-            this.defensoria.setFecModificacion(new Date());
-            this.defensoria.setFlgActivo(BigInteger.ONE);
-            this.defensoriaFacade.edit(this.defensoria);
-           
-        } catch (Exception e) {
-            adicionarMensajeError("Error al Actualizar DNA", e.getMessage());
-        }
-    }
-    
     /**
      * Enviar Correo
+     * @param pass
      */
-     public void enviarCorreo() {
+     public void enviarCorreo(String pass) {
         CorreoDnaAdministrado correoDnaAdministrado = (CorreoDnaAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{correoDnaAdministrado}", CorreoDnaAdministrado.class);
-        this.correoService.enviarCorreo(this.responsable, correoDnaAdministrado);
+        this.correoService.enviarCorreoCredenciales(this.responsable.getNombresApellidos(), this.responsable.getTxtCorreo(), pass, correoDnaAdministrado);
     } 
+     
+     
+         
+     /**
+      * Genera la contraseña del usuario
+      * @return la contraseña
+      */
+     public String generaPassword() {
+         return PasswordUtil.generatePassword(2, PasswordUtil.ALPHA_CAPS) + PasswordUtil.generatePassword(2, PasswordUtil.ALPHA) + PasswordUtil.generatePassword(2, PasswordUtil.SPECIAL_CHARS) + PasswordUtil.generatePassword(2, PasswordUtil.NUMERIC);
+            
+     }
+   
     
      /**
       * Crear usuario ligado a la PersonaDna Responsable
+      * @param pass
       * @return Usuario
       */
-    public Usuario crearUsuario() {
+    public Usuario crearUsuario(String pass) {
         
         try {
             UsuarioAdministrado usuarioAdministrado = (UsuarioAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{usuarioAdministrado}", UsuarioAdministrado.class);
@@ -962,7 +743,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
             persona.setTxtDocumento(this.responsable.getTxtDocumento());
             persona.setTxtApellidoPaterno(this.responsable.getTxtApellidoPaterno());
             persona.setTxtApellidoMaterno(this.responsable.getTxtApellidoMaterno());
-            persona.setTxtNombres(this.responsable.getTxtNombres());
+            persona.setTxtNombres(this.responsable.getApellidosNombres());
             persona.setFlgActivo(BigInteger.ONE);
             persona.setTxtPc(Internet.obtenerNombrePC());
             persona.setTxtIp(Internet.obtenerIPPC());
@@ -979,7 +760,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
             usuario.setTxtIp(Internet.obtenerIPPC());
             usuario.setFecEdicion(new Date());
           
-            String encriptado = usuarioAdministrado.encriptar(Constantes.PASSWORD);
+            String encriptado = usuarioAdministrado.encriptar(pass);
             usuario.setTxtPassword(encriptado);
 
             List<EstadoUsuario> estadousuario = this.estadoUsuarioFacade.findAllByField("txtEstadoUsuario", "APROBADO");
@@ -1014,7 +795,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
             return usuario;
         
         }catch(Exception ex) {
-            adicionarMensajeError("Error:","No pudo generar el usuario");
+            adicionarMensajeError("No pudo generar el usuario","");
         }  
         return null;
     }
@@ -1034,7 +815,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
                     if(personal.getFuncion().getNidCatalogo().equals(Constantes.CATALOGO_FUNCION_RESPONSABLE)) this.responsable = personal;
             }
             if(this.responsable == null){
-                adicionarMensajeError("Error:", "Debe agregar un responsable");
+                adicionarMensajeError("Debe agregar un responsable","");
                 fc.validationFailed();
                 fc.renderResponse(); 
             }           
@@ -1042,7 +823,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
             for(DocInscripcion doc : this.adjuntos) {
             
                 if(doc.getTxtNombre()==null){
-                    adicionarMensajeError("Debe adjuntar los archivos solicitados","");
+                    adicionarMensajeError("Debe adjuntar los documentos solicitados","");
                     fc.validationFailed();
                     fc.renderResponse(); 
                     break;
@@ -1052,8 +833,9 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      
     /**
      * Preparar para el guardado
+     * @param pass
      */
-    public void prepararSave() {
+    public void prepararSave(String pass) {
        
         try {
          
@@ -1109,7 +891,6 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
             this.inscripcion.setPersonal(listaFinal);
             this.inscripcion.setDocumentos(this.adjuntos);
            
-            
             if(this.inscripcion.getNidInscripcion()!=null) {
                 
                 Usuario usuarioTmp = this.usuarioFacade.find(this.inscripcion.getNidUsuario());
@@ -1118,11 +899,11 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
                     usuarioTmp.setFlgActivo(BigInteger.ZERO);
                     this.usuarioFacade.edit(usuarioTmp);
                     
-                    Usuario usuario = this.crearUsuario();
+                    Usuario usuario = this.crearUsuario(pass);
                     this.inscripcion.setNidUsuario(usuario.getNidUsuario());
                 }
             } else {
-                Usuario usuario = this.crearUsuario();
+                Usuario usuario = this.crearUsuario(pass);
                 this.inscripcion.setNidUsuario(usuario.getNidUsuario());
             }
 
@@ -1131,6 +912,9 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         }
        
     } 
+    
+    
+  
     /**
      * modifica el estado de la inscripción "POR EVALUAR" y revisa la PIDE
      * 
@@ -1142,24 +926,29 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         this.inscripcion.setNidUsuarioReg(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
         this.inscripcion.setFecRegistro(new Date());
         this.inscripcion.setEstado(this.catalogoFacade.find(Constantes.CATALOGO_ESTADO_POR_EVALUAR)); 
-        this.inscripcion.setFlagAcredita(BigInteger.ZERO);
-        this.prepararSave();
+         
+        String pass = this.generaPassword();
+             
+        this.prepararSave(pass);
         try {
             this.inscripcionFacade.create(this.inscripcion);
             this.inscripcion.getDna().setEstado(this.inscripcion.getEstado());
             this.defensoriaFacade.edit(this.inscripcion.getDna());
             this.verMensajeOK = true;
-   
+            this.modo = Constantes.MODO_LISTADO;
+            
+            adicionarMensaje("","La solicitud de inscripción ha sido registrada exitósamente");
+
         } catch (Exception e) {
             adicionarMensajeError("Error","Error al guardar la Solicitud de Inscripción");
         }
        
-        this.enviarCorreo();
+        this.enviarCorreo(pass);
           
     }
   
     /**
-     * Actualizar la acreditacion
+     * Actualizar la inscripción
      */
     public void update() {
         
@@ -1168,15 +957,20 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         this.inscripcion.setNidUsuarioMod(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
         this.inscripcion.setFecModificacion(new Date());
         this.inscripcion.setDocumentos(this.adjuntos);
-        this.prepararSave();
+        
+        String pass = this.generaPassword();
+        
+        this.prepararSave(pass);
         try {
             this.inscripcionFacade.edit(this.inscripcion);
-            this.enviarCorreo();
-            this.verMensajeOK = true;
-   
+             this.verMensajeOK = true;
+              adicionarMensaje("","La solicitud de inscripción ha sido actualizada exitósamente");
         } catch (Exception e) {
             adicionarMensajeError("Error","Error al guardar la Solicitud de Inscripción");
         }
+        
+        this.enviarCorreo(pass);
+          
        
     }
     
@@ -1234,22 +1028,24 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         if(!matcher.matches())
             throw new ValidatorException(new FacesMessage("El correo electrónico no dispone de un formato válido"));
       
-        ParametroNodo nodo = new ParametroNodo();
+      
+        ParamFiltro nodo = new ParamFiltro();
         nodo.adicionar("txtCorreo", correo);
         Catalogo funcion = new Catalogo();
         funcion.setNidCatalogo(Constantes.CATALOGO_FUNCION_RESPONSABLE);
         nodo.adicionar("funcion", funcion);
-        nodo.adicionar("flgActivo", BigInteger.ONE);
         
-        List<PersonaDna> listaTmp = this.personaDnaFacade.obtenerPorParametros(nodo);
-        if(listaTmp.size()>0) {
-             if(this.personaDna.getNidPersona()==null)
-                throw new ValidatorException(new FacesMessage("El correo electrónico ya ha sido registrado por otro usuario"));
-             else 
-                if(!this.personaDna.getNidPersona().equals(listaTmp.get(0).getNidPersona())) 
-                    throw new ValidatorException(new FacesMessage("El correo electrónico ya ha sido registrado por otro usuario"));
-
+        if(this.personaDna.getInscripcion()!=null &&
+                this.personaDna.getInscripcion().getNidInscripcion()!=null)
+             nodo.adicionar("inscripcion", this.personaDna.getInscripcion(), ParamFiltro.NOTEQUAL);
+        
+        List<PersonaDna> listaTmp = this.personaDnaFacade.obtenerPorFiltro(nodo, true, "txtCorreo", false);
+        
+        if(listaTmp!=null && listaTmp.size()>0) {
+            Defensoria dTmp = listaTmp.get(0).getInscripcion().getDna();
+            throw new ValidatorException(new FacesMessage("El correo electrónico ya ha sido registrado por otro usuario en la DNA " + dTmp.getTxtConstancia() + " - " + dTmp.getTxtNombre()));
         }
+      
     }
     
     /**
@@ -1260,7 +1056,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @throws ValidatorException - excepción generada si existe error en la validación
    */
     public void verificarReniec(FacesContext ctx, UIComponent component, Object value) throws ValidatorException {
-         IdentificacionReniec consultaReniec = (IdentificacionReniec)getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{identificacionReniec}", IdentificacionReniec.class);
+         IdentificacionReniec identificacionReniec = new IdentificacionReniec();
        
         String dni = (String)value;
           
@@ -1280,49 +1076,51 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
 
                 this.dniValido = false;
                 this.initPersona();
-                /*
-                ReniecConsultaDniPortType port = service.getReniecConsultaDniHttpsSoap11Endpoint();
-                PeticionConsulta datosPersona = new PeticionConsulta();
-                datosPersona.setNuDniConsulta(dni);
-                datosPersona.setNuDniUsuario(Constantes.RENIEC_DNI);
-                datosPersona.setNuRucUsuario(Constantes.RENIEC_RUC);
-                datosPersona.setPassword(Constantes.RENIEC_PASSWORD); 
-                ResultadoConsulta result = port.consultar(datosPersona);
-                */
+            
+                identificacionReniec.obtenerConsultaReniec(dni);
                 
-                this.identificacionReniec.obtenerConsultaReniec(dni);
-                
-                if (this.identificacionReniec.getNOMBRES() != null) {
+                if (identificacionReniec.getNOMBRES() != null) {
                   this.dniValido = true;
 
                   this.personaDna.setTxtDocumento(dni);
-                  this.personaDna.setTxtApellidoPaterno(this.identificacionReniec.getAPPAT());
-                  this.personaDna.setTxtApellidoMaterno(this.identificacionReniec.getAPMAT());
+                  this.personaDna.setTxtApellidoPaterno(identificacionReniec.getAPPAT());
+                  this.personaDna.setTxtApellidoMaterno(identificacionReniec.getAPMAT());
+                  this.personaDna.setTxtDireccion(identificacionReniec.getDIRECCION());
+                
+                  this.separarNombres(identificacionReniec.getNOMBRES()); 
+                  
+                  String[] ubigeo = identificacionReniec.getUBIGEO().split("/");
+                  List<Departamento> ldep = departamentoFacade.findAllByField("txtDescripcion", ubigeo[0]);
+                  if(!ldep.isEmpty()) {
 
-                  this.separarNombres(this.identificacionReniec.getNOMBRES()); 
-                  this.personaDna.setTxtDireccion(this.identificacionReniec.getDIRECCION());
+                    this.personaDna.setNidDepartamento(ldep.get(0).getNidDepartamento());
+                    this.obtenerProvinciasDna();
 
+                    if(this.personaDna.getNidDepartamento().compareTo(BigDecimal.valueOf((long)7))==0) {
+                        this.personaDna.setNidProvincia(BigDecimal.valueOf((long)67));
+                        this.obtenerDistritosDna();
+
+                        List<Distrito> ldist = distritoFacade.findAllByField("txtDescripcion", ubigeo[1]);
+                        if(!ldist.isEmpty())
+                            this.personaDna.setNidDistrito(ldist.get(0).getNidDistrito());
+
+                    } else {
+
+                        List<Provincia> lprov = provinciaFacade.findAllByField("txtDescripcion", ubigeo[1]);
+                        if(!lprov.isEmpty()) {
+                            this.personaDna.setNidProvincia(lprov.get(0).getNidProvincia());
+                            this.obtenerDistritosDna();
+                        }
+                        List<Distrito> ldist = distritoFacade.findAllByField("txtDescripcion", ubigeo[2]);
+                        if(!ldist.isEmpty())
+                            this.personaDna.setNidDistrito(ldist.get(0).getNidDistrito());
+
+                   }
+                  }
                 }  else {
                      throw new ValidatorException(new FacesMessage("El DNI ingresado no existe"));
                 }
                 
-                /*
-                if(result.getCoResultado().equals(Constantes.RENIEC_OK)) {
-
-                  this.dniValido = true;
-
-                  this.personaDna.setTxtDocumento(datosPersona.getNuDniConsulta());
-                  this.personaDna.setTxtApellidoPaterno(result.getDatosPersona().getApPrimer());
-                  this.personaDna.setTxtApellidoMaterno(result.getDatosPersona().getApSegundo());
-
-                  this.separarNombres(result.getDatosPersona().getPrenombres()); 
-                  this.personaDna.setTxtDireccion(result.getDatosPersona().getDireccion());
-
-                }  else {
-                     throw new ValidatorException(new FacesMessage("El DNI ingresado no existe"));
-                }
-                
-                */
             } catch (Exception ex) {
                 // TODO handle custom exceptions here
             }
@@ -1337,17 +1135,18 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @return String
      */
     public String verificarInpeJudiciales(PersonaDna personalDna) {
-        String result = "";
+     
         try { 
             
-            //INPEAJudicialesPortType port = service_1.getINPEAJudicialesHttpsSoap11Endpoint();
+            AntecedenteJudicial antecedenteJudicial = new AntecedenteJudicial();
+
+  
             String apepat = personalDna.getTxtApellidoPaterno();
             String apemat = personalDna.getTxtApellidoMaterno();
-            String nombres = personalDna.getTxtNombres();
-            //result = port.getAntecedenteJudicial(apepat, apemat, nombres);
+            String nombres = personalDna.getApellidosNombres();
             
-            this.antecedenteJudicial.obtenerAntJudicial(apepat, apemat, nombres);
-            return this.antecedenteJudicial.getRESPUESTA();
+            antecedenteJudicial.obtenerAntJudicial(apepat, apemat, nombres);
+            return antecedenteJudicial.getRESPUESTA();
             
         } catch (Exception ex) {
             // TODO handle custom exceptions here
@@ -1363,7 +1162,8 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
     public String verificarPJPenales(PersonaDna personalDna){
         
         try { 
-            //PJAntecedentesPenalesPortType port = service_2.getPJAntecedentesPenalesHttpsSoap11Endpoint();
+           
+             AntecedentePenal antecedentePenal = new AntecedentePenal();
             String xApellidoPaterno = personalDna.getTxtApellidoPaterno();
             String xApellidoMaterno = personalDna.getTxtApellidoMaterno();
             String xNombre1 = personalDna.getTxtNombre1();
@@ -1371,18 +1171,9 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
             String xNombre3 = (personalDna.getTxtNombre3()!=null)?personalDna.getTxtNombre3():"";
             String xDni = personalDna.getTxtDocumento();
             
-            this.antecedentePenal.obtenerAntPenal(xApellidoPaterno, xApellidoMaterno, xNombre1, xNombre2, xNombre3, xDni);
-            return this.antecedentePenal.getRESPUESTA();
-           /*
-            Holder<String> xCodigoRespuesta = new Holder<>();
-            Holder<String> xMensajeRespuesta = new Holder<>();
-            port.verificarAntecedentesPenales(xApellidoPaterno, xApellidoMaterno, xNombre1, xNombre2, xNombre3, xDni, CredencialPoderJudicial.obtenerMotivoConsulta(), CredencialPoderJudicial.obtenerProcesoEntidad(), CredencialPoderJudicial.obtenerRucEntidad(), CredencialPoderJudicial.obtenerIPPublico(), xDni, CredencialPoderJudicial.obtenerPC(), CredencialPoderJudicial.obtenerIP(), CredencialPoderJudicial.obtenerUsuario(), CredencialPoderJudicial.obtenerMAC(), xCodigoRespuesta, xMensajeRespuesta);
-            if (null != xMensajeRespuesta.value) {
-               return xMensajeRespuesta.value;
-            } else {
-                return "NO SE ENCONTRARON RESULTADOS";
-            }
-            */
+            antecedentePenal.obtenerAntPenal(xApellidoPaterno, xApellidoMaterno, xNombre1, xNombre2, xNombre3, xDni);
+            return antecedentePenal.getRESPUESTA();
+        
         } catch (Exception ex) {
             Logger.getLogger(Thread.currentThread().getStackTrace()[1].getMethodName()).log(Level.SEVERE, null, ex);
             return "ERROR";
@@ -1397,82 +1188,18 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      */
     public String verificarPnp(PersonaDna personalDna){
         
-        //MininterAntPolicialesPortType port = service_3.getMininterAntPolicialesHttpsSoap11Endpoint();
-        // TODO initialize WS operation arguments here
         String vDNI = personalDna.getTxtDocumento();
-        String tipoConsulta = "D";
-   
+    
         try {
-        
-            this.antecedentePolicial.obtenerAntPolicial(vDNI);
-            return this.antecedentePolicial.getRESPUESTA();
+            AntecedentePolicial antecedentePolicial = new AntecedentePolicial();
+
+            antecedentePolicial.obtenerAntPolicial(vDNI);
+            return antecedentePolicial.getRESPUESTA();
             
         } catch (Exception e) {
             return "ERROR";
         }
         
-        /*return "-";
-        
-        try {
-
-            if (tipoConsulta.equals("D")) {
-                String respuestaDni = port.consultaDniGeneral(CredencialMiniter.obtenerUsuario(), CredencialMiniter.obtenerClave(), 
-                        vDNI, CredencialMiniter.obtenerEntidad(), vDNI);
-                
-                if (respuestaDni.equals("0")) {
-                    return "NO PRESENTA ANTECEDENTES POLICIALES VIGENTES";
-                } else if (respuestaDni.equals("1")) {
-                    return "PRESENTA ANTECEDENTES POLICIALES VIGENTES";
-                } else if (respuestaDni.equals("101")) {
-                    return "USUARIO NO REGISTRADO";
-                } else if (respuestaDni.equals("102")) {
-                    return "CLAVE ERRADA";
-                } else if (respuestaDni.equals("103")) {
-                    return "DNI INCORRECTO";
-                } else if (respuestaDni.equals("104")) {
-                    return "FALTA PARAMETRO DE INGRESO";
-                } else if (respuestaDni.equals("105")) {
-                    return "ERROR DE SERVICIO";
-                } else if (respuestaDni.equals("106")) {
-                    return "FALTA ENTIDAD DE CONSULTA";
-                } else if (respuestaDni.equals("107")) {
-                    return "FALTA DNI DE CONSULTA";
-                } else {
-                   return "ERROR";
-                }
-            } else {
-                String nombres = personalDna.getTxtNombres();
-                String apepat = personalDna.getTxtApellidoPaterno();
-                String apemat = personalDna.getTxtApellidoMaterno();
-                String respuestaNombres = port.consultaNombreGeneral(CredencialMiniter.obtenerUsuario(), CredencialMiniter.obtenerClave(), nombres, apemat, apemat, CredencialMiniter.obtenerEntidad(), CredencialMiniter.obtenerDniConsulta());
-
-                if (respuestaNombres.equals("0")) {
-                    return "NO PRESENTA ANTECEDENTES POLICIALES VIGENTES";
-                } else if (respuestaNombres.equals("1")) {
-                    return "PRESENTA ANTECEDENTES POLICIALES VIGENTES";
-                } else if (respuestaNombres.equals("101")) {
-                    return "USUARIO NO REGISTRADO";
-                } else if (respuestaNombres.equals("102")) {
-                    return "CLAVE ERRADA";
-                } else if (respuestaNombres.equals("103")) {
-                    return "DNI INCORRECTO";
-                } else if (respuestaNombres.equals("104")) {
-                    return "FALTA PARAMETRO DE INGRESO";
-                } else if (respuestaNombres.equals("105")) {
-                    return "ERROR DE SERVICIO";
-                } else if (respuestaNombres.equals("106")) {
-                    return "FALTA ENTIDAD DE CONSULTA";
-                } else if (respuestaNombres.equals("107")) {
-                    return "FALTA DNI DE CONSULTA";
-                } else {
-                    return "ERROR";
-                }
-          }
-        } catch (Exception e) {
-            Logger.getLogger(Thread.currentThread().getStackTrace()[1].getMethodName()).log(Level.SEVERE, null, e);
-            return "ERROR";
-        }
-          */
     }
 
     /**
@@ -1497,15 +1224,8 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
             }
             
             docInscripcion.setTxtNombre(fileName);
-            /*
-            List<DocInscripcion> listaNueva = new ArrayList<>();
-            for(DocInscripcion doc : this.adjuntos){
-                if(!doc.getTipo().getNidCatalogo().equals(docInscripcion.getTipo().getNidCatalogo()))listaNueva.add(doc);
-            }
-            listaNueva.add(docInscripcion);
-            this.adjuntos = listaNueva;
-            */
-            adicionarMensaje("Carga de Archivo:",event.getFile().getFileName() + " terminado");
+        
+            adicionarMensaje("","Carga de Archivo: " + event.getFile().getFileName() + " terminado");
             
         } catch(Exception ex) {
             adicionarMensajeError("Error al subir archivo", ex.getMessage());
@@ -1571,8 +1291,18 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         }catch(Exception ex) {
             adicionarMensajeError("Error", "Error al tratar de guardar.");
         }
+        
+        String nroConstancia = this.inscripcion.getDna().getTxtConstancia() != null ? this.inscripcion.getDna().getTxtConstancia() : "";
+        String fileName = Constantes.PREFIX_INSCRIPCION.
+                    concat(Constantes.PREFIX_FIRMADO).
+                    concat(StringUtils.leftPad(nroConstancia, 5, '0')).
+                    concat(".").concat(Constantes.EXTENSION_PDF);
+       
         CorreoDnaAdministrado correoDnaAdministrado = (CorreoDnaAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{correoDnaAdministrado}", CorreoDnaAdministrado.class);
-        this.correoService.enviarConstacia(this.responsable, this.inscripcion, correoDnaAdministrado);    
+        this.correoService.enviarConstancia(Constantes.TPL_CONSTANCIA_INSCRIPCION, 
+                                            this.responsable.getNombresApellidos(), 
+                                            this.responsable.getTxtCorreo(),
+                                            this.inscripcion.getDna().getTxtNombre(),  this.rutaConstancias + fileName, correoDnaAdministrado);    
     } 
     
      /**
@@ -1585,8 +1315,18 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         }catch(Exception ex) {
             adicionarMensajeError("Error", "Error al guardar.");
         }
+        
+        String fileName = Constantes.PREFIX_OFICIO.
+                  concat(this.inscripcion.getDna().getTxtConstancia()).
+                  concat(".").concat(Constantes.EXTENSION_PDF);
+        
         CorreoDnaAdministrado correoDnaAdministrado = (CorreoDnaAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{correoDnaAdministrado}", CorreoDnaAdministrado.class);
-        this.correoService.enviarOficio(this.responsable, this.inscripcion, correoDnaAdministrado);
+        /*
+        this.correoService.enviarOficio(Constantes.TPL_OFICIO_DENEGACION,
+                                        this.responsable.getNombresApellidos(), 
+                                        this.responsable.getTxtCorreo(),
+                                        this.inscripcion.getDna().getTxtNombre(), this.rutaConstancias + fileName, correoDnaAdministrado);   
+        */
     } 
     
     /**
@@ -1666,8 +1406,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
     * @param item  - PersonaDna
     */
    public void obtenerPersonaSubsanar(PersonaDna item){
-       this.personaSubsanar = item;
-       this.personaDna = this.personaSubsanar;
+       this.personaDna = item;
    }
    
    /**
@@ -1710,8 +1449,8 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
 
         FacesContext fc = FacesContext.getCurrentInstance();
         
-        if(this.personalSubsanar != null && !this.personalSubsanar.isEmpty()){
-            PersonaDna responsableTmp = this.obtenerResponsable(this.personalSubsanar);
+        if(this.listaPersonal != null && !this.listaPersonal.isEmpty()){
+            PersonaDna responsableTmp = this.obtenerResponsable(this.listaPersonal);
             if(responsableTmp == null){
                 adicionarMensajeError("Error","El personal debe contener un responsable por lo menos.");
                 fc.validationFailed();
@@ -1734,9 +1473,9 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         final UIComponent formulario = event.getComponent();
         final UIInput nidFuncion = (UIInput) formulario.findComponent("nidFuncion");
         
-        PersonaDna responsableTmp = this.obtenerResponsable(this.personalSubsanar);
+        PersonaDna responsableTmp = this.obtenerResponsable(this.listaPersonal);
         if(responsableTmp != null && 
-            (this.personaSubsanar.getFuncion().getNidCatalogo().equals(Constantes.CATALOGO_FUNCION_RESPONSABLE) && this.personaSubsanar.getNidPersona() == null)){
+            (this.personaDna.getFuncion().getNidCatalogo().equals(Constantes.CATALOGO_FUNCION_RESPONSABLE) && this.personaDna.getNidPersona() == null)){
                 adicionarMensajeError("Error","Ya existe un responsable.");
                 fc.validationFailed();
                 fc.renderResponse(); 
@@ -1744,32 +1483,17 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
     }
 
     /**
-     * Obtener provincias
-     */
-    public void obtenerProvinciasSubsanar() {
-        Departamento departamento = new Departamento();
-        departamento.setNidDepartamento(this.inscripcionSubsanar.getDna().getNidDepartamento());
-        this.provincias = fachadaProvincia.obtenerProvincias(departamento);
-    }
-    
-    /**
-     * Obtener distritos
-     */
-    public void obtenerDistritosSubsanar() {
-        Provincia provincia = new Provincia();
-        provincia.setNidProvincia(this.inscripcionSubsanar.getDna().getNidProvincia());
-        this.distritos = fachadaDistrito.obtenerDistritos(provincia);
-    }
-    
-    /**
      * Obtener la lista de inscripciones por Responsable
      * @return lista de inscripciones
      */
     public List<Inscripcion> obtenerListaPorResponsable() {
         try {
-            UsuarioAdministrado usuarioAdministrado = (UsuarioAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{usuarioAdministrado}", UsuarioAdministrado.class); 
-            List<Inscripcion> inscripciones = this.inscripcionFacade.findAllByFieldOrder("nidUsuario", usuarioAdministrado.getEntidadSeleccionada().getNidUsuario(), true, "fecRegistro", false);
-            return inscripciones;
+            AuthAdministrado authAdministrado = (AuthAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{authAdministrado}", AuthAdministrado.class); 
+            if(authAdministrado.getDna()!=null)
+                return this.inscripcionFacade.findAllByFieldOrder("dna", authAdministrado.getDna(), true, "fecRegistro", false);
+            else
+                return this.inscripcionFacade.findAllByFieldOrder("nidUsuario", authAdministrado.getAuthResponsable(), true, "fecRegistro", false);
+            
         }catch(Exception ex){
         
         }
@@ -1780,57 +1504,63 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * Obtener la inscripcion a subsanar
      * @param item - Inscripcion
      */
-    public void obtenerInscripcionSubsnar(Inscripcion item) {
+    public void obtenerInscripcionSubsanar(Inscripcion item) {
+        this.modo = Constantes.MODO_SUBSANAR;
         this.inscripcionSubsanar = item;
         this.personalRemover = new ArrayList<>();
-        this.personalSubsanar = this.obtenerPersonalActivo(this.inscripcionSubsanar.getPersonal());
+        this.listaPersonal = this.obtenerPersonalActivo(this.inscripcionSubsanar.getPersonal());
         this.adjuntos = this.obtenerAdjuntos(this.inscripcionSubsanar);
-        this.responsableSubsanar = this.obtenerResponsable(this.personalSubsanar);
+        this.responsableSubsanar = this.obtenerResponsable(this.listaPersonal);
         this.correoResponsable = this.responsableSubsanar.getTxtCorreo();
-        this.obtenerProvinciasSubsanar();
-        this.obtenerDistritosSubsanar();
+        //this.obtenerProvinciasSubsanar();
+      //  this.obtenerDistritosSubsanar();
     }
     
     /**
      * Subsanar Inscripcion
      */
     public void subsanar() {
+        
          try {
-            PersonaDna responsableTmp = this.obtenerResponsable(this.personalSubsanar);
-            if(responsableTmp == null){
-                adicionarMensajeError("Error","El personal debe contener un responsable por lo menos.");
-                return;
-            }
-            Catalogo estado = new Catalogo();
+             
             UsuarioAdministrado usuarioAdministrado = (UsuarioAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{usuarioAdministrado}", UsuarioAdministrado.class);
+          
+            Catalogo estado = new Catalogo();
             estado.setNidCatalogo(Constantes.CATALOGO_ESTADO_SUBSANADA);
-            for(PersonaDna persona : this.personalSubsanar){
+            
+            for(PersonaDna persona : this.personalRemover){
+                persona.setNidUsuarioMod(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
+                persona.setFlgActivo(BigInteger.ZERO);
+                persona.setFecModificacion(new Date());
+            }
+             
+            for(PersonaDna persona : this.listaPersonal){
+                
+                persona.setTxtPc(Internet.obtenerNombrePC());
+                persona.setTxtIp(Internet.obtenerIPPC());
+               
                 if(persona.getNidPersona()== null){
                     persona.setNidUsuarioReg(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
                     persona.setTxtPj(this.verificarPJPenales(persona));
                     persona.setTxtInpe(this.verificarInpeJudiciales(persona));
                     persona.setTxtPnp(this.verificarPnp(persona));
                     persona.setInscripcion(this.inscripcionSubsanar);
-                    persona.setTxtPc(Internet.obtenerNombrePC());
-                    persona.setTxtIp(Internet.obtenerIPPC());
-                    persona.setFecRegistro(new Date());
+                     persona.setFecRegistro(new Date());
                     this.inscripcionSubsanar.getPersonal().add(persona);
-                }else{
-                    persona.setFecModificacion(new Date());
+                    
                     if(persona.getFuncion().getNidCatalogo().equals(Constantes.CATALOGO_FUNCION_RESPONSABLE)){
                         if(!persona.getTxtCorreo().equals(this.correoResponsable)){
-                            this.cambiarDeResponsable(this.personalSubsanar, this.inscripcionSubsanar);
+                            this.cambiarDeResponsable(this.listaPersonal, this.inscripcionSubsanar);
                         }
                     }
+                    
+                }else{
+                    persona.setNidUsuarioMod(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
+                    persona.setFecModificacion(new Date());
+                    
                 }
             }
-            for(PersonaDna persona : this.personalRemover){
-                if(persona.getNidPersona() != null && persona.getFuncion().getNidCatalogo().equals(Constantes.CATALOGO_FUNCION_RESPONSABLE)){
-                    this.cambiarDeResponsable(this.personalSubsanar,this.inscripcionSubsanar);
-                }
-                persona.setFlgActivo(BigInteger.ZERO);
-                persona.setFecModificacion(new Date());
-            }
+           
             
             this.inscripcionSubsanar.setEstado(estado);
             this.inscripcionSubsanar.setNidUsuarioMod(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
@@ -1842,8 +1572,10 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
             this.inscripcionFacade.edit(this.inscripcionSubsanar);
             
             // actualiza dna
-            this.inscripcionSubsanar.getDna().setEstado(estado);
-            this.defensoriaFacade.edit(this.inscripcionSubsanar.getDna());
+            this.inscripcionSubsanar.getDna().setEstado(estado); //TODO
+            this.defensoriaFacade.edit(this.inscripcionSubsanar.getDna());//TODO
+            
+            this.modo = Constantes.MODO_LISTADO;
             
          } catch (Exception e) {
             adicionarMensajeError("Error al tratar de subsanar la Solicitud de Inscripción", this.inscripcion.getDna().getTxtNombre());
@@ -1857,13 +1589,17 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @param inscripcion - Inscripcion
      */
     private void cambiarDeResponsable(List<PersonaDna> personal , Inscripcion inscripcion){
+        
+        String pass = this.generaPassword();
+           
         this.responsable = this.obtenerResponsable(personal);
         Usuario usuarioActual = this.usuarioFacade.find(inscripcion.getNidUsuario());
         usuarioActual.setFlgActivo(BigInteger.ZERO);
         this.usuarioFacade.edit(usuarioActual);
-        Usuario usuarioNuevo = this.crearUsuario();
-        inscripcion.setNidUsuario(usuarioNuevo.getNidUsuario());
-        
+                
+        Usuario usuarioNuevo = this.crearUsuario(pass);
+        this.inscripcion.setNidUsuario(usuarioNuevo.getNidUsuario());
+        this.enviarCorreo(pass);
     }
     
     /**
@@ -1879,16 +1615,17 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         if(this.esResponsable(this.personaRemover)){
             this.adicionarMensajeError("Se removio Responsable", "Debe agregar un nuevo responsable.");
         }
-        this.personalSubsanar = this.obtenerPersonalActivo(this.personalSubsanar);
+        this.listaPersonal = this.obtenerPersonalActivo(this.listaPersonal);
     }
     /**
      * Remover a la PersonaDna de el personal
+     * @param personaRemover
      */
-    public void removerPersonaSubsanar(){
-        this.personalSubsanar.remove(this.personaRemover);
-        this.personalRemover.add(this.personaRemover);
-        if(this.esResponsable(this.personaRemover)){
-            this.adicionarMensajeError("Se removio Responsable", "Debe agregar un nuevo responsable.");
+    public void removerPersonaSubsanar(PersonaDna personaRemover){
+        this.listaPersonal.remove(personaRemover);
+        this.personalRemover.add(personaRemover);
+        if(this.esResponsable(personaRemover)){
+            this.adicionarMensajeError("Se removió Responsable", "Debe agregar un nuevo responsable.");
         }
     }
     
@@ -1897,15 +1634,15 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      */
     public void agregarPersonaSubsanar(){
         if(this.personaDna.getFuncion().getNidCatalogo().equals(Constantes.CATALOGO_FUNCION_RESPONSABLE) &&
-                this.obtenerResponsable(this.personalSubsanar) != null){
-                this.adicionarMensajeError("Ya existe Responsable", "Debe agregar una nueva persona con otra función.");
+                this.obtenerResponsable(this.listaPersonal) != null){
+                this.adicionarMensajeError("Error", "Ya existe Responsable. Debe agregar una nueva persona con otra función.");
             return;
         }
         PersonaDna personaAgregar = this.personaDna;
         Catalogo funcion = this.catalogoFacade.find(personaAgregar.getFuncion().getNidCatalogo());
         personaAgregar.setFuncion(funcion);
         personaAgregar.setFlgActivo(BigInteger.ONE);
-        this.personalSubsanar.add(personaAgregar);
+        this.listaPersonal.add(personaAgregar);
     }
     
     /**
@@ -1913,8 +1650,8 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @return String
      */
     public String getNombreDepartamentoInsVer() { 
-        if(this.inscripcionVer == null || this.inscripcionVer.getDna() == null) return "";
-        return (this.inscripcionVer.getDna().getNidDepartamento()!=null)?fachadaDepartamento.find(this.inscripcionVer.getDna().getNidDepartamento()).getTxtDescripcion():"";
+        if(this.inscripcion == null || this.inscripcion.getDna() == null) return "";
+        return (this.inscripcion.getDna().getNidDepartamento()!=null)?departamentoFacade.find(this.inscripcion.getDna().getNidDepartamento()).getTxtDescripcion():"";
     }
     
     /**
@@ -1922,8 +1659,8 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @return String
      */
     public String getNombreProvinciaInsVer() {
-        if(this.inscripcionVer == null || this.inscripcionVer.getDna() == null) return "";
-        return (this.inscripcionVer.getDna().getNidProvincia()!=null)?fachadaProvincia.find(this.inscripcionVer.getDna().getNidProvincia()).getTxtDescripcion():"";
+        if(this.inscripcion == null || this.inscripcion.getDna() == null) return "";
+        return (this.inscripcion.getDna().getNidProvincia()!=null)?provinciaFacade.find(this.inscripcion.getDna().getNidProvincia()).getTxtDescripcion():"";
     }
     
     /**
@@ -1931,8 +1668,8 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @return String
      */
     public String getNombreDistritoInsVer() {
-        if(this.inscripcionVer == null || this.inscripcionVer.getDna() == null) return "";
-        return (this.inscripcionVer.getDna().getNidDistrito()!=null)?fachadaDistrito.find(this.inscripcionVer.getDna().getNidDistrito()).getTxtDescripcion():"";
+        if(this.inscripcion == null || this.inscripcion.getDna() == null) return "";
+        return (this.inscripcion.getDna().getNidDistrito()!=null)?distritoFacade.find(this.inscripcion.getDna().getNidDistrito()).getTxtDescripcion():"";
     }
     
     /**
@@ -1940,8 +1677,8 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @return String
      */
     public String getNombreDepartamentoVer() { 
-        if(this.personaVer == null) return "";
-        return (this.personaVer.getNidDepartamento()!=null)?fachadaDepartamento.find(this.personaVer.getNidDepartamento()).getTxtDescripcion():"";
+        if(this.personaDna == null) return "";
+        return (this.personaDna.getNidDepartamento()!=null)?departamentoFacade.find(this.personaDna.getNidDepartamento()).getTxtDescripcion():"";
     }
     
     /**
@@ -1949,8 +1686,8 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @return String
      */
     public String getNombreProvinciaVer() {
-        if(this.personaVer == null) return "";
-        return (this.personaVer.getNidProvincia()!=null)?fachadaProvincia.find(this.personaVer.getNidProvincia()).getTxtDescripcion():"";
+        if(this.personaDna == null) return "";
+        return (this.personaDna.getNidProvincia()!=null)?provinciaFacade.find(this.personaDna.getNidProvincia()).getTxtDescripcion():"";
     }
     
     /**
@@ -1958,28 +1695,20 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @return String
      */
     public String getNombreDistritoVer() {
-        if(this.personaVer == null) return "";
-        return (this.personaVer.getNidDistrito()!=null)?fachadaDistrito.find(this.personaVer.getNidDistrito()).getTxtDescripcion():"";
+        if(this.personaDna == null) return "";
+        return (this.personaDna.getNidDistrito()!=null)?distritoFacade.find(this.personaDna.getNidDistrito()).getTxtDescripcion():"";
     }
     
-    /**
-     * Obtener el nombre de el grado de instruccion
-     * @return String
-     */
-    public String getNombreGradoDeInstruccionVer() {
-        if(this.personaVer == null) return "";
-        return (this.personaVer.getNidInstruccion()!=null)?catalogoFacade.find(BigInteger.valueOf(this.personaVer.getNidInstruccion())).getTxtNombre():"";
-    }
     
     /**
      * Obtener la la fecha del curson con el formato MM/dd/yyyy
      * @return String
      */
     public String getFechaCursoTexto() {
-        if(this.personaVer == null || this.personaVer.getTxtFechaCurso() == null) return "";
+        if(this.personaDna == null || this.personaDna.getTxtFechaCurso() == null) return "";
         String pattern = "dd/MM/yyyy";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-        String date = simpleDateFormat.format(this.personaVer.getTxtFechaCurso());
+        String date = simpleDateFormat.format(this.personaDna.getTxtFechaCurso());
         return date;
     }
     
@@ -1988,10 +1717,10 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @param inscripcion - Inscripcion
      */
     public void obtenerInscripcionVer(Inscripcion inscripcion){
-        this.inscripcionVer = inscripcion;
-        this.personalVer = this.obtenerPersonalActivo(inscripcion.getPersonal());
+        this.inscripcion = inscripcion;
+        this.listaPersonal = this.obtenerPersonalActivo(inscripcion.getPersonal());
         if(inscripcion.getEstado().getNidCatalogo()!= Constantes.CATALOGO_ESTADO_NUEVO)  
-           this.adjuntos = this.inscripcionVer.getDocumentos() != null ? this.inscripcionVer.getDocumentos(): new ArrayList<DocInscripcion>();
+           this.adjuntos = this.inscripcion.getDocumentos() != null ? this.inscripcion.getDocumentos(): new ArrayList<DocInscripcion>();
     } 
     
     /**
@@ -1999,35 +1728,9 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @param persona - PersonaDna
      */
     public void obtenerPersonaVer(PersonaDna persona){
-            this.personaVer = persona;
+            this.personaDna = persona;
     }
-    
-    /**
-     * Obtener el nombre de la instruccion de la PersonaDna
-     * @return String
-     */
-    public String getNombreInstruccion(){
-        if(this.personaDna == null ||this.personaDna.getNidInstruccion() == null){return "";}
-        else{ return this.catalogoFacade.find(BigInteger.valueOf(this.personaDna.getNidInstruccion())).getTxtNombre();}
-    }
-    
-    /**
-     * Obtener el nombre de la instruccion de la PersonaDnaEval
-     * @return String
-     */
-    public String getNombreInstruccionEval(){
-        if(this.personaDna == null || this.personaDna.getPersonaEval().getNidInstruccion() == null){return "";}
-        else {return this.catalogoFacade.find(BigInteger.valueOf(this.personaDna.getPersonaEval().getNidInstruccion())).getTxtNombre();}
-    }
-    
-    /**
-     * Obtener el nombre de la instruccioon de la PersonaDnaEval
-     * @return String
-     */
-    public String getNombreInstruccionCloneEval(){
-        if(this.clonePersonaDnaEval == null || this.clonePersonaDnaEval.getNidInstruccion() == null){return "";}
-        else{return this.catalogoFacade.find(BigInteger.valueOf(this.clonePersonaDnaEval.getNidInstruccion())).getTxtNombre();}
-    }
+
     
     /**
      * Obtener el nombre del departamento
@@ -2036,7 +1739,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
     public String getNombreDepartamentoSub() {
         return (this.inscripcionSubsanar!=null &&
                 this.inscripcionSubsanar.getDna()!=null && 
-                    this.inscripcionSubsanar.getDna().getNidDepartamento()!=null)?fachadaDepartamento.find(this.inscripcionSubsanar.getDna().getNidDepartamento()).getTxtDescripcion():"";
+                    this.inscripcionSubsanar.getDna().getNidDepartamento()!=null)?departamentoFacade.find(this.inscripcionSubsanar.getDna().getNidDepartamento()).getTxtDescripcion():"";
     }
     
     /**
@@ -2046,7 +1749,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
     public String getNombreProvinciaSub() {
         return (this.inscripcionSubsanar!=null &&
                 this.inscripcionSubsanar.getDna()!=null && 
-                this.inscripcionSubsanar.getDna().getNidProvincia()!=null)?fachadaProvincia.find(this.inscripcionSubsanar.getDna().getNidProvincia()).getTxtDescripcion():"";
+                this.inscripcionSubsanar.getDna().getNidProvincia()!=null)?provinciaFacade.find(this.inscripcionSubsanar.getDna().getNidProvincia()).getTxtDescripcion():"";
     }
     
     /**
@@ -2056,7 +1759,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
     public String getNombreDistritoSub() {
         return (this.inscripcionSubsanar!=null &&
                 this.inscripcionSubsanar.getDna()!=null && 
-                this.inscripcionSubsanar.getDna().getNidDistrito()!=null)?fachadaDistrito.find(this.inscripcionSubsanar.getDna().getNidDistrito()).getTxtDescripcion():"";
+                this.inscripcionSubsanar.getDna().getNidDistrito()!=null)?distritoFacade.find(this.inscripcionSubsanar.getDna().getNidDistrito()).getTxtDescripcion():"";
     }
     
     /**
@@ -2064,7 +1767,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @return String
      */
     public String getNombreDepartamentoEvaluar() {
-        return (this.inscripcionAEvaluar.getDna().getNidDepartamento()!=null)?fachadaDepartamento.find(this.inscripcionAEvaluar.getDna().getNidDepartamento()).getTxtDescripcion():"";
+        return (this.inscripcion.getDna().getNidDepartamento()!=null)?departamentoFacade.find(this.inscripcion.getDna().getNidDepartamento()).getTxtDescripcion():"";
     }
     
     /**
@@ -2072,7 +1775,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @return String
      */
     public String getNombreProvinciaEvaluar() {
-        return (this.inscripcionAEvaluar.getDna().getNidProvincia()!=null)?fachadaProvincia.find(this.inscripcionAEvaluar.getDna().getNidProvincia()).getTxtDescripcion():"";
+        return (this.inscripcion.getDna().getNidProvincia()!=null)?provinciaFacade.find(this.inscripcion.getDna().getNidProvincia()).getTxtDescripcion():"";
     }
     
     /**
@@ -2080,7 +1783,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @return String
      */
     public String getNombreDistritoEvaluar() {
-        return (this.inscripcionAEvaluar.getDna().getNidDistrito()!=null)?fachadaDistrito.find(this.inscripcionAEvaluar.getDna().getNidDistrito()).getTxtDescripcion():"";
+        return (this.inscripcion.getDna().getNidDistrito()!=null)?distritoFacade.find(this.inscripcion.getDna().getNidDistrito()).getTxtDescripcion():"";
     }
     
     /**
@@ -2088,7 +1791,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @return String
      */
     public String getNombreDepartamentoPersonaEvaluar() {
-        return (this.clonePersonaDnaEval != null && this.clonePersonaDnaEval.getNidDepartamento()!=null)?fachadaDepartamento.find(this.clonePersonaDnaEval.getNidDepartamento()).getTxtDescripcion():"";
+        return (this.personaDnaEval != null && this.personaDnaEval.getNidDepartamento()!=null)?departamentoFacade.find(this.personaDnaEval.getNidDepartamento()).getTxtDescripcion():"";
     }
     
     /**
@@ -2096,7 +1799,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @return String
      */
     public String getNombreProvinciaPersonaEvaluar() {
-        return (this.clonePersonaDnaEval != null && this.clonePersonaDnaEval.getNidProvincia()!=null)?fachadaProvincia.find(this.clonePersonaDnaEval.getNidProvincia()).getTxtDescripcion():"";
+        return (this.personaDnaEval != null && this.personaDnaEval.getNidProvincia()!=null)?provinciaFacade.find(this.personaDnaEval.getNidProvincia()).getTxtDescripcion():"";
     }
     
     /**
@@ -2104,7 +1807,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @return String
      */
     public String getNombreDistritoPersonaEvaluar() {
-        return (this.clonePersonaDnaEval != null &&  this.clonePersonaDnaEval.getNidDistrito()!=null)?fachadaDistrito.find(this.clonePersonaDnaEval.getNidDistrito()).getTxtDescripcion():"";
+        return (this.personaDnaEval != null &&  this.personaDnaEval.getNidDistrito()!=null)?distritoFacade.find(this.personaDnaEval.getNidDistrito()).getTxtDescripcion():"";
     }
     
     /**
@@ -2152,7 +1855,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
          inscripcionEval.setAmbientesPriv(inscripcion.getAmbientesPriv());
          inscripcionEval.setPresupuesto(inscripcion.getPresupuesto());
          inscripcionEval.setDias(inscripcion.getDias());
-         inscripcionEval.setEstado(inscripcion.getEstado());
+       //  inscripcionEval.setEstado(inscripcion.getEstado());
          inscripcionEval.setFlagConstancia(inscripcion.getFlagConstancia());
         List<PersonaDnaEval> personal = new ArrayList<>();
          for(PersonaDna persona : inscripcion.getPersonal()){
@@ -2169,7 +1872,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
              personaDnaEval.setTxtSexo(persona.getTxtSexo());
              personaDnaEval.setTxtDireccion(persona.getTxtDireccion());
              personaDnaEval.setTxtCorreo(persona.getTxtCorreo());
-             personaDnaEval.setNidInstruccion(persona.getNidInstruccion());
+             personaDnaEval.setInstruccion(persona.getInstruccion());
              personaDnaEval.setTxtTelefono(persona.getTxtTelefono());
              personaDnaEval.setProfesion(persona.getProfesion());
              personaDnaEval.setTxtColegio(persona.getTxtColegio());
@@ -2226,14 +1929,9 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @param personaEval - PersonaDnaEval
      */
     public void obtenerPersonaAEvaluar(PersonaDnaEval personaEval){
-        try {
-            PersonaDnaEval clone =(PersonaDnaEval)personaEval.clonar();
-            this.clonePersonaDnaEval = clone;
             this.personaDnaEval = personaEval;
-            this.initPanelPersonaEvaluar(clonePersonaDnaEval);
-        } catch (CloneNotSupportedException ex) {
-            Logger.getLogger(InscripcionAdministrado.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            this.initPanelPersonaEvaluar(personaEval);
+       
     }
     
     /**
@@ -2241,6 +1939,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @param item - Inscripcion
      */
     public void obtenerInscripcionAEvaluar(Inscripcion item) {
+        this.modo = Constantes.MODO_EVALUACION;
         this.flgCorreoObs = false;
         this.flgDiasHoraObs = false;
         this.flgDireccionObs = false;
@@ -2248,14 +1947,20 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         this.flgNroAmbObs = false;
         this.flgNroAmbPrivObs = false;
         this.flgPresupuestoObs = false;
-        this.inscripcionAEvaluar = this.inscripcionFacade.find(item.getNidInscripcion());
-        item.setPersonal(this.inscripcionAEvaluar.getPersonal());
-        item.setDocumentos(this.inscripcionAEvaluar.getDocumentos());
-        this.inscripcionAEvaluar = item;
-        this.personalESubsanar = this.obtenerPersonalActivo(this.inscripcionAEvaluar.getPersonal());
+        this.inscripcion = item;
         this.flgDocObs = false;
-        this.inscripcionEval = this.generarInscripcionEval(this.inscripcionAEvaluar);
+        this.inscripcionEval = this.generarInscripcionEval(item);
         this.personasDnaEval = this.obtenerPersonalActivoEval(inscripcionEval.getPersonal());
+    }
+    
+     /**
+     * Obtener la inscripcion a evaluar
+     * @param item - Inscripcion
+     */
+    public void obtenerInscripcionAEvaluarSubsanacion(Inscripcion item) {
+        this.modo = Constantes.MODO_EVALUACION_SUBSANACION;
+        this.inscripcion = item;
+        this.listaPersonal = item.getPersonal();
     }
      
     /**
@@ -2283,24 +1988,93 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         return salida;
     }
     
+    public void actualizarDefensoria() {
+        Defensoria dna = this.inscripcion.getDna();
+        DefensoriaInfo info =  dna.getDefensoriaInfo();
+        if(info ==null) {
+            info = new DefensoriaInfo();
+            this.inscripcion.getDna().setDefensoriaInfo(info);
+        }
+        info.setFecInscrito(this.inscripcion.getFecInscrito());
+        info.setTxtDocumento(this.inscripcion.getTxtDocumento());
+        info.setTxtDireccion(this.inscripcion.getTxtDireccion());
+        info.setTxtCorreo(this.inscripcion.getTxtCorreo());
+        info.setTxtTelefono(this.inscripcion.getTxtTelefono());
+        info.setTxtGerencia(this.inscripcion.getTxtGerencia());
+        info.setPresupuesto(this.inscripcion.getPresupuesto());
+        info.setAmbientes(this.inscripcion.getAmbientes());
+        info.setAmbientesPriv(this.inscripcion.getAmbientesPriv());    
+        info.setDias(this.inscripcion.getDias());
+        info.setNidUsuario(this.inscripcion.getNidUsuario());
+        Catalogo estado = this.inscripcion.getDna().getEstado();
+        estado.setNidCatalogo(Constantes.CATALOGO_DNA_INSCRITA);
+        dna.setEstado(estado);
+        
+        for(DefensoriaPersona p: dna.getListaPersonaDna()) {
+            p.setFlgActivo(BigInteger.ZERO);
+            p.setFecModificacion(new Date());
+            p.setNidUsuarioMod(this.inscripcion.getNidUsuarioMod());
+        }
+            
+        for(PersonaDna pd: this.inscripcion.getPersonal()) {
+            DefensoriaPersona p = new DefensoriaPersona();
+            p.setDefensoria(dna);
+            p.setNidDepartamento(pd.getNidDepartamento());
+            p.setNidProvincia(pd.getNidProvincia());
+            p.setNidDistrito(pd.getNidDistrito());
+            p.setTxtDocumento(pd.getTxtDocumento());
+            p.setTxtApellidoPaterno(pd.getTxtApellidoPaterno());
+            p.setTxtApellidoMaterno(pd.getTxtApellidoMaterno());
+            p.setTxtNombre1(pd.getTxtNombre1());
+            p.setTxtNombre2(pd.getTxtNombre2());
+            p.setTxtNombre3(pd.getTxtNombre3());
+            p.setTxtSexo(pd.getTxtSexo());
+            p.setTxtTelefono(pd.getTxtTelefono());
+            p.setTxtDocDesignacion(pd.getTxtDocDesignacion());
+            p.setTxtCorreo(pd.getTxtCorreo());
+            p.setTxtColegiatura(pd.getTxtColegiatura());
+            p.setTxtColegio(pd.getTxtColegio());
+            p.setTxtInpe(pd.getTxtInpe());
+            p.setTxtPnp(pd.getTxtPnp());
+            p.setTxtPj(pd.getTxtPj());
+            p.setFlgActivo(BigInteger.ONE);
+            p.setProfesion(pd.getProfesion());
+            p.setFuncion(pd.getFuncion());
+            p.setInstruccion(pd.getInstruccion());
+            p.setEdad(pd.getEdad());
+            p.setTxtIp(pd.getTxtIp());
+            p.setFecRegistro(new Date());
+            p.setNidUsuarioReg(pd.getNidUsuarioMod());
+            
+            dna.getListaPersonaDna().add(p);
+        }
+        this.defensoriaFacade.edit(this.inscripcion.getDna());
+        
+    }
     /**
      * Evaluar la inscripcion
      */
     public void evaluarInscripcion(){
+        
+        UsuarioAdministrado usuarioAdministrado = (UsuarioAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{usuarioAdministrado}", UsuarioAdministrado.class); 
+        CorreoDnaAdministrado correoAdministrado = (CorreoDnaAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{correoDnaAdministrado}", CorreoDnaAdministrado.class);
+      
         try{
             if(this.flgDenegarInscripcion){
                 Catalogo estado = this.catalogoFacade.find(Constantes.CATALOGO_ESTADO_DENEGADA);
-                this.inscripcionAEvaluar.setFecDenegado(new Date());
-                this.inscripcionAEvaluar.setFecModificacion(new Date());
-                this.inscripcionAEvaluar.setEstado(estado);
-                this.inscripcionFacade.edit(this.inscripcionAEvaluar);
+                this.inscripcion.setNidUsuarioMod(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
+                this.inscripcion.setFecDenegado(new Date());
+                this.inscripcion.setFecModificacion(new Date());
+                this.inscripcion.setEstado(estado);
+                this.inscripcionFacade.edit(this.inscripcion);
                 // cambia estado de defensoría
-                this.inscripcionAEvaluar.getDna().setEstado(estado);
-                this.defensoriaFacade.edit(this.inscripcionAEvaluar.getDna());
-                
-            }else if(this.inscripcionAEvaluar.getEstado().getNidCatalogo().equals(Constantes.CATALOGO_ESTADO_POR_EVALUAR)){
-                this.inscripcionAEvaluar.setObsDenegado(null);
+                //this.inscripcion.getDna().setEstado(estado);
+                //this.defensoriaFacade.edit(this.inscripcion.getDna());
+                adicionarMensaje("","La solicitud de inscripción ha sido denegada exitósamente");
+            }else if(this.inscripcion.getEstado().getNidCatalogo().equals(Constantes.CATALOGO_ESTADO_POR_EVALUAR)){
+                this.inscripcion.setObsDenegado(null);
                 if(this.existeObservacionInscripcion(this.inscripcionEval)){
+                    this.inscripcionEval.setNidUsuarioReg(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
                     this.inscripcionEval.setTxtPc(Internet.obtenerNombrePC());
                     this.inscripcionEval.setTxtIp(Internet.obtenerIPPC());
                     this.inscripcionEval.setFecRegistro(new Date());
@@ -2308,42 +2082,51 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
                     this.inscripcionEvalFacade.create(inscripcionEval);  
 
                     Catalogo estado = this.catalogoFacade.find(Constantes.CATALOGO_ESTADO_OBSERVADA);
-                    this.inscripcionAEvaluar.setFecObservado(new Date());
-                    this.inscripcionAEvaluar.setFecModificacion(new Date());
-                    this.inscripcionAEvaluar.setEstado(estado);
-                    this.inscripcionFacade.edit(this.inscripcionAEvaluar);
-                
+                    this.inscripcion.setNidUsuarioMod(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
+                    this.inscripcion.setFecObservado(new Date());
+                    this.inscripcion.setFecModificacion(new Date());
+                    this.inscripcion.setEstado(estado);
+                    this.inscripcionFacade.edit(this.inscripcion);
+                    adicionarMensaje("","La solicitud de inscripción ha sido observada exitósamente");
                     // cambia estado de defensoría
-                    this.inscripcionAEvaluar.getDna().setEstado(estado);
-                    this.defensoriaFacade.edit(this.inscripcionAEvaluar.getDna());
+                    //this.inscripcion.getDna().setEstado(estado);
+                  //  this.defensoriaFacade.edit(this.inscripcion.getDna());
+                     PersonaDna pr = this.obtenerResponsable(this.inscripcion.getPersonal());
+                     this.correoService.enviarSolicitudObservada(Constantes.TPL_INSCRIPCION_OBSERVADA, pr.getNombresApellidos(), pr.getTxtCorreo(),
+                            this.inscripcion.getDna().getTxtNombre(),correoAdministrado);
 
                 }else{
                     Catalogo estado = this.catalogoFacade.find(Constantes.CATALOGO_ESTADO_INSCRITA);
-                    this.inscripcionAEvaluar.setFecInscrito(new Date());
-                    this.inscripcionAEvaluar.setFecModificacion(new Date());
-                    this.inscripcionAEvaluar.setEstado(estado);
-                    this.inscripcionFacade.edit(this.inscripcionAEvaluar);
+                    this.inscripcion.setFecInscrito(new Date());
+                    this.inscripcion.setNidUsuarioMod(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
+                    this.inscripcion.setFecModificacion(new Date());
+                    this.inscripcion.setEstado(estado);
+                    this.inscripcionFacade.edit(this.inscripcion);
                     // cambia estado de defensoría
-                    this.inscripcionAEvaluar.getDna().setEstado(estado);
-                    this.defensoriaFacade.edit(this.inscripcionAEvaluar.getDna());
-
+                   //  this.inscripcion.getDna().setEstado(estado);
+                   // this.defensoriaFacade.edit(this.inscripcion.getDna());
+                    this.actualizarDefensoria();
+                    adicionarMensaje("","La solicitud de inscripción ha sido aprogada (inscrita) exitósamente");
                 }
-            }else if(this.inscripcionAEvaluar.getEstado().getNidCatalogo().equals(Constantes.CATALOGO_ESTADO_SUBSANADA)){
+            }else if(this.inscripcion.getEstado().getNidCatalogo().equals(Constantes.CATALOGO_ESTADO_SUBSANADA)){
                     Catalogo estado = this.catalogoFacade.find(Constantes.CATALOGO_ESTADO_INSCRITA);
-                    this.inscripcionAEvaluar.setFecInscrito(new Date());
-                    this.inscripcionAEvaluar.setFecModificacion(new Date());
-                    this.inscripcionAEvaluar.setEstado(estado);
-                    this.inscripcionFacade.edit(this.inscripcionAEvaluar);
+                    this.inscripcion.setFecInscrito(new Date());
+                    this.inscripcion.setNidUsuarioMod(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
+                    this.inscripcion.setFecModificacion(new Date());
+                    this.inscripcion.setEstado(estado);
+                    this.inscripcionFacade.edit(this.inscripcion);
                       // cambia estado de defensoría
-                    this.inscripcionAEvaluar.getDna().setEstado(estado);
-                    this.defensoriaFacade.edit(this.inscripcionAEvaluar.getDna());
-
+                   // this.inscripcion.getDna().setEstado(estado);
+                   // this.defensoriaFacade.edit(this.inscripcion.getDna());
+                    this.actualizarDefensoria();
+                    adicionarMensaje("","La solicitud de inscripción ha sido aprogada (inscrita) exitósamente");
             }
+            this.modo = Constantes.MODO_LISTADO;
+            
         }catch (Exception e) {
-            adicionarMensajeError("Problemas al evaluar la inscripción.", e.getMessage());
+            adicionarMensajeError("Error", "Problemas al evaluar la inscripción.");
         }
-        this.responsable = this.obtenerResponsable(this.inscripcionAEvaluar.getPersonal());
-        this.enviarCorreo();
+        // this.enviarCorreo(); 
     }
     
     /**
@@ -2352,9 +2135,12 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      */
     public List<DocInscripcion> obtenerAdjuntos() {
         try{
-          Inscripcion i = new Inscripcion();
-          i.setNidInscripcion(this.inscripcionEval.getInscripcion().getNidInscripcion());
-          return this.docFacade.findAllByField("inscripcion", i);
+            
+            if(this.inscripcionEval!=null && this.inscripcionEval.getInscripcion()!=null) {
+                Inscripcion i = new Inscripcion();
+                i.setNidInscripcion(this.inscripcionEval.getInscripcion().getNidInscripcion());
+                return this.docFacade.findAllByField("inscripcion", i);
+            }
         }catch (Exception e) {
             adicionarMensajeError("Error", "No se puede cargar los adjuntos");
         }
@@ -2432,7 +2218,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * Evaluar a la persona
      */
     public void evaluarPersona(){
-        try{
+        try{/*
             this.personaDnaEval.setObsAntecedentes(this.txtObsPersonaEval);
             this.personaDnaEval.setObsColegio(this.clonePersonaDnaEval.getObsColegio());
             this.personaDnaEval.setObsCorreo(this.clonePersonaDnaEval.getObsCorreo());
@@ -2445,6 +2231,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
             this.personaDnaEval.setObsFechaDeCurso(this.clonePersonaDnaEval.getObsFechaDeCurso());
             this.personaDnaEval.setObsColegiatura(this.clonePersonaDnaEval.getObsColegiatura());
             this.personaDnaEval.setObsDocDesignacion(this.clonePersonaDnaEval.getObsDocDesignacion());
+            */
         }catch (Exception e) {
             adicionarMensajeError("Problemas al evaluar la inscripción.", e.getMessage());
         }
@@ -2456,7 +2243,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @return String
      */
     public String getNombreDepartamentoIns(Inscripcion inscripcion) {
-        return (inscripcion.getDna().getNidDepartamento()!=null)?fachadaDepartamento.find(inscripcion.getDna().getNidDepartamento()).getTxtDescripcion():"";
+        return (inscripcion.getDna().getNidDepartamento()!=null)?departamentoFacade.find(inscripcion.getDna().getNidDepartamento()).getTxtDescripcion():"";
     }
     
     /**
@@ -2465,7 +2252,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @return String
      */
     public String getNombreProvinciaIns(Inscripcion inscripcion) {
-        return (inscripcion.getDna().getNidProvincia()!=null)?fachadaProvincia.find(inscripcion.getDna().getNidProvincia()).getTxtDescripcion():"";
+        return (inscripcion.getDna().getNidProvincia()!=null)?provinciaFacade.find(inscripcion.getDna().getNidProvincia()).getTxtDescripcion():"";
     }
     
     /**
@@ -2474,7 +2261,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
      * @return String
      */
     public String getNombreDistritoIns(Inscripcion inscripcion) {
-        return (inscripcion.getDna().getNidDistrito()!=null)?fachadaDistrito.find(inscripcion.getDna().getNidDistrito()).getTxtDescripcion():"";
+        return (inscripcion.getDna().getNidDistrito()!=null)?distritoFacade.find(inscripcion.getDna().getNidDistrito()).getTxtDescripcion():"";
     }
     
     /**
@@ -2600,15 +2387,15 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         salida.setDocumentoCreacionDNA(inscripcion.getTxtDocumento() != null?inscripcion.getTxtDocumento():"");
         salida.setDireccionDNA(inscripcion.getTxtDireccion() != null?inscripcion.getTxtDireccion():"");
         if(inscripcion.getDna().getNidDepartamento() != null){
-            Departamento departamento = this.fachadaDepartamento.find(inscripcion.getDna().getNidDepartamento());
+            Departamento departamento = this.departamentoFacade.find(inscripcion.getDna().getNidDepartamento());
             salida.setDepartamento(departamento.getTxtDescripcion());
         }
         if(inscripcion.getDna().getNidProvincia()!= null){
-            Provincia provincia = this.fachadaProvincia.find(inscripcion.getDna().getNidProvincia());
+            Provincia provincia = this.provinciaFacade.find(inscripcion.getDna().getNidProvincia());
             salida.setProvincia(provincia.getTxtDescripcion());
         }
         if(inscripcion.getDna().getNidDistrito()!= null){
-            Distrito distrito = this.fachadaDistrito.find(inscripcion.getDna().getNidDistrito());
+            Distrito distrito = this.distritoFacade.find(inscripcion.getDna().getNidDistrito());
             salida.setDistrito(distrito.getTxtDescripcion());
         }
         salida.setCorreoElectronicoContacto(inscripcion.getTxtCorreo() != null?inscripcion.getTxtCorreo():"");
@@ -2633,15 +2420,15 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         }
         salida.setNroInscripcionDNA(nroConstancia);
         if(responsable != null){
-            salida.setNombresResp(responsable.getTxtNombres() != null ? responsable.getTxtNombres():"");
+            salida.setNombresResp(responsable.getApellidosNombres() != null ? responsable.getApellidosNombres():"");
             salida.setApellidosResp(responsable.getTxtApellidoPaterno() != null &&responsable.getTxtApellidoMaterno() != null ?responsable.getTxtApellidoPaterno() + " " + responsable.getTxtApellidoMaterno():"");
             salida.setTelefonoResp(responsable.getTxtTelefono() != null ? responsable.getTxtTelefono() : "");
             salida.setCorreoResp(responsable.getTxtCorreo()!= null?responsable.getTxtCorreo() : "");
             salida.setDniResp(responsable.getTxtDocumento() != null?responsable.getTxtDocumento() : "");
             salida.setDocumentoDesignacionResp(responsable.getTxtDocDesignacion() != null ? responsable.getTxtDocDesignacion() : "");
             String gradoInstruccion = "";
-            if(responsable.getNidInstruccion() != null){
-                gradoInstruccion = this.catalogoFacade.find(BigInteger.valueOf(responsable.getNidInstruccion())).getTxtNombre();
+            if(responsable.getInstruccion() != null){
+                gradoInstruccion = responsable.getInstruccion().getTxtNombre();
             }
             salida.setGradoInstruccionResp(gradoInstruccion);
             salida.setEdadResp(responsable.getEdad() != null ? responsable.getEdad().toString() : "");
@@ -2674,7 +2461,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
                     salida.getDeclaraciones().add(this.crearDeclaracionJurada(persona));
                     Detalle03DSLDREport detalle = new Detalle03DSLDREport();
                     detalle.setNombresApellidos(
-                            persona.getTxtNombres() != null ? persona.getTxtNombres():"");
+                            persona.getApellidosNombres() != null ? persona.getApellidosNombres():"");
                     String date = DnaUtil.obtenerFecha(persona.getTxtFechaCurso());
                     detalle.setFehcaLugar( persona.getTxtLugarCurso()  != null ?
                             date + " " + persona.getTxtLugarCurso():date);
@@ -2702,7 +2489,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
             if(!existeDefenseor){
                 Detalle03DSLDREport detalle = new Detalle03DSLDREport();
                 detalle.setNombresApellidos(
-                        responsable.getTxtNombres() != null ? responsable.getTxtNombres():"");
+                        responsable.getApellidosNombres() != null ? responsable.getApellidosNombres():"");
                 String date = DnaUtil.obtenerFecha(responsable.getTxtFechaCurso());
                 detalle.setFehcaLugar( responsable.getTxtLugarCurso()  != null ?
                         date + " " + responsable.getTxtLugarCurso():date);
@@ -2733,9 +2520,9 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         salida.setColegiatura(persona.getTxtColegiatura()!= null ? persona.getTxtColegiatura() : "");
         salida.setColegio(persona.getTxtColegio()!= null ? persona.getTxtColegio() : "");
         salida.setCorreo(persona.getTxtCorreo()!= null ? persona.getTxtCorreo() : "");
-        salida.setDepartamento(persona.getNidDepartamento()!= null ? this.fachadaDepartamento.find(persona.getNidDepartamento()).getTxtDescripcion() : "");
-        salida.setProvincia(persona.getNidProvincia()!= null ? this.fachadaProvincia.find(persona.getNidProvincia()).getTxtDescripcion() : "");
-        salida.setDistrito(persona.getNidDistrito()!= null ? this.fachadaDistrito.find(persona.getNidDistrito()).getTxtDescripcion() : "");
+        salida.setDepartamento(persona.getNidDepartamento()!= null ? this.departamentoFacade.find(persona.getNidDepartamento()).getTxtDescripcion() : "");
+        salida.setProvincia(persona.getNidProvincia()!= null ? this.provinciaFacade.find(persona.getNidProvincia()).getTxtDescripcion() : "");
+        salida.setDistrito(persona.getNidDistrito()!= null ? this.distritoFacade.find(persona.getNidDistrito()).getTxtDescripcion() : "");
         salida.setDireccion(persona.getTxtDireccion()!= null ? persona.getTxtDireccion() : "");
         salida.setDni(persona.getTxtDocumento()!= null ? persona.getTxtDocumento() : "");
         String date = "____";
@@ -2745,8 +2532,8 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         salida.setFechaCurso(date);
         salida.setFuncion(persona.getFuncion() != null ? persona.getFuncion().getTxtNombre() : "");
         String gradoInstruccion = "";
-        if(persona.getNidInstruccion() != null){
-            gradoInstruccion = this.catalogoFacade.find(BigInteger.valueOf(persona.getNidInstruccion())).getTxtNombre();
+        if(persona.getInstruccion() != null){
+            gradoInstruccion = persona.getInstruccion().getTxtNombre();
         }
         salida.setGradoInstruccion(gradoInstruccion);
         salida.setLugarCurso(persona.getTxtLugarCurso()!= null ? persona.getTxtLugarCurso() : "");
@@ -2798,7 +2585,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         if( this.personaDna.getTxtApellidoMaterno() == null || this.personaDna.getTxtApellidoMaterno().equals("") 
                 || this.personaDna.getTxtApellidoPaterno() == null || this.personaDna.getTxtApellidoPaterno().equals("") 
                 || this.personaDna.getTxtNombre1() == null || this.personaDna.getTxtNombre1().equals("") ){ 
-            adicionarMensajeError("Faltan datos", "Faltan los datos ligados al DNI.");
+            adicionarMensajeError("Los datos de la persona están incompletos porque no ingresó un DNI válido","");
             fc.validationFailed();
             fc.renderResponse(); 
         }
@@ -2824,21 +2611,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         this.inscripcion = inscripcion;
     }
 
-    public List<Provincia> getProvincias() {
-        return provincias;
-    }
-
-    public void setProvincias(List<Provincia> provincias) {
-        this.provincias = provincias;
-    }
-
-    public List<Distrito> getDistritos() {
-        return distritos;
-    }
-
-    public void setDistritos(List<Distrito> distritos) {
-        this.distritos = distritos;
-    }
+   
 
     public List<PersonaDna> getListaPersonal() {
         return listaPersonal;
@@ -3179,22 +2952,6 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         this.flgNroAmbPrivObs = flgNroAmbPrivObs;
     }
 
-    public List<PersonaDna> getPersonasAEvaluar() {
-        return personasAEvaluar;
-    }
-
-    public void setPersonasAEvaluar(List<PersonaDna> personasAEvaluar) {
-        this.personasAEvaluar = personasAEvaluar;
-    }
-
-    public PersonaDna getPersonaAEvaluar() {
-        return personaAEvaluar;
-    }
-
-    public void setPersonaAEvaluar(PersonaDna personaAEvaluar) {
-        this.personaAEvaluar = personaAEvaluar;
-    }
-
     public Boolean getFlgPersonaObservada() {
         return flgPersonaObservada;
     }
@@ -3227,13 +2984,6 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         this.personasDnaEval = personasDnaEval;
     }
 
-    public Inscripcion getInscripcionAEvaluar() {
-        return inscripcionAEvaluar;
-    }
-
-    public void setInscripcionAEvaluar(Inscripcion inscripcionAEvaluar) {
-        this.inscripcionAEvaluar = inscripcionAEvaluar;
-    }
 
     public String getTextoBtnEvaluar() {
         return textoBtnEvaluar;
@@ -3241,14 +2991,6 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
 
     public void setTextoBtnEvaluar(String textoBtnEvaluar) {
         this.textoBtnEvaluar = textoBtnEvaluar;
-    }
-
-    public PersonaDnaEval getClonePersonaDnaEval() {
-        return clonePersonaDnaEval;
-    }
-
-    public void setClonePersonaDnaEval(PersonaDnaEval clonePersonaDnaEval) {
-        this.clonePersonaDnaEval = clonePersonaDnaEval;
     }
 
     public Boolean getFlgDenegarInscripcion() {
@@ -3259,30 +3001,7 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         this.flgDenegarInscripcion = flgDenegarInscripcion;
     }
     
-    public Inscripcion getInscripcionVer() {
-        return inscripcionVer;
-    }
-
-    public void setInscripcionVer(Inscripcion inscripcionVer) {
-        this.inscripcionVer = inscripcionVer;
-    }
-
-    public List<PersonaDna> getPersonalVer() {
-        return personalVer;
-    }
-
-    public void setPersonalVer(List<PersonaDna> personalVer) {
-        this.personalVer = personalVer;
-    }
-
-    public PersonaDna getPersonaVer() {
-        return personaVer;
-    }
-
-    public void setPersonaVer(PersonaDna personaVer) {
-        this.personaVer = personaVer;
-    }
-
+   
     public PersonaDna getResponsableSubsanar() {
         return responsableSubsanar;
     }
@@ -3307,14 +3026,6 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         this.inscripcionSubsanar = inscripcionSubsanar;
     }
 
-    public List<PersonaDna> getPersonalSubsanar() {
-        return personalSubsanar;
-    }
-
-    public void setPersonalSubsanar(List<PersonaDna> personalSubsanar) {
-        this.personalSubsanar = personalSubsanar;
-    }
-
     public List<PersonaDna> getPersonalRemover() {
         return personalRemover;
     }
@@ -3323,14 +3034,6 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
         this.personalRemover = personalRemover;
     }
 
-    public PersonaDna getPersonaSubsanar() {
-        return personaSubsanar;
-    }
-
-    public void setPersonaSubsanar(PersonaDna personaSubsanar) {
-        this.personaSubsanar = personaSubsanar;
-    }
-    
     public Defensoria getDefensoria() {
         return defensoria;
     }
@@ -3386,6 +3089,14 @@ public class InscripcionAdministrado extends AdministradorAbstracto implements S
 
     public void setPersonalESubsanar(List<PersonaDna> personalESubsanar) {
         this.personalESubsanar = personalESubsanar;
+    }
+
+    public int getModo() {
+        return modo;
+    }
+
+    public void setModo(int modo) {
+        this.modo = modo;
     }
     
 }

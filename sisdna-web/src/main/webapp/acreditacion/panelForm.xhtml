@@ -8,95 +8,124 @@
         xmlns:pe="http://primefaces.org/ui/extensions">
 
                 
-                <p:fieldset legend="Datos Inscripción Seleccionada" style="width: 100%">
+                <p:fieldset legend="DATOS DE LA DEMUNA">
                     <div class="ui-g">
-                        <div class="ui-g-12 ui-md-3"><p:outputLabel value="Código de la DNA:"/>  </div>
-                        <div class="ui-g-9"><p:outputLabel  value="#{acreditacionAdministrado.inscripcionSeleccionada.dna.txtConstancia}"/>  </div>
+                        <div class="ui-g-12 ui-md-3 ui-lg-2"><p:outputLabel value="Código de la DNA:"/>  </div>
+                        <div class="ui-g-12 ui-md-9 ui-lg-10"><p:outputLabel class="pbold" value="#{acreditacionAdministrado.acreditacion.dna.txtConstancia}"/>  </div>
                     </div>
                      <div class="ui-g">
-                        <div class="ui-g-12 ui-md-3"><p:outputLabel value="Nombre de la entidad responsable:"/>  </div>
-                        <div class="ui-g-9"><p:outputLabel  value="#{acreditacionAdministrado.inscripcionSeleccionada.dna.txtEntidad}"/>  </div>
+                        <div class="ui-g-12 ui-md-3 ui-lg-2"><p:outputLabel value="Municipalidad:"/>  </div>
+                        <div class="ui-g-12 ui-md-9 ui-lg-10"><p:outputLabel  class="pbold" value="#{acreditacionAdministrado.acreditacion.dna.txtEntidad}"/>  </div>
                     </div>
                     <div class="ui-g">
-                        <div class="ui-g-3"><p:outputLabel value="Nombre de la DNA:"/></div>
-                        <div class="ui-g-9"><p:outputLabel value="#{acreditacionAdministrado.inscripcionSeleccionada.dna.txtNombre}"/></div>
+                        <div class="ui-g-12 ui-md-3 ui-lg-2"><p:outputLabel value="Nombre de la DNA:"/></div>
+                        <div class="ui-g-12 ui-md-9 ui-lg-10"><p:outputLabel class="pbold" value="#{acreditacionAdministrado.acreditacion.dna.txtNombre}"/></div>
                     </div>
                      <div class="ui-g">
-                        <div class="ui-g-12 ui-md-3"><p:outputLabel value="Departamento:"/> </div>
-                        <div class="ui-g-12 ui-md-2"><p:outputLabel value="#{acreditacionAdministrado.getNombreDepartamentoExterno()}" />  </div>
+                        <div class="ui-g-12 ui-md-3 ui-lg-2"><p:outputLabel value="Departamento:"/> </div>
+                        <div class="ui-g-12 ui-md-2"><p:outputLabel class="pbold" value="#{acreditacionAdministrado.getNombreDepartamento(acreditacionAdministrado.acreditacion.dna.nidDepartamento)}" />  </div>
                         <div class="ui-g-12 ui-md-1"><p:outputLabel value="Provincia:"/></div>
-                        <div class="ui-g-12 ui-md-2"><p:outputLabel value="#{acreditacionAdministrado.getNombreProvinciaExterno()}" />  </div>
+                        <div class="ui-g-12 ui-md-2"><p:outputLabel class="pbold" value="#{acreditacionAdministrado.getNombreProvincia(acreditacionAdministrado.acreditacion.dna.nidProvincia)}" />  </div>
                         <div class="ui-g-12 ui-md-1"><p:outputLabel value="Distrito:"/></div>
-                        <div class="ui-g-12 ui-md-2"><p:outputLabel value="#{acreditacionAdministrado.getNombreDistritoExterno()}" />  </div>
+                        <div class="ui-g-12 ui-md-2"><p:outputLabel class="pbold" value="#{acreditacionAdministrado.getNombreDistrito(acreditacionAdministrado.acreditacion.dna.nidDistrito)}" />  </div>
                     </div>
-                    <div class="ui-g">
-                        <div class="ui-g-12 ui-md-3">    <p:outputLabel for="txtCorreo" value="Correo electrónico de contacto:"/> </div>
-                        <div class="ui-g-12 ui-md-5"><p:outputLabel id="txtCorreo" value="#{acreditacionAdministrado.inscripcionSeleccionada.txtCorreo}"/></div>
-                        <div class="ui-g-12 ui-md-1"> <p:outputLabel for="txtTelefono" value="Teléfono(s):"/></div>
-                        <div class="ui-g-12 ui-md-2">
-                            <p:outputLabel id="txtTelefono" value="#{acreditacionAdministrado.inscripcionSeleccionada.txtTelefono}"/>
-                        </div>    
-                    </div>
-                    <div class="ui-g">
-                        <div class="ui-g-12 ui-md-3"> <p:outputLabel for="txtDireccion" value="Dirección de la DNA:"/> </div>
-                        <div class="ui-g-12 ui-md-9">
-                            <p:outputLabel id="txtDireccion" value="#{acreditacionAdministrado.inscripcionSeleccionada.txtDireccion}"/>
-                        </div>
-                    </div>
-                    <div class="ui-g">
-                        <div class="ui-g-12 ui-md-3"> <p:outputLabel for="txtGerencia" value="Dirección o Gerencia a la que pertenece la DNA:"/> </div>
-                        <div class="ui-g-12 ui-md-9">
-                            <p:outputLabel id="txtGerencia" value="#{acreditacionAdministrado.inscripcionSeleccionada.txtGerencia}"/>
-                        </div>
-                    </div>
-
-                    <div class="ui-g">
-                        <div class="ui-g-12 ui-md-3"><p:outputLabel for="txtDias" value="Días y horas de Atención:"/></div>
-                        <div class="ui-g-12 ui-md-5">
-                            <p:outputLabel id="txtDias" value="#{acreditacionAdministrado.inscripcionSeleccionada.dias}"/>
-                        </div>
-                        <div class="ui-g-12 ui-md-3"><p:outputLabel for="txtPresupuesto" value="Presupuesto asignado(en Soles):"/></div>
-                        <div class="ui-g-12 ui-md-2">  
-                            <p:outputLabel id="txtPresupuesto" value="#{acreditacionAdministrado.inscripcionSeleccionada.presupuesto}"/>
-                         </div>    
-                    </div>
-                    <div class="ui-g">
-                        <div class="ui-g-12 ui-md-3"><p:outputLabel for="txtAmbientes" value="Número de ambientes con los que cuenta la DNA:"/></div>
-                        <div class="ui-g-12 ui-md-1">
-                            <p:outputLabel id="txtAmbientes" value="#{acreditacionAdministrado.inscripcionSeleccionada.ambientes}"/>
-                        </div>
-                        <div class="ui-g-12 ui-md-4"><p:outputLabel for="txtAmbientesPrivadas" value="Número de ambientes para audiencias privadas:"/></div>
-                        <div class="ui-g-12 ui-md-1">  
-                            <p:outputLabel id="txtAmbientesPrivadas"  value="#{acreditacionAdministrado.inscripcionSeleccionada.ambientesPriv}"/>
-                         </div>    
-                    </div>
-                </p:fieldset>
-                <p:fieldset legend="Datos Acreditación" style="width: 100%">
+                    
+                    
                     <div class="ui-g"> 
-                        <div class="ui-g-12 ui-md-4"> 
-                            <p:outputLabel for="txtNroOrdenanza" value="Número de Ordenanza que incorpora a la DEMUNA en la estructura orgánica municipal"/> </div>
-                        <div class="ui-g-12 ui-md-8">
-                            <p:inputText required="true" id="txtNroOrdenanza" requiredMessage="Debe ingresar el número de ordenanza"
-                                          value="#{acreditacionAdministrado.acreditacion.txtNroOrdenanza}" maxlength="150">
-                            </p:inputText>
-                        </div>
-                    </div>
-                   <div class="ui-g"> 
-                        <div class="ui-g-12 ui-md-4"> 
-                            <p:outputLabel for="txtFecOrdenanza" value="Fecha de Ordenanza que incorpora a la DEMUNA en la estructura orgánica municipal"/> </div>
-                        <div class="ui-g-12 ui-md-3">
-                            <p:calendar id="txtFecOrdenanza" value="#{acreditacionAdministrado.acreditacion.fecOrdenanza}"
+                        <div class="ui-g-12 ui-md-3 ui-lg-2"> <p:outputLabel for="txtFecOrdenanza" value="Fecha de Ordenanza"/> </div>
+                        <div class="ui-g-12 ui-md-2">
+                            <p:calendar id="txtFecOrdenanza" value="#{acreditacionAdministrado.acreditacion.fecOrdenanza}" disabled="#{acreditacionAdministrado.modo eq 6}"
                                 requiredMessage="Debe ingresar la fecha de la ordenanza"
                                 required="true" pattern="dd/MM/yyyy" navigator="true" mask="true" locale="es"
                               />
                         </div>
+                        <div class="ui-g-12 ui-md-5">  <p:outputLabel for="txtNroOrdenanza" value="Número de Ordenanza que incorpora a la DEMUNA en la estructura orgánica municipal"/> </div>
+                        <div class="ui-g-12 ui-md-3">
+                            <p:inputText required="true" id="txtNroOrdenanza" requiredMessage="Debe ingresar el número de ordenanza" disabled="#{acreditacionAdministrado.modo eq 6}"
+                                          value="#{acreditacionAdministrado.acreditacion.txtDocumento}" maxlength="150">
+                            </p:inputText>
+                        </div>
+                      
+                    </div>
+                    <div class="ui-g"> 
+                        <div class="ui-g-12 ui-md-7"> 
+                            <p:outputLabel for="txtNorma" value="Señale la norma y el artículo de la Ordenanza donde se consigna como función de la DEMUNA: dirigir los procedimientos por riesgo y suscribir resoluliciones y comunicaciones que se emita en los mismos, entre otras funciones"/> </div>
+                        <div class="ui-g-12 ui-md-5">
+                            <p:inputText required="false" id="txtNorma" requiredMessage="Debe ingresar la norma y el artículo de la Ordenanza" disabled="#{acreditacionAdministrado.modo eq 6}"
+                                          value="#{acreditacionAdministrado.acreditacion.txtNorma}" maxlength="150">
+                            </p:inputText>
+                        </div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-3 ui-lg-2"> <p:outputLabel for="txtDireccion" value="Dirección de la DNA:"/> </div>
+                        <div class="ui-g-12 ui-md-9 ui-lg-10">
+                             <p:inputText required="true" id="txtDireccion"  value="#{acreditacionAdministrado.acreditacion.txtDireccion}"
+                                         maxlength="150"  disabled="#{acreditacionAdministrado.modo eq 6}"
+                                         requiredMessage="Debe ingresar la dirección de la DNA">
+                            </p:inputText>
+                        </div>
+                    </div>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-3 ui-lg-2"><p:outputLabel for="txtCorreo" value="Correo electrónico de contacto:"/> </div>
+                        <div class="ui-g-12 ui-md-4">
+                                <p:inputText required="true" id="txtCorreo" value="#{acreditacionAdministrado.acreditacion.txtCorreo}" 
+                                        requiredMessage="Debe ingresar el correo electrónico de contacto"    disabled="#{acreditacionAdministrado.modo eq 6}"
+                                     validatorMessage="El correo electrónico #{acreditacionAdministrado.acreditacion.txtCorreo} no dispone de un formato válido" maxlength="150" title="Campo Obligatorio">
+                                <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+                                 <p:ajax update="@this"/>
+                               </p:inputText>
+                        </div>
+                        <div class="ui-g-12 ui-md-2 ui-lg-1"><p:outputLabel for="txtTelefono" value="Teléfono(s):"/></div>
+                        <div class="ui-g-12 ui-md-3 ui-lg-5">
+                            <p:inputText required="true" id="txtTelefono" value="#{acreditacionAdministrado.acreditacion.txtTelefono}" 
+                                           disabled="#{acreditacionAdministrado.modo eq 6}"
+                                         maxlength="150" requiredMessage="Debe ingresar el teléfono">
+                         </p:inputText>
+                        </div>    
+                    </div>
+                  
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-3 ui-lg-2"><p:outputLabel for="txtDias" value="Días y horas de Atención:"/></div>
+                        <div class="ui-g-12 ui-md-4">
+                              <p:inputText required="true" id="txtDias" value="#{acreditacionAdministrado.acreditacion.dias}" 
+                                     maxlength="50"  disabled="#{acreditacionAdministrado.modo eq 6}"
+                                     requiredMessage="Debe ingresar los días y horas de atención">
+                              </p:inputText>
+                        </div>
+                        <div class="ui-g-12 ui-md-3"> <p:outputLabel for="txtGerencia" value="Órgano, oficina o área a la que pertenece la DEMUNA"/> </div>
+                        <div class="ui-g-12 ui-md-2  ui-lg-3">
+                             <p:inputText required="true" id="txtGerencia"  value="#{acreditacionAdministrado.acreditacion.txtGerencia}"  disabled="#{acreditacionAdministrado.modo eq 6}"
+                                      maxlength="150" requiredMessage="Debe ingresar el Órgano, oficina o área a la que pertenece la DEMUNA">
+                             </p:inputText>
+                        </div>
+                    </div>
+
+                 
+                    
+                </p:fieldset>
+                <p:fieldset legend="CONDICIONES DEL ESPACIO QUE OCUPA LA DEMUNA">
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-4"><p:outputLabel for="txtAmbientes" value="Número de ambientes con los que cuenta la DNA:"/></div>
+                        <div class="ui-g-12 ui-md-2">
+                            <p:inputNumber required="true" id="txtAmbientes" value="#{acreditacionAdministrado.acreditacion.ambientes}" disabled="#{acreditacionAdministrado.modo eq 6}"
+                                           minValue="0" maxValue="100"  decimalPlaces="0" inputStyle="width: 80px !important"
+                                       requiredMessage="Debe ingresar el número de ambientes con los que cuenta la DNA">
+                        </p:inputNumber>
+                        </div>
+                        <div class="ui-g-12 ui-md-3"><p:outputLabel for="txtAmbientesPrivadas" value="Número de ambientes para audiencias privadas:"/></div>
+                        <div class="ui-g-12 ui-md-2">  
+                            <p:inputNumber required="true" id="txtAmbientesPrivadas" value="#{acreditacionAdministrado.acreditacion.ambientesPriv}"  disabled="#{acreditacionAdministrado.modo eq 6}"
+                                       minValue="0" maxValue="100" decimalPlaces="0" inputStyle="width: 80px !important"
+                                       requiredMessage="Debe ingresar el número de ambientes para audiencias privadas">
+                            </p:inputNumber>
+                         </div>    
                     </div>
                     <div class="ui-g">
                          <div class="ui-g-12 ui-md-8">   
                              <p:outputLabel for="flgEquipoComputo" value="¿Cuenta con equipo de cómputo a disposición de cada personal de la DEMUNA?"/> 
                          </div>
                          <div class="ui-g-12 ui-md-1">
-                            <p:selectBooleanCheckbox id="flgEquipoComputo" value="#{acreditacionAdministrado.acreditacion.flgEquipoComputo}" >
+                            <p:selectBooleanCheckbox id="flgEquipoComputo" value="#{acreditacionAdministrado.acreditacion.flgEquipoComputo}"  disabled="#{acreditacionAdministrado.modo eq 6}">
                                 <p:ajax update="@this"/>
                             </p:selectBooleanCheckbox>
                          </div>   
@@ -106,7 +135,7 @@
                              <p:outputLabel for="flgImpresora" value="¿Cuenta con impresora a disposición de la DEMUNA?"/> 
                          </div>
                          <div class="ui-g-12 ui-md-1">
-                            <p:selectBooleanCheckbox id="flgImpresora" value="#{acreditacionAdministrado.acreditacion.flgImpresora}" >
+                            <p:selectBooleanCheckbox id="flgImpresora" value="#{acreditacionAdministrado.acreditacion.flgImpresora}"  disabled="#{acreditacionAdministrado.modo eq 6}">
                                 <p:ajax update="@this"/>
                             </p:selectBooleanCheckbox>
                          </div>   
@@ -116,7 +145,7 @@
                              <p:outputLabel for="flgInternet" value="¿Cuenta con conexión a internet en la DEMUNA?"/> 
                          </div>
                          <div class="ui-g-12 ui-md-1">
-                             <p:selectBooleanCheckbox id="flgInternet" value="#{acreditacionAdministrado.acreditacion.flgInternet}" >
+                             <p:selectBooleanCheckbox id="flgInternet" value="#{acreditacionAdministrado.acreditacion.flgInternet}"  disabled="#{acreditacionAdministrado.modo eq 6}">
                                  <p:ajax update="@this"/>
                              </p:selectBooleanCheckbox>
                          </div>   
@@ -126,7 +155,7 @@
                              <p:outputLabel for="flgArchivadores" value="¿Los archivadores y escritorios son seguros para el resguardo de los expedientes sobre riesgo de desprotección y otros de la DEMUNA?"/> 
                          </div>
                          <div class="ui-g-12 ui-md-1">
-                             <p:selectBooleanCheckbox id="flgArchivadores" value="#{acreditacionAdministrado.acreditacion.flgArchivadores}" >
+                             <p:selectBooleanCheckbox id="flgArchivadores" value="#{acreditacionAdministrado.acreditacion.flgArchivadores}"  disabled="#{acreditacionAdministrado.modo eq 6}">
                                 <p:ajax update="@this"/>
                              </p:selectBooleanCheckbox>
                          </div>   
@@ -136,7 +165,7 @@
                              <p:outputLabel for="flgAccesibilidad" value="¿El Local garantiza la accesibilidad de niñas, niños, adolescentes, madres gestantes o personas con discapacidad?"/> 
                          </div>
                          <div class="ui-g-12 ui-md-1">
-                             <p:selectBooleanCheckbox  id="flgAccesibilidad" value="#{acreditacionAdministrado.acreditacion.flgAccesibilidad}" >
+                             <p:selectBooleanCheckbox  id="flgAccesibilidad" value="#{acreditacionAdministrado.acreditacion.flgAccesibilidad}"  disabled="#{acreditacionAdministrado.modo eq 6}">
                                  <p:ajax update="@this"/>
                              </p:selectBooleanCheckbox>
                          </div>   
@@ -146,7 +175,7 @@
                              <p:outputLabel for="flgAreaLudica" value="¿Cuenta con un área lúdica para la atención de niñas, niños y adolescentes?"/> 
                          </div>
                          <div class="ui-g-12 ui-md-1">
-                             <p:selectBooleanCheckbox id="flgAreaLudica" value="#{acreditacionAdministrado.acreditacion.flgAreaLudica}" >
+                             <p:selectBooleanCheckbox id="flgAreaLudica" value="#{acreditacionAdministrado.acreditacion.flgAreaLudica}"  disabled="#{acreditacionAdministrado.modo eq 6}">
                                  <p:ajax update="@this"/>
                              </p:selectBooleanCheckbox>
                          </div>   
@@ -157,7 +186,7 @@
                             <p:outputLabel for="txtEstadoCons" value="¿Cuál es el estado de conservación de la oficina de DEMUNA?"/> 
                         </div>
                        <div class="ui-g-12 ui-md-4">
-                           <p:selectOneRadio required="true" id="txtEstadoCons" value="#{acreditacionAdministrado.acreditacion.txtEstadoCons}"
+                           <p:selectOneRadio required="true" id="txtEstadoCons" value="#{acreditacionAdministrado.acreditacion.txtEstadoCons}" disabled="#{acreditacionAdministrado.modo eq 6}"
                                              requiredMessage="Debe seleccionar el estado de Conservación">
                                <f:selectItem itemLabel="BUENO" itemValue="1" />
                                <f:selectItem itemLabel="REGULAR" itemValue="2" />
@@ -169,25 +198,27 @@
                     </div>
                    
                 </p:fieldset>
-                
-                <p:commandButton value="AGREGAR PERSONA AL EQUIPO"
+          <div class="ui-g">
+            <div class="ui-g-12 ui-md-8">
+               <p:commandButton value="AGREGAR PERSONA AL EQUIPO INTERDESCIPLINARIO DE LA DEMUNA" rendered="#{acreditacionAdministrado.modo ne 6}"
                                  actionListener="#{acreditacionAdministrado.initPersonaAdd}"
                                  oncomplete="PF('dialogoEquipo').show();"  
                                  icon="fa fa-user" 
                                  class="sombra" 
                                  update=":dialogoEquipo"
                                  process="@this"
-                                 style="margin-top: 24px; margin-bottom: 24px">
+                                 style="margin-top: 24px; margin-bottom: 8px">
                </p:commandButton>
-           
-             <p:panelGrid id="pTabla" columns="1" columnClasses="ui-grid-col-12" layout="grid" class="boxshadowinside pnoborder">
+            </div>  
 
+         </div>
+         <div class="ui-g">
+            <div class="ui-g-12">
                 <p:dataTable 
                     id="tablaEquipo"
                     widgetVar="tablaEquipo" 
                     var="itemEquipo" 
                     value="#{acreditacionAdministrado.equipoExterno}" 
-                    selection="#{acreditacionAdministrado.personaEquipoExterno}"
                     rowIndexVar="index"
                     scrollable="true"
                     rows="10" 
@@ -196,27 +227,26 @@
                     emptyMessage="No se encontraron registros"
                     currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}">
 
-                    <p:column headerText="ACCIONES"  class="pcenter" width="10%">
+                    <p:column headerText="ACCIONES"  class="pcenter" width="180">
                         <p:commandButton 
                                          update=":dialogoVerPersonaEquipo" 
-                                         process="@this"
+                                         process="@this" style="width: 32px"
                                          actionListener="#{acreditacionAdministrado.obtenerPersonaVer(itemEquipo)}"
                                          oncomplete="PF('dialogoVerPersonaEquipo').show();"  
                                          title="Ver Responsable" icon="fa fa-eye">
                         </p:commandButton>
-                        <p:commandButton 
+                        <p:commandButton rendered="#{acreditacionAdministrado.modo ne 6}"
                                          update=":dialogoActualizarPersonaEquipo" 
-                                         process="@this"
+                                         process="@this" style="width: 32px"
                                          actionListener="#{acreditacionAdministrado.obtenerPersonaExternoActualizar(itemEquipo)}"
                                          oncomplete="PF('dialogoActualizarPersonaEquipo').show();"  
                                          title="Editar Equipo" icon="fa fa-pencil">
                         </p:commandButton>
-                        <p:commandButton  
-                                         process="@this"
-                                         update=":dialogoAnularPersonaEquipo" 
-                                         actionListener="#{acreditacionAdministrado.obtenerPersonaExternoEliminar(itemEquipo)}"
-                                         oncomplete="PF('dialogoAnularPersonaEquipo').show();"  
-                                         title="Anular" icon="fa fa-trash">
+     
+                        <p:commandButton title="Anular" icon="fa fa-trash" process="@this"   style="width: 32px"
+                                         rendered="#{acreditacionAdministrado.modo ne 6}"
+                                         action="#{acreditacionAdministrado.removerPersonaExterno(itemPersonalDna)}" update=":frmNuevo:tablaEquipo">
+                             <p:confirm header="Confirmación" message="¿ Está seguro de eliminar la persona ?" />
                         </p:commandButton>
                   
                     </p:column>
@@ -240,36 +270,43 @@
                         <h:outputText value="#{itemEquipo.txtSexo}" />
                     </p:column>
                 </p:dataTable>
+            </div>  
 
-            </p:panelGrid>
-                <p:dataList id="dlAdjuntos" value="#{acreditacionAdministrado.adjuntos}" var="doc" type="definition" rowIndexVar="indexDoc" emptyMessage="No hay tipo de archivos registrados">
+         </div>
+         
+       <div class="ui-g">
+            <div class="ui-g-12">
+     
+         <p:dataList id="dlAdjuntos" value="#{acreditacionAdministrado.adjuntos}" var="doc" type="definition" rowIndexVar="indexDoc" emptyMessage="No hay tipo de archivos registrados">
                 <c:set var="nombreFile" value="acreditacionAdministrado.file${indexDoc}" />
                 <f:facet name="header">
                     Adjuntar Documentos
                 </f:facet>
                 <div class="ui-g">
-                    <div class="ui-g-12 hidden-md">#{doc.tipo.txtNombre}: <h:outputText value="#{acreditacionAdministrado.getFileName(doc)}"/> </div>
-                    <div class="ui-g-12 ui-md-6">
+                    <p:outputPanel class="ui-g-12 ui-md-6" rendered="#{acreditacionAdministrado.modo ne 6}">
                         <p:fileUpload required="true" fileUploadListener="#{acreditacionAdministrado.handleFileUpload}" mode="advanced" 
                                   label="Adjuntar #{doc.tipo.txtNombre}" 
                                   update="dwArchivo" auto="true" requiredMessage="Debe adjuntar un documento" > 
                             <f:attribute name="rowAdjunto" value="#{doc}" />
                         </p:fileUpload>
-                    </div>    
+                    </p:outputPanel>    
                     <div class="ui-g-12 hidden-xs ui-md-6">
                        <p:outputPanel  id="dwArchivo" >
-                          <p:commandButton value="Descargar #{acreditacionAdministrado.getFileName(doc)}"
-                                           rendered="#{acreditacionAdministrado.getFileName(doc)!=null}"
-                                           ajax="false" process="@this">
-                                <p:fileDownload value="#{acreditacionAdministrado.obtenerNombreAdjunto(doc)}" />
-                          </p:commandButton>
+                              <p:commandLink   rendered="#{acreditacionAdministrado.getFileName(doc)!=null}"
+                                              ajax="false" process="@this" immediate="true" style="line-height: 20px; margin-left: 12px;"
+                                              value="Descargar #{acreditacionAdministrado.getFileName(doc)}">
+                                   <p:fileDownload value="#{acreditacionAdministrado.obtenerNombreAdjunto(doc)}" />
+                               </p:commandLink>
+                        
                        </p:outputPanel>    
                     </div>
                     
                 </div>
                     
             </p:dataList>
-             
+          </div>  
+
+         </div>     
            <br />
     
 </f:view>

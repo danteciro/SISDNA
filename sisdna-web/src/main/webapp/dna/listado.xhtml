@@ -11,7 +11,7 @@
     <ui:define name="content" >
         <ui:include src="/WEB-INF/templates/cargando.xhtml"/>
         <div class="pcenter">
-            <p:outputLabel class="ptextGradient pred pbold ptitle" value="DEFENSORÍAS"/>    
+            <p:outputLabel class="pred pbold ptitle" value="DEFENSORÍAS"/>    
         </div>
         <br></br>
         
@@ -46,7 +46,7 @@
                 <ui:include src="panelForm.xhtml" />
                 <div class="ui-g">
                     <div class="ui-g-12 ui-md-3">
-                        <p:commandButton value="Guardar" actionListener="#{defensoriaAdministrado.update()}" 
+                        <p:commandButton value="Guardar" actionListener="#{defensoriaAdministrado.updateTodo()}" 
                                   update=":frmNuevo, :frmBuscar, :formularioPrincipal1" 
                                   process="@form"
                                   icon="ui-icon-disk" title="Guarda los cambios"/>	
@@ -59,17 +59,32 @@
           
         <h:form id="frmBuscar" >
            <p:outputPanel rendered="#{defensoriaAdministrado.modo eq 0}">
-        
-             <p:fieldset id="fldBusqueda" legend="Búsqueda de Defensoría" style="max-width: 900px; width: 100%">
+              <div class="ui-g">
+               <div class="ui-g-6 ui-md-2">
+                    <p:commandButton value="Nueva DNA" oncomplete="PF('dialogoDocDna').show();" 
+                                    actionListener="#{defensoriaAdministrado.nuevaDna()}" 
+                                    icon="fa fa-user" title="Nueva DNA" class="sombra" update="dialogoDocDna">
+
+                    </p:commandButton>
+               </div>    
+               <div class="ui-g-6 ui-md-2">
+                  <p:commandButton value="Migrar MDB"  rendered="#{parametroDnaAdministrado.verMigracion()}"
+                               actionListener="#{migracionAdministrado.migrar()}" 
+                               icon="fa fa-user" title="Migrar" class="sombra">
+                  </p:commandButton>
+               </div>
+            </div>    
+            
+             <p:fieldset id="fldBusqueda" legend="Búsqueda de Defensoría">
                   
              <div class="ui-g">
-                   <div class="ui-g-12 ui-md-3">
-                            <p:outputLabel for="txtCodigo" value="Ingrese el código de su defensoría: "/>
+                   <div class="ui-g-12 ui-md-2">
+                            <p:outputLabel for="txtCodigo" value="Código de DNA: "/>
                              <p:inputText id="txtCodigo" converter="maskConCero" value="#{defensoriaAdministrado.busCodigo}" maxlength="8" >
                                 <p:ajax event="blur" update="formularioPrincipal1" listener="#{defensoriaAdministrado.buscar()}" />
                             </p:inputText>
                    </div>    
-                   <div class="ui-g-12 ui-md-3">
+                   <div class="ui-g-12 ui-md-2">
                         <p:outputLabel for="busDepartamento" value="Departamento: "/>
                         <p:selectOneMenu id="busDepartamento" value="#{defensoriaAdministrado.busDepartamento}" autoWidth="false"
                               effect="fade" >
@@ -99,7 +114,16 @@
                                             itemLabel="#{distritoBus.txtDescripcion}" itemValue="#{distritoBus.nidDistrito}" />
                         </p:selectOneMenu>
                    </div>    
-              
+                   <div class="ui-g-12 ui-md-2">
+                       <p:outputLabel for="txtEstadoBus" value="Estado de la DNA: "/>
+                       <p:selectOneMenu id="txtEstadoBus" widgetVar="txtEstadoBus" value="#{defensoriaAdministrado.busEstado}" autoWidth="false"
+                         effect="fade"   >
+                          <p:ajax listener="#{defensoriaAdministrado.buscar()}" update="formularioPrincipal1" />
+                          <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                          <f:selectItems value="#{catalogoAdministrado.obtenerEstadosDna()}" var="estado" 
+                                         itemLabel="#{estado.txtNombre}" itemValue="#{estado.nidCatalogo}" />
+                        </p:selectOneMenu>
+                  </div>    
               </div>
                
             </p:fieldset>
@@ -135,13 +159,16 @@
                                          title="Actualizar Datos de la DNA" icon="fa fa-pencil">
                        </p:commandButton>
                           
-                       <p:commandButton update=":dialogoAnular" 
-                                         oncomplete="PF('dialogoAnular').show();"   process="@this"
+                       <p:commandButton update=":dialogoAnularDna" 
+                                         oncomplete="PF('dialogoAnularDna').show();"   process="@this"
                                          title="Anular" icon="fa fa-trash">
-                            <f:setPropertyActionListener value="#{itemDefensoria}" target="#{inscripcionAdministrado.defensoria}"/>
+                            <f:setPropertyActionListener value="#{itemDefensoria}" target="#{defensoriaAdministrado.defensoria}"/>
                         </p:commandButton>
                         
                         
+                    </p:column>
+                    <p:column headerText="ESTADO" class="left" width="80">
+                        <h:outputText value="#{itemDefensoria.estado.txtNombre}" />
                     </p:column>
 
                     <p:column headerText="CONSTANCIA" class="left" width="80">
@@ -174,23 +201,76 @@
           </p:outputPanel>
         </h:form>
       
-      
-        <p:dialog modal="true" dynamic="true" id="dialogoAnular" widgetVar="dialogoAnular" header="Anular Defensoría" 
-                  draggable="true" resizable="false" 
-                  closable="true" closeOnEscape="true"  width="280"
-                  class="dlgdna" position="center center" responsive="true">
+         
+        <p:dialog modal="true" id="dialogoDocDna" widgetVar="dialogoDocDna" header="Nuevo DNA" closeOnEscape="true" resizable="false"  width="90%" 
+                  class="dlgdna1" position="center center" responsive="true" dynamic="true">
+            <h:form >
+                <ui:include src="panelDna.xhtml" />
+                <br></br>
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-4">
+              
+                        <p:commandButton value="Guardar" actionListener="#{defensoriaAdministrado.createDna()}" 
+                                         update=":frmBuscar:fldBusqueda,:formularioPrincipal1" 
+                                         process="@form"
+                                         oncomplete="if (!args.validationFailed) PF('dialogoDocDna').hide()" icon="ui-icon-disk"
+                                         title="Guarda los cambios"/>	
+                    </div>      
+                    <div class="ui-g-12 ui-md-4"></div>
+                    <div class="ui-g-12 ui-md-4">     
+                        <p:commandButton value="Cerrar" onclick="PF('dialogoDocDna').hide();"
+                                         immediate="true"  icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                    </div>    
+                </div>
+            </h:form>
+        </p:dialog>
+
+         <p:dialog modal="true" id="dialogoActualizarDna" widgetVar="dialogoActualizarDna" header="Actualizar DNA"
+                   closeOnEscape="true" resizable="false" 
+                   width="90%" class="dlgdna1" position="center center" responsive="true" dynamic="true">
+            <h:form>
+                <ui:include src="panelDna.xhtml" />
+                <br></br>
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-4">
+                          <p:commandButton value="Guardar" actionListener="#{defensoriaAdministrado.update()}" 
+                                           update=":formularioPrincipal1:tablaDefensoria" process="@form"
+                                           oncomplete="if (!args.validationFailed) PF('dialogoActualizarDna').hide()" 
+                                           icon="ui-icon-disk" title="Guarda los cambios"/>	
+                    </div>      
+                    <div class="ui-g-12 ui-md-4"></div>
+                    <div class="ui-g-12 ui-md-4">     
+                        <p:commandButton value="Cerrar" onclick="PF('dialogoActualizarDna').hide();" immediate="true" 
+                                         icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                    </div>    
+                </div> 
+                 
+            </h:form>
+        </p:dialog>
+        
+         
+        <p:dialog modal="true" dynamic="true" id="dialogoAnularDna" widgetVar="dialogoAnularDna" 
+                  header="Anular Defensoría" draggable="true"
+                  resizable="false" closable="true" closeOnEscape="true" width="380"
+                  class="dlgdna1" position="center center" responsive="true" >
             <h:form>
                 <ui:include src="panelAnular.xhtml" />
                 <br></br>
-                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pright">
-                    <p:column>
-                        <p:commandButton value="Cerrar" onclick="PF('dialogoAnular').hide();" process="@this"
-                                         immediate="true" icon="ui-icon-cancel" title="Cierra el dialogo"/>
-                    </p:column>
-                </p:panelGrid> 
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-4">
+                          <p:commandButton value="Guardar" actionListener="#{defensoriaAdministrado.anular()}" update=":formularioPrincipal1:tablaDefensoria" 
+                                         oncomplete="PF('dialogoAnularDna').hide()" icon="ui-icon-disk" title="Guarda los cambios"/>	
+                    </div>
+                    <div class="ui-g-12 ui-md-4"></div>
+                    <div class="ui-g-12 ui-md-4">
+                        <p:commandButton value="Cerrar" onclick="PF('dialogoAnularDna').hide();"
+                                         process="@this" immediate="true" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                    </div>
+                 </div>   
             </h:form>
         </p:dialog>
-               
+        
+        
         
          <p:dialog  modal="true" id="dialogoPersonalDna" widgetVar="dialogoPersonalDna" width="90%" height="400px" 
               header="Nuevo Personal" closeOnEscape="true" resizable="false" dynamic="true" class="dlgdna" position="center center" responsive="true" >

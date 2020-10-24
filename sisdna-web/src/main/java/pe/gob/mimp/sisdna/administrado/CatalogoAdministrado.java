@@ -156,14 +156,38 @@ public class CatalogoAdministrado extends AdministradorAbstracto implements Seri
         }
     }
     
+    
+      /**
+     * Devuelve la lista de origenes de defensorías
+     * @return lista de catálogos
+     */
+    public List<Catalogo> obtenerOrigen() {
+        return  this.fachada.findAllByFieldOrder("nidPadre", Constantes.CATALOGO_ORIGEN, true, "txtNombre", false);
+    }
+    
+    /**
+     * Devuelve la lista de los grados de instrucciones
+     * @return  lista de catálogos
+     */
+    public List<Catalogo> obtenerGradoInstruccion() {
+        return this.fachada.findAllByFieldOrder("nidPadre", Constantes.CATALOGO_GRADO_INSTRUCCION, true, "txtNombre", false);        
+    }
+
+     /**
+     * Devuelve la lista de las ocupaciones
+     * @return  lista de catálogos
+     */
+    public List<Catalogo> obtenerOcupaciones() {
+        return this.fachada.findAllByFieldOrder("nidPadre", Constantes.CATALOGO_OCUPACIONES, true, "txtNombre", false);
+    }
+    
     /**
      * Devuelve la lista de documentos de inscripción
      * @return lista de catálogos
      */
     public List<Catalogo> obtenerDocumentosInscripcion(){
-        List<Catalogo> listaDocumentosInscripcion;
-        listaDocumentosInscripcion = fachada.findAllByField("nidPadre", Constantes.CATALOGO_DOCUMENTO_INSCRIPCION);
-        return listaDocumentosInscripcion;
+       return  this.fachada.findAllByFieldOrder("nidPadre", Constantes.CATALOGO_DOCUMENTO_INSCRIPCION, true, "txtNombre", false);
+     
     }
 
     /**

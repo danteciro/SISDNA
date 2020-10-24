@@ -18,11 +18,14 @@
         <p:panelGrid id="pRespuesta" rendered="#{acreditacionAdministrado.verMensajeOK}" columns="1" layout="grid" columnClasses="ui-grid-col-12" class="pwhite" style="max-width: 1000px" >
              <ui:include src="acreditacion/respuesta.xhtml"/>
         </p:panelGrid>    
-        <p:growl id="mensajes" widgetVar="mensajes" showDetail="true" showSummary="false" life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true"/>
-           
+         <p:messages id="mensajes" autoUpdate="true" showDetail="false" closable="true" severity="error"  />
+        <p:growl  widgetVar="mensajes" showDetail="true" showSummary="false" 
+               life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true" severity="warn, info"/>
+
+        
         <p:panelGrid id="pSolicitud" rendered="#{!acreditacionAdministrado.verMensajeOK}" columns="1" layout="grid" columnClasses="ui-grid-col-12" class="pnoborder" style="max-width: 1000px" >
      
-        <p:fieldset legend="Búsqueda de Inscripciòn" style="width: 100%">
+        <p:fieldset legend="Búsqueda de Defensoría" >
           <h:form id="busInscripcion">
               <p:tabView activeIndex="#{acreditacionAdministrado.indexTab}" >
                  <p:ajax event="tabChange" listener="#{acreditacionAdministrado.cambiarBusqueda}" update="pSolicitud"></p:ajax>
@@ -30,7 +33,7 @@
                     <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4,ui-grid-col-2" class="pnoborder" >
                        <p:outputLabel for="txtCodigo" value="Ingrese el código de su defensoría: "/>
                        <p:inputText id="txtCodigo" value="#{acreditacionAdministrado.busCodigo}" maxlength="5" converter="maskConCero"
-                                    required="#{acreditacionAdministrado.indexTab==0}"
+                                    required="#{acreditacionAdministrado.indexTab==0}" requiredMessage="Debe ingresar el código de la defensoría"
                                     title="Campo Obligatorio" style="width: 150px">
                             <p:ajax event="blur" update="@this"/>
                        </p:inputText>
@@ -82,15 +85,17 @@
         </p:fieldset>
           <br /> 
              <h:form id="fResDna">
-                <p:panelGrid  rendered="#{acreditacionAdministrado.inscripcionesEncontradas.size()==0}" columns="1" layout="grid" columnClasses="ui-grid-col-12" class="pnoborder" style="max-width: 1000px" >
+                <p:panelGrid  rendered="#{acreditacionAdministrado.resDefensorias.size()==0}" columns="1" layout="grid" 
+                              columnClasses="ui-grid-col-12" class="pnoborder" style="max-width: 1000px" >
                      No se encontraron Defensorías registradas según el criterio de búsqueda. Por favor, envíenos un correo electrónico a correo@mimp.gob.pe solicitando el registro de su DNA.
                 </p:panelGrid>    
-                <p:panelGrid  rendered="#{acreditacionAdministrado.inscripcionesEncontradas.size()>0}" id="pResDna" columns="1" layout="grid" columnClasses="ui-grid-col-12" class="pnoborder" style="max-width: 1000px" >
+          <p:panelGrid  rendered="#{acreditacionAdministrado.resDefensorias.size()>0}" id="pResDna" columns="1" layout="grid" 
+                        columnClasses="ui-grid-col-12" class="pnoborder" style="max-width: 1000px" >
              <p:dataTable 
                     id="resDna"
                     widgetVar="resDna" 
                     var="item" 
-                    value="#{acreditacionAdministrado.inscripcionesEncontradas}" 
+                    value="#{acreditacionAdministrado.resDefensorias}" 
                     emptyMessage="No se encontraron registros"
                     rowIndexVar="index"
                     scrollable="true"
@@ -102,18 +107,17 @@
                     rowsPerPageTemplate="5,10,15"
                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                     currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}">
-                  >
-                     
-                       
-                    <f:facet name="header">
+                
+                 <f:facet name="header">
                          SELECCIONE DEFENSORÍA
                     </f:facet>
                     <p:column headerText="CÓDIGO" class="left" width="10%">
-                        <h:outputText value="#{item.dna.txtConstancia}"  />
+                        <h:outputText value="#{item.txtConstancia}"  />
                     </p:column>
                     <p:column headerText="NOMBRE DE DNA" class="left" width="90%">
-                            <p:commandLink process="@this" update="@all" action="#{acreditacionAdministrado.generarAcreditacionExterna(item)}" title="Carga Datos de Defensoría" >
-                            <h:outputText value="#{item.dna.txtNombre}" />
+                            <p:commandLink process="@this" update="@all" action="#{acreditacionAdministrado.generarAcreditacionExterna(item)}" 
+                                           title="Carga Datos de Defensoría" >
+                            <h:outputText value="#{item.txtNombre}" />
                         </p:commandLink>
                     </p:column>
                    
@@ -121,12 +125,25 @@
                 </p:panelGrid>
              </h:form>   
                 <br />
-                <p:panelGrid id="pForm" rendered="#{acreditacionAdministrado.inscripcionSeleccionada.nidInscripcion!=null}"
-                     columns="1" layout="grid" columnClasses="ui-grid-col-12" class="pnoborder" style="max-width: 1000px" >
-            <ui:include src="acreditacion/panelFormExterno.xhtml"/>
+                <p:panelGrid id="pForm" rendered="#{acreditacionAdministrado.acreditacion.dna!=null}"
+                     columns="1" layout="grid" columnClasses="ui-grid-col-12" class="pnoborder">
+             <h:form id="frmNuevo" enctype="multipart/form-data">
+                <ui:include src="acreditacion/panelForm.xhtml"/>
+               <div class="ui-g">
+                 <div class="ui-g-12 ui-md-3">
+                  <p:commandButton value="Guardar" ajax="true"
+                                icon="ui-icon-disk" title="Guardar" 
+                                action="#{acreditacionAdministrado.crearAcreditacionExterna()}" update="@this, :pTodo"/>  
+                 </div>
+               </div>
+               <f:event listener="#{acreditacionAdministrado.validarCreate}" type="postValidate" />
+            </h:form>
+            
+         <ui:include src="acreditacion/panelDialogExterno.xhtml" />
         </p:panelGrid>     
     </p:panelGrid>      
         </p:outputPanel>    
+        <h:form id="formularioPrincipal" ></h:form>
    </ui:define>
 </ui:composition> 
 

@@ -1,6 +1,8 @@
 package pe.gob.mimp.sisdna.service;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Asynchronous;
@@ -18,13 +20,24 @@ public class CorreoService {
     /**
      * Envia correo
      * @param responsable - personal en la fase de acreditación
+     * @param correo
+     * @param pass
      * @param correoDnaAdministrado el bean del correo
      */
     @Asynchronous
-    public void enviarCorreo(PersonaDnaAcre responsable ,  CorreoDnaAdministrado correoDnaAdministrado) {
+    public void enviarCorreoCredenciales(String responsable, String correo, String pass, CorreoDnaAdministrado correoDnaAdministrado) {
         try {
-            this.agregarContenidoCorreoYEnviar(Constantes.TPL_CREDENCIAL,responsable.getTxtNombre1(), responsable.getTxtApellidoPaterno(), responsable.getTxtCorreo(), correoDnaAdministrado);
-        }catch(Exception ex) {
+            
+             String contenido = correoDnaAdministrado.cargarTpl(Constantes.TPL_CREDENCIAL)
+                                    .replace("{0}", responsable)
+                                    .replace("{1}", correo)
+                                    .replace("{2}", pass);
+            correoDnaAdministrado.getCorreo().setContenido(contenido);
+            correoDnaAdministrado.getCorreo().getDestinatarios().add(correo);
+            correoDnaAdministrado.getCorreo().setTitulo(MimeUtility.encodeText("Correo de Envío de Credenciales", "utf-8", "B"));
+            correoDnaAdministrado.getCorreo().setHtml(true);
+            correoDnaAdministrado.getCorreo().enviarCorreo();
+        } catch(Exception ex) {
             Logger.getLogger(Thread.currentThread().getStackTrace()[1].getMethodName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -71,24 +84,36 @@ public class CorreoService {
      * @param correoDnaAdministrado  - bean del correo
      */
     @Asynchronous
-    public void enviarConstacia(PersonaDna responsable , Inscripcion inscripcion ,CorreoDnaAdministrado correoDnaAdministrado){
+    public void enviarSolicitudObservada(String tpl, String responsable , String correo, String nombreDna, CorreoDnaAdministrado correoDnaAdministrado){
         try{
-            this.agregarContenidoCorreoYEnviar(Constantes.TPL_CONSTANCIA_INSCRIPCION , inscripcion.getDna().getTxtNombre(),responsable.getTxtCorreo(),correoDnaAdministrado);
+            String contenido = correoDnaAdministrado.cargarTpl(tpl)
+                                    .replace("{0}", responsable)
+                                    .replace("{1}", nombreDna);
+            correoDnaAdministrado.getCorreo().setContenido(contenido);
+            correoDnaAdministrado.getCorreo().getDestinatarios().add(correo);
+            correoDnaAdministrado.getCorreo().setTitulo(MimeUtility.encodeText("Notificación de evaluación de solicitud", "utf-8", "B"));
+            correoDnaAdministrado.getCorreo().setHtml(true);
+            correoDnaAdministrado.getCorreo().enviarCorreo();  
+      
         }catch(Exception ex){
             Logger.getLogger(Thread.currentThread().getStackTrace()[1].getMethodName()).log(Level.SEVERE, null, ex);
         }
     }
     
+   
     /**
      * Enviar constancia
+     * @param tpl
      * @param responsable - persona en la fase de acreditación
-     * @param inscripcion - instancia de la inscripción
+     * @param correo
+     * @param nombreDna
+     * @param nomFile
      * @param correoDnaAdministrado  - bean del correo
      */
     @Asynchronous
-    public void enviarConstacia(PersonaDnaAcre responsable , Inscripcion inscripcion ,CorreoDnaAdministrado correoDnaAdministrado){
+    public void enviarConstancia(String tpl, String responsable , String correo, String nombreDna, String nomFile, CorreoDnaAdministrado correoDnaAdministrado){
         try{
-            this.agregarContenidoCorreoYEnviar(Constantes.TPL_CONSTANCIA_ACREDITACION , inscripcion.getDna().getTxtNombre(),responsable.getTxtCorreo(),correoDnaAdministrado);
+//            this.agregarContenidoCorreoYEnviar(Constantes.TPL_CONSTANCIA_ACREDITACION , inscripcion.getDna().getTxtNombre(),responsable.getTxtCorreo(),correoDnaAdministrado);
         }catch(Exception ex){
             Logger.getLogger(Thread.currentThread().getStackTrace()[1].getMethodName()).log(Level.SEVERE, null, ex);
         }
@@ -102,7 +127,8 @@ public class CorreoService {
      * @param correoDnaAdministrado - bean del correo
      * @throws UnsupportedEncodingException 
      */
-    private void agregarContenidoCorreoYEnviar(String tpl , String dnaNombre , String correo ,CorreoDnaAdministrado correoDnaAdministrado) throws UnsupportedEncodingException{
+    private void agregarContenidoCorreoYEnviar(String tpl , String dnaNombre , String correo ,CorreoDnaAdministrado correoDnaAdministrado) 
+            throws UnsupportedEncodingException{
         String contenido = correoDnaAdministrado.cargarTpl(tpl)
                                     .replace("{0}", dnaNombre);
         correoDnaAdministrado.getCorreo().setContenido(contenido);
@@ -111,37 +137,52 @@ public class CorreoService {
         correoDnaAdministrado.getCorreo().setHtml(true);
         correoDnaAdministrado.getCorreo().enviarCorreo();  
     }
+    /*
+            String contenido = correoDnaAdministrado.cargarTpl(tpl)
+                                    .replace("{0}", responsable)
+                                    .replace("{1}", nombreDna);
+            correoDnaAdministrado.getCorreo().setContenido(contenido);
+            correoDnaAdministrado.getCorreo().addAttach(bFile, "constancia.pdf");
+            correoDnaAdministrado.getCorreo().getDestinatarios().add(correo);
+            correoDnaAdministrado.getCorreo().setTitulo(MimeUtility.encodeText("Notificación de Constancia", "utf-8", "B"));
+            correoDnaAdministrado.getCorreo().setHtml(true);
+            correoDnaAdministrado.getCorreo().enviarCorreo();  
+      */
+       
+    }
+   
     
     /**
      * Enviar oficio
-     * @param responsable - personal en la fase de inscripción
-     * @param inscripcion - instancia de la inscripción
+     * @param tpl
+     * @param responsable
+     * @param correo
+     * @param nombreDna
+     * @param nomFile
      * @param correoDnaAdministrado  - bean del correo
      */
+/*
     @Asynchronous
-    public void enviarOficio(PersonaDna responsable , Inscripcion inscripcion ,CorreoDnaAdministrado correoDnaAdministrado){
+    public void enviarOficio(String tpl, String responsable , String correo, String nombreDna, String nomFile, CorreoDnaAdministrado correoDnaAdministrado){
         try{
-            this.agregarContenidoCorreoYEnviarOficio(Constantes.TPL_OFICIO_DENEGACION , inscripcion.getDna().getTxtNombre(),responsable.getTxtCorreo(),correoDnaAdministrado);
-        }catch(Exception ex){
+           byte[] bFile = Files.readAllBytes(new File(nomFile).toPath());
+    
+           
+            String contenido = correoDnaAdministrado.cargarTpl(tpl)
+                                    .replace("{0}", responsable)
+                                    .replace("{1}", nombreDna);
+            correoDnaAdministrado.getCorreo().setContenido(contenido);
+            correoDnaAdministrado.getCorreo().addAttach(bFile, "oficio.pdf");
+            correoDnaAdministrado.getCorreo().getDestinatarios().add(correo);
+            correoDnaAdministrado.getCorreo().setTitulo(MimeUtility.encodeText("Notificación de Oficio de Denegación", "utf-8", "B"));
+            correoDnaAdministrado.getCorreo().setHtml(true);
+            correoDnaAdministrado.getCorreo().enviarCorreo();  
+
+        } catch(Exception ex){
             Logger.getLogger(Thread.currentThread().getStackTrace()[1].getMethodName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    /**
-     * Enviar oficio
-     * @param responsable - personal en la fase de acreditación
-     * @param inscripcion - instancia de la inscripción
-     * @param correoDnaAdministrado  - bean del correo
-     */
-    @Asynchronous
-    public void enviarOficio(PersonaDnaAcre responsable , Inscripcion inscripcion ,CorreoDnaAdministrado correoDnaAdministrado){
-        try{
-            this.agregarContenidoCorreoYEnviarOficio(Constantes.TPL_OFICIO_DENEGACION_ACRE , inscripcion.getDna().getTxtNombre(),responsable.getTxtCorreo(),correoDnaAdministrado);
-        }catch(Exception ex){
-            Logger.getLogger(Thread.currentThread().getStackTrace()[1].getMethodName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
+    */
     /**
      * Ingresa los valores para poder enviar el correo
      * @param tpl - plantilla del correo
@@ -150,15 +191,18 @@ public class CorreoService {
      * @param correoDnaAdministrado - bean del correo
      * @throws UnsupportedEncodingException 
      */
+/*
     private void agregarContenidoCorreoYEnviarOficio(String tpl , String dnaNombre , String correo ,CorreoDnaAdministrado correoDnaAdministrado) throws UnsupportedEncodingException{
-        String contenido = correoDnaAdministrado.cargarTpl(tpl)
-                                    .replace("{0}", dnaNombre);
+        String contenido = correoDnaAdministrado.cargarTpl(tpl).replace("{0}", dnaNombre);
+
         correoDnaAdministrado.getCorreo().setContenido(contenido);
         correoDnaAdministrado.getCorreo().getDestinatarios().add(correo);
         correoDnaAdministrado.getCorreo().setTitulo(MimeUtility.encodeText("Notificación de Oficio de Denegación", "utf-8", "B"));
         correoDnaAdministrado.getCorreo().setHtml(true);
         correoDnaAdministrado.getCorreo().enviarCorreo();  
+
     }
     
     
 }
+*/

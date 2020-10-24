@@ -22,9 +22,7 @@ public class Constantes {
     public static final String EXTENSION_PDF = "pdf";
    
     public static final BigDecimal NID_MODULO = BigDecimal.valueOf(16);
-    public static final String PERFIL_RESPONSABLE = "RESPONSABLE";
-
-   
+ 
     public static final BigInteger CATALOGO_ORIGEN = BigInteger.valueOf(1);
     public static final BigInteger CATALOGO_FUNCION = BigInteger.valueOf(2);
     public static final BigInteger CATALOGO_ESTADO = BigInteger.valueOf(3);
@@ -67,7 +65,12 @@ public class Constantes {
     public static final BigInteger CATALOGO_OCUPACION_PSICOLOGO = BigInteger.valueOf(181);
     public static final BigInteger CATALOGO_OCUPACION_TRABAJADOR = BigInteger.valueOf(184);
    
+    public static final BigInteger CATALOGO_DNA_NUEVO = BigInteger.valueOf(349);
+    public static final BigInteger CATALOGO_DNA_REGISTRADA = BigInteger.valueOf(350);
+    public static final BigInteger CATALOGO_DNA_INSCRITA = BigInteger.valueOf(351);
+    public static final BigInteger CATALOGO_DNA_NO_INSCRITA = BigInteger.valueOf(352);
     public static final BigInteger CATALOGO_DNA_NO_FUNCIONA = BigInteger.valueOf(353);
+    public static final BigInteger CATALOGO_DNA_ACREDITADA = BigInteger.valueOf(354);
    
     public static final byte CURPROG_ESTADO_PENDIENTE = 0;
     public static final byte CURPROG_ESTADO_CONCLUIDO = 1;
@@ -98,18 +101,24 @@ public class Constantes {
   
     public static final String PASSWORD = "123456";
 
+    public static final String PERFIL_RESPONSABLE = "RESPONSABLE";
+    public static final String PERFIL_DSLD = "DSLD";
     public static final String PERFIL_ADMINISTRADOR = "ADMINISTRADOR";
-    public static final String PERFIL_USUARIO = "USUARIO";
-    public static final String PERFIL_INSTITUCION = "INSTITUCION";
+
 
     public static final String TPL_CREDENCIAL = "TPL_CREDENCIAL";
     public static final String TPL_ALERTA_INSCRIPCION = "TPL_ALERTA_INS";
+    public static final String TPL_ALERTA_INSCRIPCION_SUBSANADA = "TPL_ALERTA_INS_SUB";
     public static final String TPL_ALERTA_ACREDITACION = "TPL_ALERTA_ACRE";
+    public static final String TPL_ALERTA_ACREDITACION_SUBSANADA = "TPL_ALERTA_ACRE_SUB";
     public static final String TPL_CONSTANCIA_INSCRIPCION = "TPL_CONSTANCIA_INS";
     public static final String TPL_CONSTANCIA_ACREDITACION = "TPL_CONSTANCIA_ACRE";
     public static final String TPL_OFICIO_DENEGACION = "TPL_OFICIO_DEN";
     public static final String TPL_OFICIO_DENEGACION_ACRE = "TPL_OFICIO_DEN_ACRE";
+    public static final String TPL_INSCRIPCION_OBSERVADA = "TPL_INS_OBS";
+    public static final String TPL_ACREDITACION_OBSERVADA = "TPL_ACRE_OBS";
     public static final String TPL_INS_DENEGADO = "TPL_INS_DENEGADO";
+    public static final String TPL_ACRE_DENEGADO = "TPL_ACRE_DENEGADO";
     public static final String TPL_CURSO_INS_OK = "TPL_CURSO_INS_OK";
     public static final String TPL_CURSO_INS_OBS = "TPL_CURSO_INS_OBS";
     public static final String TPL_CURSO_INS_REC = "TPL_CURSO_INS_REC";
@@ -128,7 +137,11 @@ public class Constantes {
     public static final int MODO_LISTADO = 0;
     public static final int MODO_NUEVO = 1;
     public static final int MODO_UPDATE = 2;
-    
+    public static final int MODO_EVALUACION = 3;
+    public static final int MODO_SUBSANAR = 4;
+    public static final int MODO_EVALUACION_SUBSANACION = 5;
+    public static final int MODO_VER = 6;
+   
     public static final int CURINS_MODO_EVALUACION = 3;
     public static final int CURINS_MODO_CALIFICACION = 4;
     

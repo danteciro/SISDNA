@@ -29,6 +29,20 @@ public class PersonaDnaAcreEval implements Serializable , Cloneable {
     @JoinColumn(name="NID_ACREDITACION", nullable = false)
     private AcreditacionEval acreditacionEval;
     
+    
+    @JoinColumn(name = "NID_INSTRUCCION", referencedColumnName = "NID_CATALOGO")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Catalogo instruccion;
+    
+    @JoinColumn(name = "NID_PROFESION", referencedColumnName = "NID_CATALOGO")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Catalogo profesion;
+    
+    @JoinColumn(name = "NID_FUNCION", referencedColumnName = "NID_CATALOGO")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Catalogo funcion;
+  
+   
     @Size(max = 20)
     @Column(name = "TXT_DOCUMENTO")
     private String txtDocumento;
@@ -64,18 +78,12 @@ public class PersonaDnaAcreEval implements Serializable , Cloneable {
     @Size(max = 150)
     @Column(name = "TXT_CORREO")
     private String txtCorreo;
-    
-    @Column(name = "NID_INSTRUCCION")
-    private Integer nidInstruccion;
+  
     
     @Size(max = 150)
     @Column(name = "TXT_TELEFONO")
     private String txtTelefono;
     
-    @JoinColumn(name = "NID_PROFESION", referencedColumnName = "NID_CATALOGO")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Catalogo profesion;
-     
     
     @Size(max = 150)
     @Column(name = "TXT_COLEGIO")
@@ -97,9 +105,6 @@ public class PersonaDnaAcreEval implements Serializable , Cloneable {
     @Column(name = "TXT_INPE")
     private String txtInpe;
     
-    @JoinColumn(name = "NID_FUNCION", referencedColumnName = "NID_CATALOGO")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Catalogo funcion;
     
     @Column(name = "NID_DEPARTAMENTO")
     private BigDecimal nidDepartamento;
@@ -184,6 +189,14 @@ public class PersonaDnaAcreEval implements Serializable , Cloneable {
     @Column(name = "OBS_ANTECEDENTES")
     private String obsAntecedentes; 
     
+     public PersonaDnaAcreEval() {
+        
+        this.funcion = new Catalogo();
+        this.instruccion = new Catalogo();
+        this.profesion = new Catalogo();
+        this.acreditacionEval = new AcreditacionEval();
+    }
+     
     public String getTxtDocumento() {
         return txtDocumento;
     }
@@ -256,14 +269,7 @@ public class PersonaDnaAcreEval implements Serializable , Cloneable {
         this.txtCorreo = txtCorreo;
     }
 
-    public Integer getNidInstruccion() {
-        return nidInstruccion;
-    }
-
-    public void setNidInstruccion(Integer nidInstruccion) {
-        this.nidInstruccion = nidInstruccion;
-    }
-
+    
     public String getTxtTelefono() {
         return txtTelefono;
     }
@@ -537,6 +543,14 @@ public class PersonaDnaAcreEval implements Serializable , Cloneable {
 
     public void setTxtColegio(String txtColegio) {
         this.txtColegio = txtColegio;
+    }
+
+    public Catalogo getInstruccion() {
+        return instruccion;
+    }
+
+    public void setInstruccion(Catalogo instruccion) {
+        this.instruccion = instruccion;
     }
     
 }

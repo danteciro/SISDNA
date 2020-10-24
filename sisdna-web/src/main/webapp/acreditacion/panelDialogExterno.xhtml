@@ -7,72 +7,72 @@
         xmlns:ui="http://java.sun.com/jsf/facelets"
         xmlns:pe="http://primefaces.org/ui/extensions">
     
-    
-    <p:dialog  modal="true" id="dialogoEquipo" widgetVar="dialogoEquipo" header="Persona Equipo" closeOnEscape="true" resizable="false" dynamic="false">
+            
+    <p:dialog  modal="true" id="dialogoEquipo" widgetVar="dialogoEquipo" header="Persona Equipo" closeOnEscape="true" 
+               resizable="false" dynamic="true" width="90%" style="max-width: 850px">
         <h:form id="formEquipo">
            <ui:include src="panelPersonalExterno.xhtml"/>
              <br></br>
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pright">
-                <p:column>
-                    <p:commandButton value="Guardar"
+              <div class="ui-g">
+                    <div class="ui-g-12 ui-md-4">
+                        <p:commandButton value="Guardar"
                                      icon="ui-icon-disk" 
                                      title="Guarda los cambios" 
+                                     process="@form"
                                      actionListener="#{acreditacionAdministrado.agregarAEquipo()}" 
                                      oncomplete="if (!args.validationFailed) PF('dialogoEquipo').hide()"
-                                     update="@form :formularioPrincipal:tablaEquipo"/>	
-                    <p:commandButton value="Cerrar" onclick="PF('dialogoEquipo').hide();" immediate="true" process="@this" icon="ui-icon-cancel"/>
-                </p:column>
-            </p:panelGrid>
-              <f:event listener="#{acreditacionAdministrado.validarPanelPersona}" type="postValidate" />
+                                     update=":frmNuevo:tablaEquipo"/>	
+                     
+                    </div>
+                    <div class="ui-g-12 ui-md-4"></div>
+                    <div class="ui-g-12 ui-md-4">
+                           <p:commandButton value="Cerrar" onclick="PF('dialogoEquipo').hide();" immediate="true" process="@this" icon="ui-icon-cancel"/>
+                      
+                
+                    </div>    
+                </div>    
+             
+             <f:event listener="#{acreditacionAdministrado.validarPanelPersona}" type="postValidate" />
         </h:form>    
     </p:dialog>
 
-    <p:dialog modal="true" id="dialogoActualizarPersonaEquipo" widgetVar="dialogoActualizarPersonaEquipo" header="Equipo" closeOnEscape="true" resizable="false" dynamic="false">
+ 
+    <p:dialog modal="true" id="dialogoActualizarPersonaEquipo" widgetVar="dialogoActualizarPersonaEquipo" header="Equipo" 
+              closeOnEscape="true" resizable="false" dynamic="true" width="90%" style="max-width: 850px">
         <h:form>
             <ui:include src="panelPersonalExterno.xhtml" />
             <br></br>
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pright">
-                <p:column>
-                    <p:commandButton value="Guardar" 
-                                     actionListener="#{acreditacionAdministrado.actualizarPersonaEquipoExterno()}" 
-                                     update=":formularioPrincipal:tablaEquipo" 
-                                     oncomplete="if (!args.validationFailed) PF('dialogoActualizarPersonaEquipo').hide()" 
-                                     icon="ui-icon-disk" title="Guarda los cambios"/>	
-                    <p:commandButton value="Cerrar" onclick="PF('dialogoActualizarPersonaEquipo').hide();" immediate="true" process="@this" icon="ui-icon-cancel"/>
-                </p:column>
-            </p:panelGrid>
-             <f:event listener="#{acreditacionAdministrado.validarPanelPersona}" type="postValidate" />
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-4">
+                     <p:commandButton value="Guardar" 
+                                 actionListener="#{acreditacionAdministrado.actualizarPersonaEquipoExterno()}" 
+                                 update=":frmNuevo:tablaEquipo" 
+                                 oncomplete="if (!args.validationFailed) PF('dialogoActualizarPersonaEquipo').hide()" 
+                                 icon="ui-icon-disk" title="Guarda los cambios"/>	
+                </div>
+                <div class="ui-g-12 ui-md-4"></div>
+                <div class="ui-g-12 ui-md-4">
+                       <p:commandButton value="Cerrar" onclick="PF('dialogoActualizarPersonaEquipo').hide();" immediate="true" process="@this" icon="ui-icon-cancel"/>
+                </div>    
+            </div>    
+
+            <f:event listener="#{acreditacionAdministrado.validarPanelPersona}" type="postValidate" />
         </h:form>
     </p:dialog>
 
-    <p:dialog modal="true" id="dialogoVerPersonaEquipo" widgetVar="dialogoVerPersonaEquipo" header="Persona" closeOnEscape="true" resizable="false" dynamic="false">
+    <p:dialog modal="true" id="dialogoVerPersonaEquipo" widgetVar="dialogoVerPersonaEquipo" header="Persona" closeOnEscape="true" 
+              resizable="false" dynamic="true"  width="90%" style="max-width: 800px">
         <h:form>
             <ui:include src="panelPersonaVer.xhtml" />
             <br></br>
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pright">
-                <p:column>
-                    <p:commandButton value="Cerrar" onclick="PF('dialogoVerPersonaEquipo').hide();" immediate="true" process="@this" icon="ui-icon-cancel"/>
-                </p:column>
-            </p:panelGrid>
+            <div class="ui-g">
+               <div class="ui-g-12 ui-md-4">
+                  <p:commandButton value="Cerrar" onclick="PF('dialogoVerPersonaEquipo').hide();" immediate="true" process="@this" icon="ui-icon-cancel"/>
+               </div>    
+            </div>    
         </h:form>
     </p:dialog>
-    
-    <p:dialog modal="true" id="dialogoAnularPersonaEquipo" widgetVar="dialogoAnularPersonaEquipo" header="Confirmación" closeOnEscape="true" resizable="false" dynamic="false">
-       <h:form>
-           ¿ Está seguro de eliminar la persona ?
-           <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pright">
-               <p:column>
-                   <p:commandButton value="SÍ" 
-                                    actionListener="#{acreditacionAdministrado.removerPersonaExterno()}" 
-                                    update=":formularioPrincipal:tablaEquipo" 
-                                    oncomplete="if (!args.validationFailed) PF('dialogoAnularPersonaEquipo').hide()" 
-                                    icon="ui-icon-disk" title="Guarda los cambios"/>	
-                   <p:commandButton value="NO" onclick="PF('dialogoAnularPersonaEquipo').hide();" immediate="true" process="@this" icon="ui-icon-cancel"/>
-               </p:column>
-           </p:panelGrid>
-       </h:form>
-   </p:dialog>
-    
+  
     <p:dialog modal="true" id="dialogoConfirmarResponsable" widgetVar="dialogoConfirmarResponsable" header="Confirmación" closeOnEscape="true" resizable="false" dynamic="false">
        <h:form>
            ¿ Desea que el responsable cumpla con esta función ?

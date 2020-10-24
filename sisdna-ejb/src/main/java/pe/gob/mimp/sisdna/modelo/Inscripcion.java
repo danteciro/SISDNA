@@ -35,14 +35,13 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Inscripcion.filtrarDistritos", query = "SELECT i FROM Inscripcion as i WHERE i.dna.nidDistrito=:nidDistrito and i.dna.flgActivo = 1"),
 
     @NamedQuery(name = "Inscripcion.filtrarObservadasVencidos", query = "SELECT i from Inscripcion as i WHERE i.estado.nidCatalogo = :estadoPorEvaluar and func('TRUNC',i.fecObservado) < func('TRUNC',:hoy)"),
+  
+    @NamedQuery(name = "Inscripcion.filtrarPorConstanciaEstado", query = "SELECT i FROM Inscripcion as i WHERE i.dna.txtConstancia=:txtConstancia and i.dna.flgActivo = 1 and  i.estado.nidCatalogo=:nidCatalogo"),
+    @NamedQuery(name = "Inscripcion.filtrarDepartamentosEstado", query = "SELECT i FROM Inscripcion as i WHERE i.dna.nidDepartamento=:nidDepartamento and i.dna.flgActivo = 1 and i.estado.nidCatalogo=:nidCatalogo"),
+    @NamedQuery(name = "Inscripcion.filtrarProvinciasEstado", query = "SELECT i FROM Inscripcion as i WHERE i.dna.nidProvincia=:nidProvincia and i.dna.flgActivo = 1 and i.estado.nidCatalogo=:nidCatalogo"),
+    @NamedQuery(name = "Inscripcion.filtrarDistritosEstado", query = "SELECT i FROM Inscripcion as i WHERE i.dna.nidDistrito=:nidDistrito and i.dna.flgActivo = 1 and i.estado.nidCatalogo=:nidCatalogo"),
+
     @NamedQuery(name = "Inscripcion.filtrarPorEvaluarPorVencer", query = "SELECT i from Inscripcion as i WHERE i.estado.nidCatalogo = :estadoPorEvaluar and func('TRUNC',i.fecRegistro) <= func('TRUNC',:hoy)"),
-    @NamedQuery(name = "Inscripcion.filtrarSubsanadasPorVencer", query = "SELECT i from Inscripcion as i WHERE i.estado.nidCatalogo = :estadoPorEvaluar and func('TRUNC',i.fecSubsanado) <= func('TRUNC',:hoy)"),
-
-    @NamedQuery(name = "Inscripcion.filtrarPorConstanciaEstado", query = "SELECT i FROM Inscripcion as i WHERE i.dna.txtConstancia=:txtConstancia and i.dna.flgActivo = 1 and (i.flagAcredita = 0 or i.flagAcredita IS NULL )and i.estado.nidCatalogo=:nidCatalogo"),
-    @NamedQuery(name = "Inscripcion.filtrarDepartamentosEstado", query = "SELECT i FROM Inscripcion as i WHERE i.dna.nidDepartamento=:nidDepartamento and i.dna.flgActivo = 1 and (i.flagAcredita = 0 or i.flagAcredita IS NULL ) and i.estado.nidCatalogo=:nidCatalogo"),
-    @NamedQuery(name = "Inscripcion.filtrarProvinciasEstado", query = "SELECT i FROM Inscripcion as i WHERE i.dna.nidProvincia=:nidProvincia and i.dna.flgActivo = 1 and (i.flagAcredita = 0 or i.flagAcredita IS NULL ) and  i.estado.nidCatalogo=:nidCatalogo"),
-    @NamedQuery(name = "Inscripcion.filtrarDistritosEstado", query = "SELECT i FROM Inscripcion as i WHERE i.dna.nidDistrito=:nidDistrito and i.dna.flgActivo = 1 and (i.flagAcredita = 0 or i.flagAcredita IS NULL ) and i.estado.nidCatalogo=:nidCatalogo"),
-
 })
 public class Inscripcion implements Serializable {
     
@@ -74,7 +73,7 @@ public class Inscripcion implements Serializable {
     @Column(name = "TXT_TELEFONO")
     private String txtTelefono;
 
-    @Size(max = 50)
+    @Size(max = 150)
     @Column(name = "TXT_GERENCIA")
     private String txtGerencia;
 
@@ -87,7 +86,7 @@ public class Inscripcion implements Serializable {
     @Column(name = "PRESUPUESTO")
     private BigDecimal presupuesto;
 
-    @Size(max = 50)
+    @Size(max = 150)
     @Column(name = "DIAS")
     private String dias;
 

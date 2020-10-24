@@ -40,7 +40,7 @@ public class DefensoriaInfo implements Serializable {
     @Column(name = "TXT_DOCUMENTO")
     private String txtDocumento;
 
-    @Size(max = 150)
+    @Size(max = 250)
     @Column(name = "TXT_DIRECCION")
     private String txtDireccion;
     
@@ -121,7 +121,9 @@ public class DefensoriaInfo implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date fecAcreditacion;
     
-  
+    @Column(name = "NID_USUARIO")
+    private BigDecimal nidUsuario;
+    
     // Auditoría 
     
     @Column(name = "FLG_ACTIVO")
@@ -400,6 +402,14 @@ public class DefensoriaInfo implements Serializable {
 
     public void setNidUsuarioReg(BigDecimal nidUsuarioReg) {
         this.nidUsuarioReg = nidUsuarioReg;
+    }
+
+    public BigDecimal getNidUsuario() {
+        return nidUsuario;
+    }
+
+    public void setNidUsuario(BigDecimal nidUsuario) {
+        this.nidUsuario = nidUsuario;
     }
     
     

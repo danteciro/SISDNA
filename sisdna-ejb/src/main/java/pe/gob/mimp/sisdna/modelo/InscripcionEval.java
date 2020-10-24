@@ -91,44 +91,44 @@ public class InscripcionEval implements Serializable{
     private Date fecModificacion;
     
     @Column(name = "NID_USUARIO_REG")
-    private BigInteger nidUsuarioReg;
+    private BigDecimal nidUsuarioReg;
     
     @Column(name = "NID_USUARIO_MOD")
-    private BigInteger nidUsuarioMod;
+    private BigDecimal nidUsuarioMod;
     
-    @Size(max = 300)
+    @Size(max = 850)
     @Column(name = "OBS_DOCCREACION")
     private String obsDocCreacion;
  
-    @Size(max = 300)
+    @Size(max = 850)
     @Column(name = "OBS_DIRECCION")
     private String obsDireccion;
     
-    @Size(max = 300)
+    @Size(max = 850)
     @Column(name = "OBS_GERENCIA")
     private String obsGerencia;
     
-    @Size(max = 300)
+    @Size(max = 850)
     @Column(name = "OBS_CORREO")
     private String obsCorreo;
     
-    @Size(max = 300)
+    @Size(max = 850)
     @Column(name = "OBS_AMBIENTES_PRIV")
     private String obsAmbientesPriv;
     
-    @Size(max = 300)
+    @Size(max = 850)
     @Column(name = "OBS_AMBIENTES")
     private String obsAmbientes;
     
-    @Size(max = 300)
+    @Size(max = 850)
     @Column(name = "OBS_DIAS")
     private String obsDias;
     
-    @Size(max = 300)
+    @Size(max = 850)
     @Column(name = "OBS_PRESUPUESTO")
     private String obsPresupuesto;
     
-    @Size(max = 300)
+    @Size(max = 850)
     @Column(name = "OBS_DOCS")
     private String obsDocs;
     
@@ -223,14 +223,6 @@ public class InscripcionEval implements Serializable{
         this.dias = dias;
     }
 
-    public Catalogo getEstado() {
-        return estado;
-    }
-
-    public void setEstado(Catalogo estado) {
-        this.estado = estado;
-    }
-
     public Integer getFlagConstancia() {
         return flagConstancia;
     }
@@ -279,19 +271,19 @@ public class InscripcionEval implements Serializable{
         this.fecModificacion = fecModificacion;
     }
 
-    public BigInteger getNidUsuarioReg() {
+    public BigDecimal getNidUsuarioReg() {
         return nidUsuarioReg;
     }
 
-    public void setNidUsuarioReg(BigInteger nidUsuarioReg) {
+    public void setNidUsuarioReg(BigDecimal nidUsuarioReg) {
         this.nidUsuarioReg = nidUsuarioReg;
     }
 
-    public BigInteger getNidUsuarioMod() {
+    public BigDecimal getNidUsuarioMod() {
         return nidUsuarioMod;
     }
 
-    public void setNidUsuarioMod(BigInteger nidUsuarioMod) {
+    public void setNidUsuarioMod(BigDecimal nidUsuarioMod) {
         this.nidUsuarioMod = nidUsuarioMod;
     }
 

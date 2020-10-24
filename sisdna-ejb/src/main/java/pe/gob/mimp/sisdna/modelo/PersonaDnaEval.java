@@ -31,6 +31,19 @@ public class PersonaDnaEval implements Serializable , Cloneable{
     @JoinColumn(name="NID_INSCRIPCION", nullable = false)
     private InscripcionEval inscripcionEval;
     
+    
+    @JoinColumn(name = "NID_FUNCION", referencedColumnName = "NID_CATALOGO")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Catalogo funcion;
+   
+    @JoinColumn(name = "NID_INSTRUCCION", referencedColumnName = "NID_CATALOGO")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Catalogo instruccion;
+    
+    @JoinColumn(name = "NID_PROFESION", referencedColumnName = "NID_CATALOGO")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Catalogo profesion;
+    
     @Size(max = 20)
     @Column(name = "TXT_DOCUMENTO")
     private String txtDocumento;
@@ -66,18 +79,11 @@ public class PersonaDnaEval implements Serializable , Cloneable{
     @Size(max = 150)
     @Column(name = "TXT_CORREO")
     private String txtCorreo;
-    
-    @Column(name = "NID_INSTRUCCION")
-    private Integer nidInstruccion;
-    
+
     @Size(max = 150)
     @Column(name = "TXT_TELEFONO")
     private String txtTelefono;
-    
-    @JoinColumn(name = "NID_PROFESION", referencedColumnName = "NID_CATALOGO")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Catalogo profesion;
-    
+
     @Size(max = 150)
     @Column(name = "TXT_COLEGIO")
     private String txtColegio;
@@ -101,11 +107,7 @@ public class PersonaDnaEval implements Serializable , Cloneable{
     @Size(max = 4000)
     @Column(name = "TXT_INPE")
     private String txtInpe;
-    
-    @JoinColumn(name = "NID_FUNCION", referencedColumnName = "NID_CATALOGO")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Catalogo funcion;
-    
+
     @Column(name = "NID_DEPARTAMENTO")
     private BigDecimal nidDepartamento;
   
@@ -186,14 +188,20 @@ public class PersonaDnaEval implements Serializable , Cloneable{
     private String obsColegiatura;
     
     @Size(max = 850)
-    @Column(name = "OBS_DOC_DEGINACION")
+    @Column(name = "OBS_DOC_DESIGNACION")
     private String obsDocDesignacion;
    
     @Size(max = 850)
     @Column(name = "OBS_ANTECEDENTES")
     private String obsAntecedentes;
     
-   
+    public PersonaDnaEval() {
+        this.funcion = new Catalogo();
+        this.instruccion = new Catalogo();
+        this.profesion = new Catalogo();
+        this.inscripcionEval = new InscripcionEval();
+    }
+    
     public PersonaDna getPersona() {
         return persona;
     }
@@ -274,14 +282,7 @@ public class PersonaDnaEval implements Serializable , Cloneable{
         this.txtCorreo = txtCorreo;
     }
 
-    public Integer getNidInstruccion() {
-        return nidInstruccion;
-    }
-
-    public void setNidInstruccion(Integer nidInstruccion) {
-        this.nidInstruccion = nidInstruccion;
-    }
-
+  
     public String getTxtTelefono() {
         return txtTelefono;
     }
@@ -562,6 +563,14 @@ public class PersonaDnaEval implements Serializable , Cloneable{
 
     public void setObsDocDesignacion(String obsDocDesignacion) {
         this.obsDocDesignacion = obsDocDesignacion;
+    }
+
+    public Catalogo getInstruccion() {
+        return instruccion;
+    }
+
+    public void setInstruccion(Catalogo instruccion) {
+        this.instruccion = instruccion;
     }
     
     

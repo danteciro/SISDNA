@@ -36,6 +36,22 @@ public class PersonaDnaAcre implements Serializable,Cloneable {
     @Column(name = "NID_PERSONA")
     private BigDecimal nidPersonaAcre;
 
+    @JoinColumn(name = "NID_INSTRUCCION", referencedColumnName = "NID_CATALOGO")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Catalogo instruccion;
+    
+    @JoinColumn(name = "NID_PROFESION", referencedColumnName = "NID_CATALOGO")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Catalogo profesion;
+        
+    @JoinColumn(name = "NID_FUNCION", referencedColumnName = "NID_CATALOGO")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Catalogo funcion;
+    
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="NID_ACREDITACION", nullable = false)
+    private Acreditacion acreditacion;
+
     @Size(max = 20)
     @Column(name = "TXT_DOCUMENTO")
     private String txtDocumento;
@@ -72,17 +88,10 @@ public class PersonaDnaAcre implements Serializable,Cloneable {
     @Column(name = "TXT_CORREO")
     private String txtCorreo;
     
-    @Column(name = "NID_INSTRUCCION")
-    private Integer nidInstruccion;
-    
     @Size(max = 150)
     @Column(name = "TXT_TELEFONO")
     private String txtTelefono;
     
-    @JoinColumn(name = "NID_PROFESION", referencedColumnName = "NID_CATALOGO")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Catalogo profesion;
-        
     @Size(max = 150)
     @Column(name = "TXT_COLEGIO")
     private String txtColegio;
@@ -103,9 +112,7 @@ public class PersonaDnaAcre implements Serializable,Cloneable {
     @Column(name = "TXT_INPE")
     private String txtInpe;
     
-    @JoinColumn(name = "NID_FUNCION", referencedColumnName = "NID_CATALOGO")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Catalogo funcion;
+
     
     @Column(name = "NID_DEPARTAMENTO")
     private BigDecimal nidDepartamento;
@@ -150,9 +157,7 @@ public class PersonaDnaAcre implements Serializable,Cloneable {
     @Column(name = "NID_USUARIO_MOD")
     private BigDecimal nidUsuarioMod;
     
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="NID_ACREDITACION", nullable = false)
-    private Acreditacion acreditacion;
+
     
     @OneToOne(fetch=FetchType.LAZY, mappedBy="persona")
     private PersonaDnaAcreEval personaDnaAcreEval;
@@ -160,6 +165,15 @@ public class PersonaDnaAcre implements Serializable,Cloneable {
     @OneToOne(fetch=FetchType.LAZY, mappedBy="persona")
     private PersonaDnaAcreEval personaEval;
 
+    public PersonaDnaAcre() {
+        
+        this.funcion = new Catalogo();
+        this.instruccion = new Catalogo();
+        this.profesion = new Catalogo();
+        this.acreditacion = new Acreditacion();
+    }
+    
+      
     public BigDecimal getNidPersonaAcre() {
         return nidPersonaAcre;
     }
@@ -273,13 +287,7 @@ public class PersonaDnaAcre implements Serializable,Cloneable {
         this.txtCorreo = txtCorreo;
     }
 
-    public Integer getNidInstruccion() {
-        return nidInstruccion;
-    }
-
-    public void setNidInstruccion(Integer nidInstruccion) {
-        this.nidInstruccion = nidInstruccion;
-    }
+    
 
     
     public String getTxtTelefono() {
@@ -427,7 +435,7 @@ public class PersonaDnaAcre implements Serializable,Cloneable {
         this.edad = edad;
     }
     
-    public String getTxtNombres() {
+    public String getApellidosNombres() {
         String nombre = "";
 
             if (null != this.getTxtApellidoPaterno()) {
@@ -451,167 +459,32 @@ public class PersonaDnaAcre implements Serializable,Cloneable {
         return nombre;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 43 * hash + Objects.hashCode(this.nidPersonaAcre);
-        hash = 43 * hash + Objects.hashCode(this.txtDocumento);
-        hash = 43 * hash + Objects.hashCode(this.txtApellidoPaterno);
-        hash = 43 * hash + Objects.hashCode(this.txtApellidoMaterno);
-        hash = 43 * hash + Objects.hashCode(this.txtNombre1);
-        hash = 43 * hash + Objects.hashCode(this.txtNombre2);
-        hash = 43 * hash + Objects.hashCode(this.txtNombre3);
-        hash = 43 * hash + Objects.hashCode(this.txtSexo);
-        hash = 43 * hash + Objects.hashCode(this.txtDireccion);
-        hash = 43 * hash + Objects.hashCode(this.txtCorreo);
-        hash = 43 * hash + Objects.hashCode(this.nidInstruccion);
-        hash = 43 * hash + Objects.hashCode(this.txtTelefono);
-        hash = 43 * hash + Objects.hashCode(this.profesion);
-        hash = 43 * hash + Objects.hashCode(this.txtColegio);
-        hash = 43 * hash + Objects.hashCode(this.txtColegiatura);
-        hash = 43 * hash + Objects.hashCode(this.txtLugarCurso);
-        hash = 43 * hash + Objects.hashCode(this.txtFechaCurso);
-        hash = 43 * hash + Objects.hashCode(this.txtInpe);
-        hash = 43 * hash + Objects.hashCode(this.funcion);
-        hash = 43 * hash + Objects.hashCode(this.nidDepartamento);
-        hash = 43 * hash + Objects.hashCode(this.nidProvincia);
-        hash = 43 * hash + Objects.hashCode(this.nidDistrito);
-        hash = 43 * hash + Objects.hashCode(this.txtPj);
-        hash = 43 * hash + Objects.hashCode(this.txtPnp);
-        hash = 43 * hash + Objects.hashCode(this.edad);
-        hash = 43 * hash + Objects.hashCode(this.txtPc);
-        hash = 43 * hash + Objects.hashCode(this.txtIp);
-        hash = 43 * hash + Objects.hashCode(this.flgActivo);
-        hash = 43 * hash + Objects.hashCode(this.fecRegistro);
-        hash = 43 * hash + Objects.hashCode(this.fecModificacion);
-        hash = 43 * hash + Objects.hashCode(this.nidUsuarioReg);
-        hash = 43 * hash + Objects.hashCode(this.nidUsuarioMod);
-        hash = 43 * hash + Objects.hashCode(this.acreditacion);
-        hash = 43 * hash + Objects.hashCode(this.personaDnaAcreEval);
-        hash = 43 * hash + Objects.hashCode(this.personaEval);
-        return hash;
-    }
+    public String getNombresApellidos() {
+        String nombre = "";
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final PersonaDnaAcre other = (PersonaDnaAcre) obj;
-        if (!Objects.equals(this.txtDocumento, other.txtDocumento)) {
-            return false;
-        }
-        if (!Objects.equals(this.txtApellidoPaterno, other.txtApellidoPaterno)) {
-            return false;
-        }
-        if (!Objects.equals(this.txtApellidoMaterno, other.txtApellidoMaterno)) {
-            return false;
-        }
-        if (!Objects.equals(this.txtNombre1, other.txtNombre1)) {
-            return false;
-        }
-        if (!Objects.equals(this.txtNombre2, other.txtNombre2)) {
-            return false;
-        }
-        if (!Objects.equals(this.txtNombre3, other.txtNombre3)) {
-            return false;
-        }
-        if (!Objects.equals(this.txtSexo, other.txtSexo)) {
-            return false;
-        }
-        if (!Objects.equals(this.txtDireccion, other.txtDireccion)) {
-            return false;
-        }
-        if (!Objects.equals(this.txtCorreo, other.txtCorreo)) {
-            return false;
-        }
-        if (!Objects.equals(this.txtTelefono, other.txtTelefono)) {
-            return false;
-        }
-        if (!Objects.equals(this.txtColegio, other.txtColegio)) {
-            return false;
-        }
-        if (!Objects.equals(this.txtColegiatura, other.txtColegiatura)) {
-            return false;
-        }
-        if (!Objects.equals(this.txtLugarCurso, other.txtLugarCurso)) {
-            return false;
-        }
-        if (!Objects.equals(this.txtInpe, other.txtInpe)) {
-            return false;
-        }
-        if (!Objects.equals(this.txtPj, other.txtPj)) {
-            return false;
-        }
-        if (!Objects.equals(this.txtPnp, other.txtPnp)) {
-            return false;
-        }
-        if (!Objects.equals(this.txtPc, other.txtPc)) {
-            return false;
-        }
-        if (!Objects.equals(this.txtIp, other.txtIp)) {
-            return false;
-        }
-        if (!Objects.equals(this.nidPersonaAcre, other.nidPersonaAcre)) {
-            return false;
-        }
-        if (!Objects.equals(this.nidInstruccion, other.nidInstruccion)) {
-            return false;
-        }
-        if (!Objects.equals(this.profesion, other.profesion)) {
-            return false;
-        }
-        if (!Objects.equals(this.txtFechaCurso, other.txtFechaCurso)) {
-            return false;
-        }
-        if (!Objects.equals(this.funcion, other.funcion)) {
-            return false;
-        }
-        if (!Objects.equals(this.nidDepartamento, other.nidDepartamento)) {
-            return false;
-        }
-        if (!Objects.equals(this.nidProvincia, other.nidProvincia)) {
-            return false;
-        }
-        if (!Objects.equals(this.nidDistrito, other.nidDistrito)) {
-            return false;
-        }
-        if (!Objects.equals(this.edad, other.edad)) {
-            return false;
-        }
-        if (!Objects.equals(this.flgActivo, other.flgActivo)) {
-            return false;
-        }
-        if (!Objects.equals(this.fecRegistro, other.fecRegistro)) {
-            return false;
-        }
-        if (!Objects.equals(this.fecModificacion, other.fecModificacion)) {
-            return false;
-        }
-        if (!Objects.equals(this.nidUsuarioReg, other.nidUsuarioReg)) {
-            return false;
-        }
-        if (!Objects.equals(this.nidUsuarioMod, other.nidUsuarioMod)) {
-            return false;
-        }
-        if (!Objects.equals(this.acreditacion, other.acreditacion)) {
-            return false;
-        }
-        if (!Objects.equals(this.personaDnaAcreEval, other.personaDnaAcreEval)) {
-            return false;
-        }
-        if (!Objects.equals(this.personaEval, other.personaEval)) {
-            return false;
-        }
-        return true;
-    }
-    
+            if (null != this.getTxtNombre1()) {
+                nombre += this.getTxtNombre1();
+            }
+       
+            if (null != this.getTxtNombre2()) {
+                nombre += " " + this.getTxtNombre2();
+            }
+       
+            if (null != this.getTxtNombre3()) {
+                nombre += " " + this.getTxtNombre3();
+            }
+            
+            if (null != this.getTxtApellidoPaterno()) {
+                nombre += " " + this.getTxtApellidoPaterno();
+            }
+            if (null != this.getTxtApellidoMaterno()) {
+                nombre += " " + this.getTxtApellidoMaterno();
+            }
+           
+       
+        return nombre;
+}
+  
     @Override
     public String toString() {
         return "pe.gob.mimp.sisdna.modelo.Persona[ id=" + nidPersonaAcre + " ]";
@@ -641,6 +514,14 @@ public class PersonaDnaAcre implements Serializable,Cloneable {
     public void setTxtColegio(String txtColegio) {
         this.txtColegio = txtColegio;
     }
+
+    public Catalogo getInstruccion() {
+        return instruccion;
+    }
+
+    public void setInstruccion(Catalogo instruccion) {
+        this.instruccion = instruccion;
+    }
     
     
     public void actualizar(PersonaDnaAcre persona){
@@ -650,7 +531,7 @@ public class PersonaDnaAcre implements Serializable,Cloneable {
         this.setNidDepartamento(persona.getNidDepartamento());
         this.setNidProvincia(persona.getNidProvincia());
         this.setNidDistrito(persona.getNidDistrito());
-        this.setNidInstruccion(persona.getNidInstruccion());
+        this.setInstruccion(persona.getInstruccion());
         this.setTxtApellidoMaterno(persona.getTxtApellidoMaterno());
         this.setTxtApellidoPaterno(persona.getTxtApellidoPaterno());
         this.setTxtNombre1(persona.getTxtNombre1());

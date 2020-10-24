@@ -38,7 +38,7 @@ public class DocInscripcion implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private Inscripcion inscripcion;
     
-    @Size(max = 80)
+    @Size(max = 150)
     @Column(name = "TXT_NOMBRE")
     private String txtNombre;
    

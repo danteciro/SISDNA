@@ -56,7 +56,7 @@
                     </div>
                     <div class="ui-g-12 ui-md-2"> <p:outputLabel for="txtTelefono" value="Teléfono(s)"/></div>
                     <div class="ui-g-12 ui-md-2">  
-                        <p:inputText required="true" id="txtTelefono" value="#{inscripcionAdministrado.inscripcion.txtTelefono}" maxlength="50">
+                        <p:inputText required="true" id="txtTelefono" value="#{inscripcionAdministrado.inscripcion.txtTelefono}" maxlength="50" requiredMessage="Debe ingresar el teléfono">
                          </p:inputText>
                     </div>    
                 </div>
@@ -89,14 +89,14 @@
                     <div class="ui-g-12 ui-md-3"><p:outputLabel for="txtAmbientes" value="Número de ambientes con los que cuenta la DNA"/></div>
                     <div class="ui-g-12 ui-md-1">
                         <p:inputNumber required="true" id="txtAmbientes" value="#{inscripcionAdministrado.inscripcion.ambientes}"
-                                       minValue="0" maxValue="100" 
+                                       minValue="0" maxValue="100"  decimalPlaces="0"
                                        requiredMessage="Debe ingresar el número de ambientes con los que cuenta la DNA">
                         </p:inputNumber>
                     </div>
                     <div class="ui-g-12 ui-md-5"><p:outputLabel for="txtAmbientesPrivadas" value="Número de ambientes para audiencias privadas"/></div>
                     <div class="ui-g-12 ui-md-1">  
                         <p:inputNumber required="true" id="txtAmbientesPrivadas" value="#{inscripcionAdministrado.inscripcion.ambientesPriv}" 
-                                       minValue="0" maxValue="100" 
+                                       minValue="0" maxValue="100" decimalPlaces="0"
                                        requiredMessage="Debe ingresar el número de ambientes para audiencias privadas">
                          </p:inputNumber>
                      </div>    
@@ -109,34 +109,35 @@
                                           actionListener="#{inscripcionAdministrado.initPersona()}"
                                           update="frmPersonalDna"
                                           process="@this"
-                                          icon="fa fa-user" title="" class="sombra" style="margin-top: 24px; margin-bottom: 24px">
-
+                                          icon="fa fa-user" title="" class="sombra" style="margin-top: 24px; margin-bottom: 8px">
+                                    <p:resetInput target="frmPersonalDna" />
                        </p:commandButton>
                     </div>
                 </div>
-             <p:panelGrid id="pTabla" columns="1" columnClasses="ui-grid-col-12" layout="grid" class="boxshadowinside pnoborder">
-
+    
+                <div class="ui-g">
+                    <div class="ui-g-12">
+            
                 <p:dataTable 
                     id="tablaPersonal"
                     widgetVar="tablaPersonal" 
-                    rendered="#{inscripcionAdministrado.listaPersonal!=null and inscripcionAdministrado.listaPersonal.size()>0}"
                     var="itemPersonalDna" 
                     value="#{inscripcionAdministrado.listaPersonal}" 
                     rowIndexVar="index"
                     scrollable="true"
                     paginator="false"
-                    resizableColumns="true" emptyMessage="No se encontraron registros"
+                    resizableColumns="true" emptyMessage="No existen personas registradas"
                     currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}">
 
-                    <p:column headerText="ACCIONES"  class="pcenter" width="10%">                                       	                                
+                    <p:column headerText="ACCIONES"  class="pcenter" width="140">                                       	                                
                         
-                        <p:commandButton update="dialogoActualizarPersonal" process="@this"
+                        <p:commandButton update=":dialogoActualizarPersonal" process="@this" style="width: 32px"
                                          oncomplete="PF('dialogoActualizarPersonal').show();" 
                                          actionListener="#{inscripcionAdministrado.obtenerPersonalDna(itemPersonalDna)}" 
                                          title="Editar Personal" icon="fa fa-pencil">
                         </p:commandButton>
-                        <p:commandButton title="Anular" icon="fa fa-trash" process="@this"
-                                         action="#{inscripcionAdministrado.eliminarPersonal()}" update=":formularioPrincipal:pTabla">
+                        <p:commandButton title="Anular" icon="fa fa-trash" process="@this" style="width: 32px"
+                                         action="#{inscripcionAdministrado.eliminarPersonal()}" update=":frmNuevo:tablaPersonal">
                              <f:setPropertyActionListener value="#{itemPersonalDna}" target="#{inscripcionAdministrado.personaDna}"/>
                              <p:confirm header="Confirmación" message="¿ Está seguro de eliminar la persona ?" />
                         </p:commandButton>
@@ -163,15 +164,18 @@
                     </p:column>
                 </p:dataTable>
 
-            </p:panelGrid>
+                    </div>
+                </div>
              
+             <div class="ui-g">
+                    <div class="ui-g-12">
+    
             <p:dataList id="dlAdjuntos" value="#{inscripcionAdministrado.adjuntos}" var="doc" type="definition" rowIndexVar="indexDoc" >
                 <c:set var="nombreFile" value="inscripcionAdministrado.file${indexDoc}" />
                 <f:facet name="header">
                     Adjuntar Documentos
                 </f:facet>
                 <div class="ui-g">
-                    <div class="ui-g-12 hidden-md">#{doc.tipo.txtNombre}: <h:outputText value="#{inscripcionAdministrado.getFileName(doc)}"/> </div>
                     <div class="ui-g-12 ui-md-4">
                         <p:fileUpload required="true" fileUploadListener="#{inscripcionAdministrado.handleFileUpload}" mode="advanced" 
                                   label="Adjuntar #{doc.tipo.txtNombre}" 
@@ -181,17 +185,21 @@
                     </div>    
                     <div class="ui-g-12 hidden-xs ui-md-6">
                        <p:outputPanel  id="dwArchivo" >
-                          <p:commandButton value="Descargar #{inscripcionAdministrado.getFileName(doc)}"
-                                           rendered="#{inscripcionAdministrado.getFileName(doc)!=null}"
-                                           ajax="false" process="@this" immediate="true">
-                                <p:fileDownload value="#{inscripcionAdministrado.obtenerNombreAdjunto(doc)}" />
-                          </p:commandButton>
+                             <p:commandLink   rendered="#{inscripcionAdministrado.getFileName(doc)!=null}"
+                                              ajax="false" process="@this" immediate="true" style="line-height: 20px; margin-left: 12px;"
+                                              value="Descargar #{inscripcionAdministrado.getFileName(doc)}">
+                                   <p:fileDownload value="#{inscripcionAdministrado.obtenerNombreAdjunto(doc)}" />
+                               </p:commandLink>
+                        
                        </p:outputPanel>    
                     </div>
                     
                 </div>
                     
             </p:dataList>
+                        
+                           </div>
+                </div>
             <f:event listener="#{inscripcionAdministrado.validar}" type="postValidate" />
 
 </f:view>

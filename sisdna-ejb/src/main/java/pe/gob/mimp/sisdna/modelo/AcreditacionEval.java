@@ -28,8 +28,50 @@ public class AcreditacionEval implements Serializable{
     private Acreditacion acreditacion;
     
     @OneToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="NID_PADRE")
-    private Inscripcion padre;
+    @JoinColumn(name="NID_DNA")
+    private Defensoria dna;
+    
+    @JoinColumn(name = "NID_ESTADO", referencedColumnName = "NID_CATALOGO")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Catalogo estado;
+   
+    @Column(name = "FEC_ORDENANZA")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fecOrdenanza; 
+    
+    @Size(max = 150)
+    @Column(name = "TXT_NORMA")
+    private String txtNorma;
+  
+    @Size(max = 150)
+    @Column(name = "TXT_DOCUMENTO")
+    private String txtDocumento;
+
+    @Size(max = 150)
+    @Column(name = "TXT_DIRECCION")
+    private String txtDireccion;
+    
+    @Size(max = 150)
+    @Column(name = "TXT_CORREO")
+    private String txtCorreo;
+
+    @Size(max = 20)
+    @Column(name = "TXT_TELEFONO")
+    private String txtTelefono;
+
+    @Size(max = 150)
+    @Column(name = "TXT_GERENCIA")
+    private String txtGerencia;
+
+    @Column(name = "AMBIENTES")
+    private Integer ambientes;
+
+    @Column(name = "AMBIENTES_PRIV")
+    private Integer ambientesPriv;
+
+    @Size(max = 150)
+    @Column(name = "DIAS")
+    private String dias;
     
     @Column(name = "FLG_EQUIPO_COMPUTO")
     private Boolean flgEquipoComputo;
@@ -49,26 +91,60 @@ public class AcreditacionEval implements Serializable{
     @Column(name = "FLG_AREA_LUDICA")
     private Boolean flgAreaLudica;
     
-    @Size(max = 50)
-    @Column(name = "TXT_NORMA")
-    private String txtNorma;
-    
     @Size(max = 3)
     @Column(name = "TXT_ESTADO_CONS")
     private String txtEstadoCons;
     
-    @Column(name = "FEC_ORDENANZA")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fecOrdenanza; 
+  
     
-    @Size(max = 100)
-    @Column(name = "TXT_NRO_ORDENANZA")
-    private String txtNroOrdenanza;
+    @Size(max = 850)
+    @Column(name = "OBS_DOCCREACION")
+    private String obsDocCreacion;
+ 
+    @Size(max = 850)
+    @Column(name = "OBS_DIRECCION")
+    private String obsDireccion;
     
-    @JoinColumn(name = "NID_ESTADO", referencedColumnName = "NID_CATALOGO")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Catalogo estado;
+    @Size(max = 850)
+    @Column(name = "OBS_GERENCIA")
+    private String obsGerencia;
     
+    @Size(max = 850)
+    @Column(name = "OBS_CORREO")
+    private String obsCorreo;
+    
+    @Size(max = 850)
+    @Column(name = "OBS_AMBIENTES_PRIV")
+    private String obsAmbientesPriv;
+    
+    @Size(max = 850)
+    @Column(name = "OBS_AMBIENTES")
+    private String obsAmbientes;
+    
+    @Size(max = 850)
+    @Column(name = "OBS_DIAS")
+    private String obsDias;
+    
+    @Size(max = 850)
+    @Column(name = "OBS_PRESUPUESTO")
+    private String obsPresupuesto;
+    
+    @Size(max = 850)
+    @Column(name = "OBS_DOCS")
+    private String obsDocs;
+    
+    @Size(max = 850)
+    @Column(name = "OBS_FEC_ORDENANZA")
+    private String obsFecOrdenanza;
+
+    @Size(max = 850)
+    @Column(name = "OBS_ESTADO_CONS")
+    private String obsEstadoCons;
+    
+    @Size(max = 850)
+    @Column(name = "OBS_NORMA")
+    private String obsNorma;    
+  
     @Column(name = "TXT_PC")
     private String txtPc;
 
@@ -95,21 +171,7 @@ public class AcreditacionEval implements Serializable{
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "acreditacionEval", fetch = FetchType.LAZY)
     private List<PersonaDnaAcreEval> equipo;
     
-    @Size(max = 850)
-    @Column(name = "OBS_FEC_ORDENANZA")
-    private String obsFecOrdenanza;
-  
-    @Size(max = 850)
-    @Column(name = "OBS_NRO_ORDENANZA")
-    private String obsNroOrdenanza;
-    
-    @Size(max = 850)
-    @Column(name = "OBS_ESTADO_CONS")
-    private String obsEstadoCons;
-    
-    @Size(max = 850)
-    @Column(name = "OBS_DOCS")
-    private String obsDocs;
+   
 
     public AcreditacionEval() {
         this.flgEquipoComputo = false;
@@ -128,13 +190,13 @@ public class AcreditacionEval implements Serializable{
     public void setAcreditacion(Acreditacion acreditacion) {
         this.acreditacion = acreditacion;
     }
-    
-    public Inscripcion getPadre() {
-        return padre;
+
+    public Defensoria getDna() {
+        return dna;
     }
 
-    public void setPadre(Inscripcion padre) {
-        this.padre = padre;
+    public void setDna(Defensoria dna) {
+        this.dna = dna;
     }
     
     public String getTxtEstadoCons() {
@@ -281,15 +343,6 @@ public class AcreditacionEval implements Serializable{
         this.obsFecOrdenanza = obsFecOrdenanza;
     }
 
-    public String getObsNroOrdenanza() {
-        return obsNroOrdenanza;
-    }
-
-    public void setObsNroOrdenanza(String obsNroOrdenanza) {
-        this.obsNroOrdenanza = obsNroOrdenanza;
-    }
-    
-    
     
     public String getObsEstadoCons() {
         return obsEstadoCons;
@@ -315,12 +368,141 @@ public class AcreditacionEval implements Serializable{
         this.fecOrdenanza = fecOrdenanza;
     }
 
-    public String getTxtNroOrdenanza() {
-        return txtNroOrdenanza;
+
+    public String getTxtDocumento() {
+        return txtDocumento;
     }
 
-    public void setTxtNroOrdenanza(String txtNroOrdenanza) {
-        this.txtNroOrdenanza = txtNroOrdenanza;
+    public void setTxtDocumento(String txtDocumento) {
+        this.txtDocumento = txtDocumento;
+    }
+
+    public String getTxtDireccion() {
+        return txtDireccion;
+    }
+
+    public void setTxtDireccion(String txtDireccion) {
+        this.txtDireccion = txtDireccion;
+    }
+
+    public String getTxtCorreo() {
+        return txtCorreo;
+    }
+
+    public void setTxtCorreo(String txtCorreo) {
+        this.txtCorreo = txtCorreo;
+    }
+
+    public String getTxtTelefono() {
+        return txtTelefono;
+    }
+
+    public void setTxtTelefono(String txtTelefono) {
+        this.txtTelefono = txtTelefono;
+    }
+
+    public String getTxtGerencia() {
+        return txtGerencia;
+    }
+
+    public void setTxtGerencia(String txtGerencia) {
+        this.txtGerencia = txtGerencia;
+    }
+
+    public Integer getAmbientes() {
+        return ambientes;
+    }
+
+    public void setAmbientes(Integer ambientes) {
+        this.ambientes = ambientes;
+    }
+
+    public Integer getAmbientesPriv() {
+        return ambientesPriv;
+    }
+
+    public void setAmbientesPriv(Integer ambientesPriv) {
+        this.ambientesPriv = ambientesPriv;
+    }
+
+    public String getDias() {
+        return dias;
+    }
+
+    public void setDias(String dias) {
+        this.dias = dias;
+    }
+
+    public String getObsDireccion() {
+        return obsDireccion;
+    }
+
+    public void setObsDireccion(String obsDireccion) {
+        this.obsDireccion = obsDireccion;
+    }
+
+    public String getObsGerencia() {
+        return obsGerencia;
+    }
+
+    public void setObsGerencia(String obsGerencia) {
+        this.obsGerencia = obsGerencia;
+    }
+
+    public String getObsCorreo() {
+        return obsCorreo;
+    }
+
+    public void setObsCorreo(String obsCorreo) {
+        this.obsCorreo = obsCorreo;
+    }
+
+    public String getObsAmbientesPriv() {
+        return obsAmbientesPriv;
+    }
+
+    public void setObsAmbientesPriv(String obsAmbientesPriv) {
+        this.obsAmbientesPriv = obsAmbientesPriv;
+    }
+
+    public String getObsAmbientes() {
+        return obsAmbientes;
+    }
+
+    public void setObsAmbientes(String obsAmbientes) {
+        this.obsAmbientes = obsAmbientes;
+    }
+
+    public String getObsDias() {
+        return obsDias;
+    }
+
+    public void setObsDias(String obsDias) {
+        this.obsDias = obsDias;
+    }
+
+    public String getObsPresupuesto() {
+        return obsPresupuesto;
+    }
+
+    public void setObsPresupuesto(String obsPresupuesto) {
+        this.obsPresupuesto = obsPresupuesto;
+    }
+
+    public String getObsDocCreacion() {
+        return obsDocCreacion;
+    }
+
+    public void setObsDocCreacion(String obsDocCreacion) {
+        this.obsDocCreacion = obsDocCreacion;
+    }
+
+    public String getObsNorma() {
+        return obsNorma;
+    }
+
+    public void setObsNorma(String obsNorma) {
+        this.obsNorma = obsNorma;
     }
     
 }

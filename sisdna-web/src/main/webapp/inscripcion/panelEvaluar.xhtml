@@ -9,265 +9,204 @@
                 
               <div class="ui-g">
                 <div class="ui-g-12 ui-md-12">
-                    <h2>#{inscripcionAdministrado.inscripcionAEvaluar.dna.txtEntidad}</h2>
-                    <h3>#{inscripcionAdministrado.inscripcionAEvaluar.dna.txtConstancia} -
-                        #{inscripcionAdministrado.inscripcionAEvaluar.dna.txtNombre} - 
+                    <h2>#{inscripcionAdministrado.inscripcion.dna.txtEntidad}</h2>
+                    <h3>#{inscripcionAdministrado.inscripcion.dna.txtConstancia} -
+                        #{inscripcionAdministrado.inscripcion.dna.txtNombre} <br /> 
                         #{inscripcionAdministrado.getNombreDepartamentoEvaluar()} -
                         #{inscripcionAdministrado.getNombreProvinciaEvaluar()} -
                         #{inscripcionAdministrado.getNombreDistritoEvaluar()}
                     </h3>
                 </div>
                 <div class="ui-g-12 ui-md-12">
-                    <p:outputLabel value="Teléfono:"/>#{inscripcionAdministrado.inscripcionAEvaluar.txtTelefono}
+                    <p:outputLabel value="Teléfono:"/>#{inscripcionAdministrado.inscripcion.txtTelefono}
                 </div>
             </div>
             <p:separator />
                   <div class="ui-g">
-                     <div class="ui-g-12 ui-md-1">
-                         <p:selectBooleanCheckbox id="flgDocCreacionObs" value="#{inscripcionAdministrado.flgDocObs}" >
+                     <div class="ui-g-12 ui-md-4">
+                         <p:selectBooleanCheckbox id="flgDocCreacionObs" value="#{inscripcionAdministrado.flgDocObs}"  style="margin-right: 12px !important">
                             <p:ajax update="obsDocCreacion , btnEvaluar" />
                         </p:selectBooleanCheckbox>
+                         Documento de Creación
                     </div>
-                    <div class="ui-g-12 ui-md-4">    
-                        <p:outputLabel for="txtDocCreacion" value="Documento de Creación"/> 
-                    </div>
-                    <div class="ui-g-12 ui-md-7">
+                    <div class="ui-g-12 ui-md-8">
                         <p:inputText id="txtDocCreacion" value="#{inscripcionAdministrado.inscripcionEval.txtDocumento}" 
                                      maxlength="150" readonly="true" title="Campo Obligatorio">
                         </p:inputText>
+                        <p:outputPanel id="obsDocCreacion" style="width: 100%">
+                            <p:inputText rendered="#{inscripcionAdministrado.flgDocObs}" required="#{inscripcionAdministrado.flgDocObs}" 
+                                        requiredMessage="Debe ingresar la observación del correo electrónico de contacto"
+                                        value="#{inscripcionAdministrado.inscripcionEval.obsDocCreacion}" maxlength="300" style="margin-top:12px !important">
+                                <p:ajax update="@this"/>
+                            </p:inputText>
+                         </p:outputPanel>  
                     </div>
                     
                 </div>
-                <p:outputPanel id="obsDocCreacion" style="width: 100%">
-                    <div class="ui-g">
-                        <div class="ui-g-12 ui-md-1"> </div>   
-                        <div class="ui-g-12 ui-md-11"> 
-                           <p:inputText rendered="#{inscripcionAdministrado.flgDocObs}" required="#{inscripcionAdministrado.flgDocObs}" 
-                                        requiredMessage="Debe ingresar la observación del correo electrónico de contacto"
-                                        
-                                        value="#{inscripcionAdministrado.inscripcionEval.obsDocCreacion}" 
-                                     maxlength="300" >
-                                <p:ajax update="@this"/>
-                            </p:inputText>
-                        </div>
-                    </div>                     
-                 </p:outputPanel>  
-            
+               
             
             
                 <div class="ui-g">
-                     <div class="ui-g-12 ui-md-1">
-                        <p:selectBooleanCheckbox id="flgCorreoObs" value="#{inscripcionAdministrado.flgCorreoObs}" >
+                    <div class="ui-g-12 ui-md-4">
+                        <p:selectBooleanCheckbox id="flgCorreoObs" value="#{inscripcionAdministrado.flgCorreoObs}" style="margin-right: 12px !important">
                             <p:ajax update="obsCorreo , btnEvaluar" />
                         </p:selectBooleanCheckbox>
+                        Correo electrónico de contacto
                     </div>
-                    <div class="ui-g-12 ui-md-4">    
-                        <p:outputLabel for="obsCorreo" value="Correo electrónico de contacto"/> 
-                    </div>
-                    <div class="ui-g-12 ui-md-7">
-                        <p:inputText id="txtCorreo" value="#{inscripcionAdministrado.inscripcionEval.txtCorreo}" 
+                    <div class="ui-g-12 ui-md-8">
+                        <p:inputText value="#{inscripcionAdministrado.inscripcionEval.txtCorreo}" 
                                      maxlength="150" readonly="true" title="Campo Obligatorio">
                         </p:inputText>
+                        
+                         <p:outputPanel id="obsCorreo" style="width: 100%">
+                            <p:inputText rendered="#{inscripcionAdministrado.flgCorreoObs}" required="#{inscripcionAdministrado.flgCorreoObs}" 
+                                          requiredMessage="Debe ingresar la observación del correo electrónico de contacto"
+                                       value="#{inscripcionAdministrado.inscripcionEval.obsCorreo}"  maxlength="300"  style="margin-top:12px !important">
+                                  <p:ajax update="@this"/>
+                              </p:inputText>
+                        </p:outputPanel>   
                     </div>
                     
                 </div>
-                <p:outputPanel id="obsCorreo" style="width: 100%">
-                    <div class="ui-g">
-                        <div class="ui-g-12 ui-md-1"> </div>   
-                        <div class="ui-g-12 ui-md-11"> 
-                           <p:inputText rendered="#{inscripcionAdministrado.flgCorreoObs}" required="#{inscripcionAdministrado.flgCorreoObs}" 
-                                        requiredMessage="Debe ingresar la observación del correo electrónico de contacto"
-                                     value="#{inscripcionAdministrado.inscripcionEval.obsCorreo}" 
-                                     
-                                     maxlength="300" >
-                                <p:ajax update="@this"/>
-                            </p:inputText>
-                        </div>
-                    </div>                     
-                 </p:outputPanel>   
+              
                 <div class="ui-g">
-                     <div class="ui-g-12 ui-md-1">
-                        <p:selectBooleanCheckbox id="flgDireccionObs" value="#{inscripcionAdministrado.flgDireccionObs}" >
+                    <div class="ui-g-12 ui-md-4">
+                        <p:selectBooleanCheckbox id="flgDireccionObs" value="#{inscripcionAdministrado.flgDireccionObs}"  style="margin-right: 12px !important">
                             <p:ajax update="obsDireccion , btnEvaluar " />
                         </p:selectBooleanCheckbox>
+                         Dirección de la DNA
                     </div>
-                    <div class="ui-g-12 ui-md-4">    
-                        <p:outputLabel for="txtDireccion" value="Dirección de la DNA"/> 
-                    </div>
-                    <div class="ui-g-12 ui-md-7">
-                        <p:inputText required="true" id="txtDireccion" readonly="true"
-                                          
-                                         value="#{inscripcionAdministrado.inscripcionEval.txtDireccion}" maxlength="8" title="Campo Obligatorio">
-
-                        </p:inputText>
-                    </div>
-                    </div>
-                <p:outputPanel id="obsDireccion" style="width: 100%">
-                    <div class="ui-g">
-                        <div class="ui-g-12 ui-md-1"> </div>   
-                        <div class="ui-g-12 ui-md-11"> 
-                            <p:inputText rendered="#{inscripcionAdministrado.flgDireccionObs}"
+                    <div class="ui-g-12 ui-md-8">
+                        <p:inputText  readonly="true" value="#{inscripcionAdministrado.inscripcionEval.txtDireccion}" />
+                         <p:outputPanel id="obsDireccion" style="width: 100%">
+                           <p:inputText rendered="#{inscripcionAdministrado.flgDireccionObs}"
                                      required="#{inscripcionAdministrado.flgDireccionObs}"    
                                      value="#{inscripcionAdministrado.inscripcionEval.obsDireccion}" 
-                                     requiredMessage="Debe ingresar la observación de la dirección"
-                                     
-                                     maxlength="300">
-                            <p:ajax update="@this"/>
+                                     requiredMessage="Debe ingresar la observación de la dirección"  maxlength="300" style="margin-top:12px !important">
+                              <p:ajax update="@this"/>
                            </p:inputText>
-                        </div>
-                    </div>                     
-                 </p:outputPanel>   
+                                        
+                         </p:outputPanel>   
+                    </div>
+               </div>
+               
                   
                 <div class="ui-g">
-                    <div class="ui-g-12 ui-md-1">
-                        <p:selectBooleanCheckbox id="flgGerenciaObs" value="#{inscripcionAdministrado.flgGerenciaObs}" >
+                     <div class="ui-g-12 ui-md-4">
+                        <p:selectBooleanCheckbox id="flgGerenciaObs" value="#{inscripcionAdministrado.flgGerenciaObs}"  style="margin-right: 12px !important">
                             <p:ajax update="obsGerencia , btnEvaluar " />
                         </p:selectBooleanCheckbox>
+                        Dirección o Gerencia a la que pertenece la DNA
                     </div>
-                    <div class="ui-g-12 ui-md-4">    
-                        <p:outputLabel for="txtGerencia" value="Dirección o Gerencia a la que pertenece la DNA"/> 
-                    </div>
-                    <div class="ui-g-12 ui-md-7">
-                        <p:inputText id="txtGerencia" readonly="true" value="#{inscripcionAdministrado.inscripcionEval.txtGerencia}" maxlength="150" />
+                    <div class="ui-g-12 ui-md-8">
+                        <p:inputText  readonly="true" value="#{inscripcionAdministrado.inscripcionEval.txtGerencia}" maxlength="150" />
+                        <p:outputPanel id="obsGerencia" style="width: 100%">
+                                <p:inputText rendered="#{inscripcionAdministrado.flgGerenciaObs}"
+                                             required="#{inscripcionAdministrado.flgGerenciaObs}"
+                                             requiredMessage="Debe ingresar la observación de la dirección o gerencia"
+                                             value="#{inscripcionAdministrado.inscripcionEval.obsGerencia}"  maxlength="300"  style="margin-top:12px !important">
+                                    <p:ajax update="@this"/>
+                                </p:inputText>
+                                               
+                         </p:outputPanel>   
                     </div>
                 </div>
-                <p:outputPanel id="obsGerencia" style="width: 100%">
-                    <div class="ui-g">
-                        <div class="ui-g-12 ui-md-1"> </div>   
-                        <div class="ui-g-12 ui-md-11"> 
-                           <p:inputText rendered="#{inscripcionAdministrado.flgGerenciaObs}"
-                                     required="#{inscripcionAdministrado.flgGerenciaObs}"
-                                     requiredMessage="Debe ingresar la observación de la dirección o gerencia"
-                                     value="#{inscripcionAdministrado.inscripcionEval.obsGerencia}" 
-                                     
-                                     maxlength="300" >
-                            <p:ajax update="@this"/>
-                        </p:inputText>
-                        </div>
-                    </div>                     
-                 </p:outputPanel>   
+              
                    
                 <div class="ui-g">
-                    <div class="ui-g-12 ui-md-1">
-                        <p:selectBooleanCheckbox id="flgDiasHoraObs" value="#{inscripcionAdministrado.flgDiasHoraObs}" >
+                    <div class="ui-g-12 ui-md-4">
+                        <p:selectBooleanCheckbox id="flgDiasHoraObs" value="#{inscripcionAdministrado.flgDiasHoraObs}"  style="margin-right: 12px !important">
                             <p:ajax update="obsDias , btnEvaluar" />
                         </p:selectBooleanCheckbox>
+                        Días y horas de Atención
                     </div>
-                    <div class="ui-g-12 ui-md-4">    
-                        <p:outputLabel for="txtDias" value="Días y horas de Atención"/> 
-                    </div>
-                    <div class="ui-g-12 ui-md-3">
-                         <p:inputText id="txtDias" readonly="true" value="#{inscripcionAdministrado.inscripcionEval.dias}" maxlength="50" />
-                       
-                    </div>
-                </div>
-                <p:outputPanel id="obsDias" style="width: 100%">
-                    <div class="ui-g">
-                        <div class="ui-g-12 ui-md-1"> </div>   
-                        <div class="ui-g-12 ui-md-11"> 
-                           <p:inputText rendered="#{inscripcionAdministrado.flgDiasHoraObs}"
+                    <div class="ui-g-12 ui-md-8">
+                         <p:inputText  readonly="true" value="#{inscripcionAdministrado.inscripcionEval.dias}" maxlength="50" />
+                         <p:outputPanel id="obsDias" style="width: 100%">
+                          <p:inputText rendered="#{inscripcionAdministrado.flgDiasHoraObs}"
                                      required="#{inscripcionAdministrado.flgDiasHoraObs}"
                                      requiredMessage="Debe ingresar la observación de los días y horas de atención"
                                      value="#{inscripcionAdministrado.inscripcionEval.obsDias}" 
-                                     
-                                     maxlength="300" >
+                                     maxlength="300"   style="margin-top:12px !important">
                             <p:ajax update="@this"/>
                         </p:inputText>
-                        </div>
-                    </div>                     
-                 </p:outputPanel>   
+                       </p:outputPanel>   
+                    </div>
+                </div>
+               
                  
                 <div class="ui-g">
-                    <div class="ui-g-12 ui-md-1">
-                        <p:selectBooleanCheckbox id="flgPresupuestoObs" value="#{inscripcionAdministrado.flgPresupuestoObs}" >
+                    <div class="ui-g-12 ui-md-4">
+                        <p:selectBooleanCheckbox id="flgPresupuestoObs" value="#{inscripcionAdministrado.flgPresupuestoObs}" style="margin-right: 12px !important">
                             <p:ajax update="obsPresupuesto , btnEvaluar" />
                         </p:selectBooleanCheckbox>
-                    </div>
-                    <div class="ui-g-12 ui-md-4">    
-                        <p:outputLabel for="txtPresupuesto" value="Presupuesto asignado a la DNA (en Soles)"/> 
+                        Presupuesto asignado a la DNA (en Soles)
                     </div>
                     <div class="ui-g-12 ui-md-3">
-                        <p:inputNumber minValue="0" decimalPlaces="2" required="true" id="txtPresupuesto" readonly="true" value="#{inscripcionAdministrado.inscripcionEval.presupuesto}">
+                        <p:inputNumber minValue="0" decimalPlaces="2" required="true" readonly="true" value="#{inscripcionAdministrado.inscripcionEval.presupuesto}">
                         </p:inputNumber>
+                         <p:outputPanel id="obsPresupuesto" style="width: 100%">
+                              <p:inputText rendered="#{inscripcionAdministrado.flgPresupuestoObs}"
+                                             required="#{inscripcionAdministrado.flgPresupuestoObs}"
+                                             requiredMessage="Debe ingresar la observación del presupuesto"
+                                             value="#{inscripcionAdministrado.inscripcionEval.obsPresupuesto}" 
+                                             maxlength="300"   style="margin-top:12px !important">
+                                    <p:ajax update="@this"/>
+                              </p:inputText>                  
+                         </p:outputPanel>  
                     </div>
                 </div>  
-                <p:outputPanel id="obsPresupuesto" style="width: 100%">
-                    <div class="ui-g">
-                        <div class="ui-g-12 ui-md-1"> </div>   
-                        <div class="ui-g-12 ui-md-11"> 
-                           <p:inputText rendered="#{inscripcionAdministrado.flgPresupuestoObs}"
-                                     required="#{inscripcionAdministrado.flgPresupuestoObs}"
-                                     requiredMessage="Debe ingresar la observación del presupuesto"
-                                     
-                                     value="#{inscripcionAdministrado.inscripcionEval.obsPresupuesto}" 
-                                     maxlength="300" >
-                            <p:ajax update="@this"/>
-                        </p:inputText>
-                        </div>
-                    </div>                     
-                 </p:outputPanel>  
+               
                 
                 
                 <div class="ui-g">
-                    <div class="ui-g-12 ui-md-1">
-                        <p:selectBooleanCheckbox id="flgNroAmbObs" value="#{inscripcionAdministrado.flgNroAmbObs}" >
+                    <div class="ui-g-12 ui-md-4">
+                        <p:selectBooleanCheckbox id="flgNroAmbObs" value="#{inscripcionAdministrado.flgNroAmbObs}" style="margin-right: 12px !important">
                             <p:ajax update="obsAmbientes , btnEvaluar" />
                         </p:selectBooleanCheckbox>
+                        Número de ambientes con los que cuenta la DNA
                     </div>
-                    <div class="ui-g-12 ui-md-4">    
-                        <p:outputLabel for="txtAmbientes" value="Número de ambientes con los que cuenta la DNA"/> 
-                    </div>
-                    <div class="ui-g-12 ui-md-2">
-                        <p:inputText id="txtAmbientes" readonly="true" value="#{inscripcionAdministrado.inscripcionEval.ambientes}" />
-                    </div>
-                </div>  
-                <p:outputPanel id="obsAmbientes" style="width: 100%">
-                    <div class="ui-g">
-                        <div class="ui-g-12 ui-md-1"> </div>   
-                        <div class="ui-g-12 ui-md-11"> 
-                           <p:inputText rendered="#{inscripcionAdministrado.flgNroAmbObs}"
+                    <div class="ui-g-12 ui-md-3">
+                        <p:inputText readonly="true" value="#{inscripcionAdministrado.inscripcionEval.ambientes}" />
+                         <p:outputPanel id="obsAmbientes" style="width: 100%">
+                         <p:inputText rendered="#{inscripcionAdministrado.flgNroAmbObs}"
                                      required="#{inscripcionAdministrado.flgNroAmbObs}"
                                      requiredMessage="Debe ingresar la observación del número de ambientes"
                                      
                                      value="#{inscripcionAdministrado.inscripcionEval.obsAmbientes}" 
-                                     maxlength="300" >
+                                     maxlength="300"  style="margin-top:12px !important">
                             <p:ajax update="@this"/>
                         </p:inputText>
-                        </div>
-                    </div>                     
-                 </p:outputPanel>  
+                      </p:outputPanel>  
+                    </div>
+                </div>  
+               
                 
                <div class="ui-g">
-                    <div class="ui-g-12 ui-md-1">
-                        <p:selectBooleanCheckbox id="flgNroAmbPrivObs" value="#{inscripcionAdministrado.flgNroAmbPrivObs}" >
+                    <div class="ui-g-12 ui-md-4">
+                        <p:selectBooleanCheckbox id="flgNroAmbPrivObs" value="#{inscripcionAdministrado.flgNroAmbPrivObs}"  style="margin-right: 12px !important">
                             <p:ajax update="obsAmbientesPriv , btnEvaluar" />
                         </p:selectBooleanCheckbox>
+                       Número de ambientes para audiencias privadas
                     </div>
-                    <div class="ui-g-12 ui-md-4">    
-                        <p:outputLabel for="txtAmbientesPrivadas" value="Número de ambientes para audiencias privadas"/> 
-                    </div>
-                    <div class="ui-g-12 ui-md-2">
-                        <p:inputText id="txtAmbientesPrivadas" readonly="true" value="#{inscripcionAdministrado.inscripcionEval.ambientesPriv}" />
-                    </div>
-                </div>
-                <p:outputPanel id="obsAmbientesPriv" style="width: 100%">
-                    <div class="ui-g">
-                        <div class="ui-g-12 ui-md-1"> </div>   
-                        <div class="ui-g-12 ui-md-11"> 
+                    <div class="ui-g-12 ui-md-3">
+                        <p:inputText readonly="true" value="#{inscripcionAdministrado.inscripcionEval.ambientesPriv}" />
+                         <p:outputPanel id="obsAmbientesPriv" style="width: 100%">
                            <p:inputText rendered="#{inscripcionAdministrado.flgNroAmbPrivObs}"
                                      required="#{inscripcionAdministrado.flgNroAmbPrivObs}"
                                      requiredMessage="Debe ingresar la observación del número de ambienes para audiencias privadas"
                                      value="#{inscripcionAdministrado.inscripcionEval.obsAmbientesPriv}" 
                                      
-                                     maxlength="300" >
+                                     maxlength="300"  style="margin-top:12px !important">
                             <p:ajax update="@this"/>
                         </p:inputText>
-                        </div>
-                    </div>                     
-                 </p:outputPanel>  
+                      </p:outputPanel>  
                 
+                    </div>
+                </div>
+               
            
-                <p:panelGrid id="pTabla" columns="1" columnClasses="ui-grid-col-12" layout="grid" class="boxshadowinside pnoborder">
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="boxshadowinside pnoborder">
 
                    <p:dataTable 
                        id="tablaPersonasEvaluar"
@@ -313,25 +252,23 @@
                    </p:dataTable>
 
                </p:panelGrid>
-            <p:dataList id="dlAdjuntos" value="#{inscripcionAdministrado.obtenerAdjuntos()}"  var="doc" rowIndexVar="indexDoc" type="definition" class="noborder">
-                <p:outputPanel>
-                    <p:commandButton value="Descargar #{doc.tipo.txtNombre} : #{doc.txtNombre}" ajax="false">
-                        <p:fileDownload value="#{inscripcionAdministrado.obtenerNombreAdjunto(doc)}" />
-                   </p:commandButton>
-                </p:outputPanel><br />
-
+              <p:dataList  value="#{inscripcionAdministrado.obtenerAdjuntos()}"  var="doc" rowIndexVar="indexDoc" type="definition" class="noborder">
+                 <p:commandLink  ajax="false" process="@this" immediate="true"
+                          value="Descargar #{doc.tipo.txtNombre} : #{doc.txtNombre}">
+                     <p:fileDownload value="#{inscripcionAdministrado.obtenerNombreAdjunto(doc)}" />
+                 </p:commandLink>
+               
               </p:dataList>
               <div class="ui-g">
-                    <div class="ui-g-12 ui-md-1">
+                    <div class="ui-g-12 ui-md-12">
                         <p:selectBooleanCheckbox value="#{inscripcionAdministrado.flgAdjuntosObs}" >
                             <p:ajax update="obsArchivos , btnEvaluar" />
                         </p:selectBooleanCheckbox>
+                        Observación en archivos  
                     </div>
-                    <div class="ui-g-12 ui-md-4"> Observación en archivos  </div>
                 </div>
                 <p:outputPanel id="obsArchivos" style="width: 100%">
                     <div class="ui-g">
-                        <div class="ui-g-12 ui-md-1"> </div>   
                         <div class="ui-g-12 ui-md-11"> 
                            <p:inputText rendered="#{inscripcionAdministrado.flgAdjuntosObs}"
                                      required="#{inscripcionAdministrado.flgAdjuntosObs}"

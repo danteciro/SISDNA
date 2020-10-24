@@ -9,63 +9,63 @@
     <p:fieldset legend="Datos Inscripción Seleccionada" style="width: 100%">
                     <div class="ui-g">
                         <div class="ui-g-12 ui-md-3"><p:outputLabel value="Código de la DNA:"/>  </div>
-                        <div class="ui-g-9"><p:outputLabel  value="#{acreditacionAdministrado.inscripcionSeleccionada.dna.txtConstancia}"/>  </div>
+                        <div class="ui-g-9"><p:outputLabel  value="#{acreditacionAdministrado.acreditacion.dna.txtConstancia}"/>  </div>
                     </div>
                      <div class="ui-g">
                         <div class="ui-g-12 ui-md-3"><p:outputLabel value="Nombre de la entidad responsable:"/>  </div>
-                        <div class="ui-g-9"><p:outputLabel  value="#{acreditacionAdministrado.inscripcionSeleccionada.dna.txtEntidad}"/>  </div>
+                        <div class="ui-g-9"><p:outputLabel  value="#{acreditacionAdministrado.acreditacion.dna.txtEntidad}"/>  </div>
                     </div>
                     <div class="ui-g">
                         <div class="ui-g-3"><p:outputLabel value="Nombre de la DNA:"/></div>
-                        <div class="ui-g-9"><p:outputLabel value="#{acreditacionAdministrado.inscripcionSeleccionada.dna.txtNombre}"/></div>
+                        <div class="ui-g-9"><p:outputLabel value="#{acreditacionAdministrado.acreditacion.dna.txtNombre}"/></div>
                     </div>
                      <div class="ui-g">
                         <div class="ui-g-12 ui-md-3"><p:outputLabel value="Departamento:"/> </div>
-                        <div class="ui-g-12 ui-md-2"><p:outputLabel value="#{acreditacionAdministrado.getNombreDepartamentoExterno()}" />  </div>
+                        <div class="ui-g-12 ui-md-2"><p:outputLabel value="#{acreditacionAdministrado.getNombreDepartamento(acreditacionAdministrado.acreditacion.dna.nidDepartamento)}" />  </div>
                         <div class="ui-g-12 ui-md-1"><p:outputLabel value="Provincia:"/></div>
-                        <div class="ui-g-12 ui-md-2"><p:outputLabel value="#{acreditacionAdministrado.getNombreProvinciaExterno()}" />  </div>
+                        <div class="ui-g-12 ui-md-2"><p:outputLabel value="#{acreditacionAdministrado.getNombreProvincia(acreditacionAdministrado.acreditacion.dna.nidProvincia)}" />  </div>
                         <div class="ui-g-12 ui-md-1"><p:outputLabel value="Distrito:"/></div>
-                        <div class="ui-g-12 ui-md-2"><p:outputLabel value="#{acreditacionAdministrado.getNombreDistritoExterno()}" />  </div>
+                        <div class="ui-g-12 ui-md-2"><p:outputLabel value="#{acreditacionAdministrado.getNombreDistrito(acreditacionAdministrado.acreditacion.dna.nidDistrito)}" />  </div>
                     </div>
                     <div class="ui-g">
                         <div class="ui-g-12 ui-md-3">    <p:outputLabel for="txtCorreo" value="Correo electrónico de contacto:"/> </div>
-                        <div class="ui-g-12 ui-md-5"><p:outputLabel id="txtCorreo" value="#{acreditacionAdministrado.inscripcionSeleccionada.txtCorreo}"/></div>
+                        <div class="ui-g-12 ui-md-5"><p:outputLabel id="txtCorreo" value="#{acreditacionAdministrado.acreditacion.dna.defensoriaInfo.txtCorreo}"/></div>
                         <div class="ui-g-12 ui-md-1"> <p:outputLabel for="txtTelefono" value="Teléfono(s):"/></div>
                         <div class="ui-g-12 ui-md-2">
-                            <p:outputLabel id="txtTelefono" value="#{acreditacionAdministrado.inscripcionSeleccionada.txtTelefono}"/>
+                            <p:outputLabel id="txtTelefono" value="#{acreditacionAdministrado.acreditacion.dna.defensoriaInfo.txtTelefono}"/>
                         </div>    
                     </div>
                     <div class="ui-g">
                         <div class="ui-g-12 ui-md-3"> <p:outputLabel for="txtDireccion" value="Dirección de la DNA:"/> </div>
                         <div class="ui-g-12 ui-md-9">
-                            <p:outputLabel id="txtDireccion" value="#{acreditacionAdministrado.inscripcionSeleccionada.txtDireccion}"/>
+                            <p:outputLabel id="txtDireccion" value="#{acreditacionAdministrado.acreditacion.dna.defensoriaInfo.txtDireccion}"/>
                         </div>
                     </div>
                     <div class="ui-g">
                         <div class="ui-g-12 ui-md-3"> <p:outputLabel for="txtGerencia" value="Dirección o Gerencia a la que pertenece la DNA:"/> </div>
                         <div class="ui-g-12 ui-md-9">
-                            <p:outputLabel id="txtGerencia" value="#{acreditacionAdministrado.inscripcionSeleccionada.txtGerencia}"/>
+                            <p:outputLabel id="txtGerencia" value="#{acreditacionAdministrado.acreditacion.dna.defensoriaInfo.txtGerencia}"/>
                         </div>
                     </div>
 
                     <div class="ui-g">
                         <div class="ui-g-12 ui-md-3"><p:outputLabel for="txtDias" value="Días y horas de Atención:"/></div>
                         <div class="ui-g-12 ui-md-5">
-                            <p:outputLabel id="txtDias" value="#{acreditacionAdministrado.inscripcionSeleccionada.dias}"/>
+                            <p:outputLabel id="txtDias" value="#{acreditacionAdministrado.acreditacion.dna.defensoriaInfo.dias}"/>
                         </div>
                         <div class="ui-g-12 ui-md-3"><p:outputLabel for="txtPresupuesto" value="Presupuesto asignado(en Soles):"/></div>
                         <div class="ui-g-12 ui-md-2">  
-                            <p:outputLabel id="txtPresupuesto" value="#{acreditacionAdministrado.inscripcionSeleccionada.presupuesto}"/>
+                            <p:outputLabel id="txtPresupuesto" value="#{acreditacionAdministrado.acreditacion.dna.defensoriaInfo.presupuesto}"/>
                          </div>    
                     </div>
                     <div class="ui-g">
                         <div class="ui-g-12 ui-md-3"><p:outputLabel for="txtAmbientes" value="Número de ambientes con los que cuenta la DNA:"/></div>
                         <div class="ui-g-12 ui-md-1">
-                            <p:outputLabel id="txtAmbientes" value="#{acreditacionAdministrado.inscripcionSeleccionada.ambientes}"/>
+                            <p:outputLabel id="txtAmbientes" value="#{acreditacionAdministrado.acreditacion.dna.defensoriaInfo.ambientes}"/>
                         </div>
                         <div class="ui-g-12 ui-md-4"><p:outputLabel for="txtAmbientesPrivadas" value="Número de ambientes para audiencias privadas:"/></div>
                         <div class="ui-g-12 ui-md-1">  
-                            <p:outputLabel id="txtAmbientesPrivadas"  value="#{acreditacionAdministrado.inscripcionSeleccionada.ambientesPriv}"/>
+                            <p:outputLabel id="txtAmbientesPrivadas"  value="#{acreditacionAdministrado.acreditacion.dna.defensoriaInfo.ambientesPriv}"/>
                          </div>    
                     </div>
                 </p:fieldset>

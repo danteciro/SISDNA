@@ -20,15 +20,15 @@
        
         <div class="ui-g">
             <div class="ui-g-12">
-                <p:outputLabel value="Sexo:"/>#{acreditacionAdministrado.clonePersonaEval.txtSexo} - 
-                <p:outputLabel value="Teléfono:"/>#{acreditacionAdministrado.clonePersonaEval.txtTelefono} 
+                <p:outputLabel value="Sexo: "/>#{acreditacionAdministrado.clonePersonaEval.txtSexo} - 
+                <p:outputLabel value="Teléfono: "/>#{acreditacionAdministrado.clonePersonaEval.txtTelefono} 
             </div>
         </div>    
         <div class="ui-g">
             <div class="ui-g-12">
-                #{acreditacionAdministrado.getNombreDepartamentoPersonaEvaluar()} - 
-                #{acreditacionAdministrado.getNombreProvinciaPersonaEvaluar()} - 
-                #{acreditacionAdministrado.getNombreDistritoPersonaEvaluar()}
+                #{acreditacionAdministrado.getNombreDepartamento(acreditacionAdministrado.clonePersonaEval.nidDepartamento)} - 
+                #{acreditacionAdministrado.getNombreProvincia(acreditacionAdministrado.clonePersonaEval.nidProvincia)} - 
+                #{acreditacionAdministrado.getNombreDistrito(acreditacionAdministrado.clonePersonaEval.nidDistrito)}
             </div>
         </div>    
         <div class="ui-g">
@@ -39,278 +39,182 @@
         <p:separator />
         
         <div class="ui-g">
-            <div class="ui-g-12 ui-md-1">
-                <p:selectBooleanCheckbox id="flgCorreoPersonaObs" value="#{acreditacionAdministrado.flgCorreoPersonaObs}" >
+             <div class="ui-g-12 ui-md-6">
+                <p:selectBooleanCheckbox id="flgDireccionPersonaObs" value="#{acreditacionAdministrado.flgDireccionPersonaObs}"   style="margin-right: 12px !important" >
+                    <p:ajax update="obsDireccion" />
+                </p:selectBooleanCheckbox>
+                <p:outputLabel value="Dirección Domiciliaria"/> 
+                 <p:inputText required="true" readonly="true" value="#{acreditacionAdministrado.clonePersonaEval.txtDireccion}">
+                </p:inputText>
+                <p:outputPanel id="obsDireccion" style="width: 100%">
+                           <p:inputText rendered="#{acreditacionAdministrado.flgDireccionPersonaObs}"
+                                 required="#{acreditacionAdministrado.flgDireccionPersonaObs}"
+                                 requiredMessage="Debe ingresar la observación de la dirección."
+                                 value="#{acreditacionAdministrado.clonePersonaEval.obsDireccion}"
+                                 maxlength="850"   style="margin-top:12px !important">
+                    </p:inputText>
+
+             </p:outputPanel>  
+            </div>
+            <div class="ui-g-12 ui-md-6">
+                <p:selectBooleanCheckbox id="flgCorreoPersonaObs" value="#{acreditacionAdministrado.flgCorreoPersonaObs}"   style="margin-right: 12px !important" >
                     <p:ajax update="obsCorreo" />
                 </p:selectBooleanCheckbox>
-            </div>
-            <div class="ui-g-12 ui-md-2">    
-                <p:outputLabel for="txtCorreo" value="Correo"/> 
-            </div>
-            <div class="ui-g-12 ui-md-9">
-                <p:inputText required="true" id="txtCorreo" readonly="true" value="#{acreditacionAdministrado.clonePersonaEval.txtCorreo}">
+                <p:outputLabel  value="Correo"/> 
+                <p:inputText required="true" readonly="true" value="#{acreditacionAdministrado.clonePersonaEval.txtCorreo}">
                 </p:inputText>
-            </div>
-        </div>
-        <p:outputPanel id="obsCorreo" style="width: 100%">
-            <div class="ui-g">
-                <div class="ui-g-12 ui-md-1"> </div>   
-                <div class="ui-g-12 ui-md-11"> 
-                   <p:inputText rendered="#{acreditacionAdministrado.flgCorreoPersonaObs}"
+                <p:outputPanel id="obsCorreo" style="width: 100%">
+                    <p:inputText rendered="#{acreditacionAdministrado.flgCorreoPersonaObs}"
                              required="#{acreditacionAdministrado.flgCorreoPersonaObs}"
                              requiredMessage="Debe ingresar la observación de el correo."
                              value="#{acreditacionAdministrado.clonePersonaEval.obsCorreo}"
-                             maxlength="850">
-                </p:inputText>
-                </div>
-            </div>                     
-         </p:outputPanel>  
-        
-        <div class="ui-g">
-            <div class="ui-g-12 ui-md-1">
-                <p:selectBooleanCheckbox id="flgDireccionPersonaObs" value="#{acreditacionAdministrado.flgDireccionPersonaObs}" >
-                    <p:ajax update="obsDireccion" />
-                </p:selectBooleanCheckbox>
-            </div>
-            <div class="ui-g-12 ui-md-2">    
-                <p:outputLabel for="txtDireccion" value="Dirección"/> 
-            </div>
-            <div class="ui-g-12 ui-md-9">
-                <p:inputText required="true" id="txtDireccion" readonly="true" value="#{acreditacionAdministrado.clonePersonaEval.txtDireccion}">
-                </p:inputText>
+                             maxlength="850"  style="margin-top:12px !important">
+                  </p:inputText>
+                </p:outputPanel>  
             </div>
         </div>
-        <p:outputPanel id="obsDireccion" style="width: 100%">
-            <div class="ui-g">
-                <div class="ui-g-12 ui-md-1"> </div>   
-                <div class="ui-g-12 ui-md-11"> 
-                   <p:inputText rendered="#{acreditacionAdministrado.flgDireccionPersonaObs}"
-                             required="#{acreditacionAdministrado.flgDireccionPersonaObs}"
-                             requiredMessage="Debe ingresar la observación de la dirección."
-                             value="#{acreditacionAdministrado.clonePersonaEval.obsDireccion}"
-                             maxlength="850" >
-                </p:inputText>
-                </div>
-            </div>                     
-         </p:outputPanel>  
-        
-        <div class="ui-g">
-            <div class="ui-g-12 ui-md-1">
-                <p:selectBooleanCheckbox id="flgInstruccionObs" value="#{acreditacionAdministrado.flgInstruccionObs}" >
+         <div class="ui-g">
+            <div class="ui-g-12 ui-md-3">
+                <p:selectBooleanCheckbox id="flgInstruccionObs" value="#{acreditacionAdministrado.flgInstruccionObs}"   style="margin-right: 12px !important" >
                     <p:ajax update="obsInstruccion" />
                 </p:selectBooleanCheckbox>
-            </div>
-            <div class="ui-g-12 ui-md-2">    
-                <p:outputLabel value="Instruccion"/> 
-            </div>
-            <div class="ui-g-12 ui-md-9">
-                <p:inputText readonly="true" value="#{acreditacionAdministrado.getNombreInstruccionCloneEval()}">
+                 <p:outputLabel value="Grado de Instrucción"/> 
+                <p:inputText readonly="true" value="#{acreditacionAdministrado.clonePersonaEval.instruccion.txtNombre}">
                 </p:inputText>
+                <p:outputPanel id="obsInstruccion" style="width: 100%">
+                      <p:inputText rendered="#{acreditacionAdministrado.flgInstruccionObs}"
+                               required="#{acreditacionAdministrado.flgInstruccionObs}"
+                               requiredMessage="Debe ingresar la observación de la instrucción."
+                               value="#{acreditacionAdministrado.clonePersonaEval.obsInstruccion}"
+                               maxlength="850"   style="margin-top:12px !important">
+                  </p:inputText>
+
+                 </p:outputPanel>  
             </div>
-        </div>
-        <p:outputPanel id="obsInstruccion" style="width: 100%">
-            <div class="ui-g">
-                <div class="ui-g-12 ui-md-1"> </div>   
-                <div class="ui-g-12 ui-md-11"> 
-                   <p:inputText rendered="#{acreditacionAdministrado.flgInstruccionObs}"
-                             required="#{acreditacionAdministrado.flgInstruccionObs}"
-                             requiredMessage="Debe ingresar la observación de la instrucción."
-                             value="#{acreditacionAdministrado.clonePersonaEval.obsInstruccion}"
-                             maxlength="850" >
-                </p:inputText>
-                </div>
-            </div>                     
-         </p:outputPanel>  
-        
-        <div class="ui-g">
-            <div class="ui-g-12 ui-md-1">
-                <p:selectBooleanCheckbox id="flgProfesionPersonaObs" value="#{acreditacionAdministrado.flgProfesionPersonaObs}" >
+            <div class="ui-g-12 ui-md-3">
+                <p:selectBooleanCheckbox id="flgProfesionPersonaObs" value="#{acreditacionAdministrado.flgProfesionPersonaObs}"   style="margin-right: 12px !important" >
                     <p:ajax update="obsProfesion" />
                 </p:selectBooleanCheckbox>
-            </div>
-            <div class="ui-g-12 ui-md-2">    
-                <p:outputLabel for="txtProfesion" value="Profesión"/> 
-            </div>
-            <div class="ui-g-12 ui-md-9">
-                <p:inputText id="txtProfesion" readonly="true" value="#{acreditacionAdministrado.clonePersonaEval.profesion.txtNombre}">
+               <p:outputLabel value="Profesión"/> 
+                <p:inputText readonly="true" value="#{acreditacionAdministrado.clonePersonaEval.profesion.txtNombre}">
                 </p:inputText>
-            </div>
-        </div>
-        <p:outputPanel id="obsProfesion" style="width: 100%">
-            <div class="ui-g">
-                <div class="ui-g-12 ui-md-1"> </div>   
-                <div class="ui-g-12 ui-md-11"> 
+                <p:outputPanel id="obsProfesion" style="width: 100%">
+          
                    <p:inputText rendered="#{acreditacionAdministrado.flgProfesionPersonaObs}"
                              required="#{acreditacionAdministrado.flgProfesionPersonaObs}"
                              requiredMessage="Debe ingresar la observación de la profesion."
                              value="#{acreditacionAdministrado.clonePersonaEval.obsProfesion}"
-                             maxlength="850">
+                             maxlength="850"  style="margin-top:12px !important">
                 </p:inputText>
-                </div>
-            </div>                     
-         </p:outputPanel>  
-        
-        <div class="ui-g">
-            <div class="ui-g-12 ui-md-1">
-                <p:selectBooleanCheckbox id="flgColegioPersonaObs" value="#{acreditacionAdministrado.flgColegioPersonaObs}" >
+                               
+                </p:outputPanel>  
+            </div>
+            <div class="ui-g-12 ui-md-3">
+                <p:selectBooleanCheckbox id="flgColegioPersonaObs" value="#{acreditacionAdministrado.flgColegioPersonaObs}"  style="margin-right: 12px !important" >
                     <p:ajax update="obsColegio" />
                 </p:selectBooleanCheckbox>
-            </div>
-            <div class="ui-g-12 ui-md-2">    
-                <p:outputLabel for="txtColegio" value="Colegio"/> 
-            </div>
-            <div class="ui-g-12 ui-md-9">
-                <p:inputText id="txtColegio" readonly="true" value="#{acreditacionAdministrado.clonePersonaEval.txtColegio}">
+                <p:outputLabel value="Colegio Profesional"/> 
+                 <p:inputText  readonly="true" value="#{acreditacionAdministrado.clonePersonaEval.txtColegio}">
                 </p:inputText>
-            </div>
-        </div>
-        <p:outputPanel id="obsColegio" style="width: 100%">
-            <div class="ui-g">
-                <div class="ui-g-12 ui-md-1"> </div>   
-                <div class="ui-g-12 ui-md-11"> 
-                   <p:inputText rendered="#{acreditacionAdministrado.flgColegioPersonaObs}"
+         
+                <p:outputPanel id="obsColegio" style="width: 100%">
+                     <p:inputText rendered="#{acreditacionAdministrado.flgColegioPersonaObs}"
                              required="#{acreditacionAdministrado.flgColegioPersonaObs}"
                              requiredMessage="Debe ingresar la observación de el colegio."
                              value="#{acreditacionAdministrado.clonePersonaEval.obsColegio}"
-                             maxlength="850">
+                             maxlength="850"  style="margin-top:12px !important">
                 </p:inputText>
-                </div>
-            </div>                     
-         </p:outputPanel>  
-        
-        <div class="ui-g">
-            <div class="ui-g-12 ui-md-1">
-                <p:selectBooleanCheckbox id="flgNroColegiaturaObs" value="#{acreditacionAdministrado.flgNroColegiaturaObs}" >
+              </p:outputPanel>  
+          </div>
+           <div class="ui-g-12 ui-md-3">
+                <p:selectBooleanCheckbox id="flgNroColegiaturaObs" value="#{acreditacionAdministrado.flgNroColegiaturaObs}"   style="margin-right: 12px !important" >
                     <p:ajax update="obsColegiatura" />
                 </p:selectBooleanCheckbox>
-            </div>
-            <div class="ui-g-12 ui-md-2">    
-                <p:outputLabel value="Colegiatura"/> 
-            </div>
-            <div class="ui-g-12 ui-md-9">
-                <p:inputText readonly="true" value="#{acreditacionAdministrado.clonePersonaEval.txtColegiatura}">
+                 <p:outputLabel value="N° de Colegiatura"/> 
+                 <p:inputText readonly="true" value="#{acreditacionAdministrado.clonePersonaEval.txtColegiatura}">
                 </p:inputText>
-            </div>
-        </div>
-        <p:outputPanel id="obsColegiatura" style="width: 100%">
-            <div class="ui-g">
-                <div class="ui-g-12 ui-md-1"> </div>   
-                <div class="ui-g-12 ui-md-11"> 
-                   <p:inputText rendered="#{acreditacionAdministrado.flgNroColegiaturaObs}"
+                <p:outputPanel id="obsColegiatura" style="width: 100%">
+                <p:inputText rendered="#{acreditacionAdministrado.flgNroColegiaturaObs}"
                              required="#{acreditacionAdministrado.flgNroColegiaturaObs}"
                              requiredMessage="Debe ingresar la observación de la colegiatura."
                              value="#{acreditacionAdministrado.clonePersonaEval.obsColegiatura}"
-                             maxlength="850" >
+                             maxlength="850"   style="margin-top:12px !important">
                 </p:inputText>
-                </div>
-            </div>                     
-         </p:outputPanel>  
-        
+                 </p:outputPanel>  
+           </div>
+        </div>
           <div class="ui-g">
-            <div class="ui-g-12 ui-md-1">
-                <p:selectBooleanCheckbox id="flgLugarPersonaObs" value="#{acreditacionAdministrado.flgLugarPersonaObs}" >
+            <div class="ui-g-12 ui-md-6">
+                <p:selectBooleanCheckbox id="flgLugarPersonaObs" value="#{acreditacionAdministrado.flgLugarPersonaObs}"  style="margin-right: 12px !important" >
                     <p:ajax update="obsLugarDeCurso" />
                 </p:selectBooleanCheckbox>
-            </div>
-            <div class="ui-g-12 ui-md-2">    
                 <p:outputLabel for="txtLugar" value="Lugar de Curso"/> 
-            </div>
-            <div class="ui-g-12 ui-md-9">
                 <p:inputText id="txtLugar" readonly="true" value="#{acreditacionAdministrado.clonePersonaEval.txtLugarCurso}">
                 </p:inputText>
-            </div>
-        </div>
-        <p:outputPanel id="obsLugarDeCurso" style="width: 100%">
-            <div class="ui-g">
-                <div class="ui-g-12 ui-md-1"> </div>   
-                <div class="ui-g-12 ui-md-11"> 
-                   <p:inputText rendered="#{acreditacionAdministrado.flgLugarPersonaObs}"
+                <p:outputPanel id="obsLugarDeCurso" style="width: 100%">
+                     <p:inputText rendered="#{acreditacionAdministrado.flgLugarPersonaObs}"
                              required="#{acreditacionAdministrado.flgLugarPersonaObs}"
                              requiredMessage="Debe ingresar la observación de el lugar del curso."
                              value="#{acreditacionAdministrado.clonePersonaEval.obsLugarDeCurso}"
-                             maxlength="850">
-                </p:inputText>
-                </div>
-            </div>                     
-         </p:outputPanel> 
-        
-        <div class="ui-g">
-            <div class="ui-g-12 ui-md-1">
-                <p:selectBooleanCheckbox id="flgFechaCursoObs" value="#{acreditacionAdministrado.flgFechaCursoObs}" >
+                             maxlength="850"  style="margin-top:12px !important">
+                  </p:inputText>
+                 </p:outputPanel> 
+            </div>
+            <div class="ui-g-12 ui-md-6">
+                <p:selectBooleanCheckbox id="flgFechaCursoObs" value="#{acreditacionAdministrado.flgFechaCursoObs}"   style="margin-right: 12px !important" >
                     <p:ajax update="obsFechaDeCurso" />
                 </p:selectBooleanCheckbox>
-            </div>
-            <div class="ui-g-12 ui-md-2">    
                 <p:outputLabel value="Fecha de Curso"/> 
-            </div>
-            <div class="ui-g-12 ui-md-9">
                 <p:inputText required="true" id="txtFechaCurso" readonly="true" 
                              value="#{acreditacionAdministrado.obtenerFechaConFormato(acreditacionAdministrado.clonePersonaEval.txtFechaCurso)}">
                 </p:inputText>
-            </div>
-        </div>
-        <p:outputPanel id="obsFechaDeCurso" style="width: 100%">
-            <div class="ui-g">
-                <div class="ui-g-12 ui-md-1"> </div>   
-                <div class="ui-g-12 ui-md-11"> 
+                <p:outputPanel id="obsFechaDeCurso" style="width: 100%">
                    <p:inputText rendered="#{acreditacionAdministrado.flgFechaCursoObs}"
                              required="#{acreditacionAdministrado.flgFechaCursoObs}"
                              requiredMessage="Debe ingresar la observación de la fecha del curso."
                              value="#{acreditacionAdministrado.clonePersonaEval.obsFechaDeCurso}"
-                             maxlength="850" >
+                             maxlength="850"   style="margin-top:12px !important">
                 </p:inputText>
-                </div>
-            </div>                     
-         </p:outputPanel>  
-       
+             </p:outputPanel>  
+            </div>
+          </div>
+          
      <p:fieldset legend="Plataforma de Interoperabilidad">
         <div class="ui-g">
-            <div class="ui-g-12 ui-md-2">    
+            <div class="ui-g-12 ui-md-4">    
                 <p:outputLabel for="txPj" value="PJ:"/>
-            </div>
-            <div class="ui-g-12 ui-md-10">
                 <p:inputText id="txPj"  readonly="true" value="#{acreditacionAdministrado.clonePersonaEval.txtPj}" >
                 </p:inputText>
             </div>
-            <div class="ui-g-12 ui-md-2">    
-
-                <p:outputLabel for="txtInpe" value="INPE:"/>
-            </div>
-            <div class="ui-g-12 ui-md-10">
+            <div class="ui-g-12 ui-md-4">    
+               <p:outputLabel for="txtInpe" value="INPE:"/>
                 <p:inputText id="txtInpe"  readonly="true" value="#{acreditacionAdministrado.clonePersonaEval.txtInpe}" >
                 </p:inputText>
             </div>
-            <div class="ui-g-12 ui-md-2">    
+            <div class="ui-g-12 ui-md-4">    
                 <p:outputLabel for="txtPnp" value="PNP:"/>
-            </div>
-            <div class="ui-g-12 ui-md-10">
                 <p:inputText id="txtPnp"  readonly="true" value="#{acreditacionAdministrado.clonePersonaEval.txtPnp}" >
                 </p:inputText>
             </div>
          </div>   
          
         <div class="ui-g">
-            <div class="ui-g-12 ui-md-1">
-                <p:selectBooleanCheckbox id="flgAntecedentePersonaObs" value="#{acreditacionAdministrado.flgAntecedentePersonaObs}" >
+            <div class="ui-g-12">
+                <p:selectBooleanCheckbox id="flgAntecedentePersonaObs" value="#{acreditacionAdministrado.flgAntecedentePersonaObs}"    style="margin-right: 12px !important" >
                     <p:ajax update="obsAntecedentes" />
                 </p:selectBooleanCheckbox>
-            </div>
-            <div class="ui-g-12 ui-md-2">    
                 <p:outputLabel value="Observaciones"/> 
             </div>
         </div>
-        <p:outputPanel id="obsAntecedentes" style="width: 100%">
-            <div class="ui-g">
-                <div class="ui-g-12 ui-md-1"> </div>   
-                <div class="ui-g-12 ui-md-11"> 
+        <p:outputPanel id="obsAntecedentes" class="ui-g">
+                <div class="ui-g-12"> 
                    <p:inputText rendered="#{acreditacionAdministrado.flgAntecedentePersonaObs}"
                              required="#{acreditacionAdministrado.flgAntecedentePersonaObs}"
                              requiredMessage="Debe ingresar la observación de los antecedentes."
                              value="#{acreditacionAdministrado.clonePersonaEval.obsAntecedentes}"
                              maxlength="850">
                 </p:inputText>
-                </div>
-            </div>                     
+             </div>                     
          </p:outputPanel> 
         
      </p:fieldset>
