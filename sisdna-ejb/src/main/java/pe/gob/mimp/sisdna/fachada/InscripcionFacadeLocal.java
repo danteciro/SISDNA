@@ -42,20 +42,20 @@ public interface InscripcionFacadeLocal {
     List<Inscripcion> filtrarDistritos(BigDecimal nidDistrito);
     
 
-    List<Inscripcion> filtrarObservadasVencidos(BigInteger estadoPorEvaluar, Integer numDias);
+    List<Inscripcion> filtrarObservadasVencidos(BigInteger estadoPorEvaluar, BigInteger numDias);
   
-    List<Object[]> filtrarPorEvaluarPorVencer(BigInteger estadoPorEvaluar, Integer numDias, Integer vence);
+    List<Inscripcion> filtrarPorEvaluarPorVencer(BigInteger estadoPorEvaluar, BigInteger numDias);
   
-    List<Object[]> filtrarSubsanadasPorVencer(BigInteger estadoPorEvaluar, Integer numDias, Integer vence);
+    List<Inscripcion> filtrarSubsanadasPorVencer(BigInteger estadoPorEvaluar, BigInteger numDias);
   
 
-    List<Inscripcion> filtrarPorConstancia(String txtConstancia , BigInteger nidCatalogo);
+    List<Inscripcion> filtrarPorConstancia(String txtConstancia , BigInteger nidCatalgo);
     
-    List<Inscripcion> filtrarDepartamentos(BigDecimal nidDepartamento , BigInteger nidCatalogo);
+    List<Inscripcion> filtrarDepartamentos(BigDecimal nidDepartamento , BigInteger nidCatalgo);
     
-    List<Inscripcion> filtrarProvincias(BigDecimal nidProvincia , BigInteger nidCatalogo);
+    List<Inscripcion> filtrarProvincias(BigDecimal nidProvincia , BigInteger nidCatalgo);
     
-    List<Inscripcion> filtrarDistritos(BigDecimal nidDistrito , BigInteger nidCatalogo);
+    List<Inscripcion> filtrarDistritos(BigDecimal nidDistrito , BigInteger nidCatalgo);
     
     Integer obtenerNroConstancia();
 }

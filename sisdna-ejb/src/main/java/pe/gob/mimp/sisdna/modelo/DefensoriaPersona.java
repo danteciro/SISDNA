@@ -19,7 +19,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.eclipse.persistence.annotations.AdditionalCriteria;
 
 /**
  * Clase: DefensoriaPersona.java<br>
@@ -32,7 +31,6 @@ import org.eclipse.persistence.annotations.AdditionalCriteria;
  */
 @Entity
 @Table(name = "DEFENSORIA_PERSONA")
-@AdditionalCriteria("this.flgActivo=1")
 public class DefensoriaPersona implements Serializable , Cloneable{
 
     private static final long serialVersionUID = 1L;
@@ -90,7 +88,7 @@ public class DefensoriaPersona implements Serializable , Cloneable{
     private String txtSexo;
     
     @Column(name = "EDAD")
-    private BigInteger edad;
+    private Byte edad;
 
     @Size(max = 150)
     @Column(name = "TXT_DIRECCION")
@@ -449,11 +447,11 @@ public class DefensoriaPersona implements Serializable , Cloneable{
         this.defensoria = defensoria;
     }
 
-    public BigInteger getEdad() {
+    public Byte getEdad() {
         return edad;
     }
 
-    public void setEdad(BigInteger edad) {
+    public void setEdad(Byte edad) {
         this.edad = edad;
     }
     

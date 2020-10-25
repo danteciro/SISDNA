@@ -15,14 +15,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 /**
@@ -35,13 +34,6 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "DEFENSORIA")
-@NamedQueries({
-    @NamedQuery(name = "Defensoria.filtrarPorConstanciaEstado", query = "SELECT d FROM Defensoria as d WHERE d.txtConstancia=:txtConstancia and d.estado.nidCatalogo = :nidCatalogo and d.flgActivo = 1"),
-    @NamedQuery(name = "Defensoria.filtrarDepartamentosEstado", query = "SELECT d FROM Defensoria as d WHERE d.nidDepartamento=:nidDepartamento and d.estado.nidCatalogo = :nidCatalogo and d.flgActivo = 1"),
-    @NamedQuery(name = "Defensoria.filtrarProvinciasEstado", query = "SELECT d FROM Defensoria as d WHERE d.nidProvincia=:nidProvincia  and d.estado.nidCatalogo = :nidCatalogo and d.flgActivo = 1"),
-    @NamedQuery(name = "Defensoria.filtrarDistritosEstado", query = "SELECT d FROM Defensoria as d WHERE d.nidDistrito=:nidDistrito  and d.estado.nidCatalogo = :nidCatalogo and d.flgActivo = 1"),
-
-})
 public class Defensoria implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -53,22 +45,25 @@ public class Defensoria implements Serializable {
     private BigInteger nidDna;
 
     @JoinColumn(name = "NID_INFO", referencedColumnName = "NID_INFO")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private DefensoriaInfo defensoriaInfo;
   
     @Column(name = "TXT_CONSTANCIA")
     private String txtConstancia;
 
-    @JoinColumn(name = "NID_CENTRAL", referencedColumnName = "NID_DNA")
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    //@JoinColumn(name = "NID_CENTRAL", referencedColumnName = "NID_DNA",insertable = false)
+    //@ManyToOne(fetch = FetchType.LAZY, optional = true,cascade = CascadeType.ALL)
+    @Transient
     private Defensoria central;
 
-    @JoinColumn(name = "NID_ORIGEN", referencedColumnName = "NID_CATALOGO")
-    @ManyToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(name = "NID_ORIGEN", referencedColumnName = "NID_CATALOGO",insertable = false)
+    //@ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @Transient
     private Catalogo origen;
 
-    @JoinColumn(name = "NID_ESTADO", referencedColumnName = "NID_CATALOGO")
-    @ManyToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(name = "NID_ESTADO", referencedColumnName = "NID_CATALOGO",insertable = false)
+    //@ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @Transient
     private Catalogo estado;
     
     @Size(max = 3)
@@ -169,8 +164,8 @@ public class Defensoria implements Serializable {
     @Column(name = "TXT_NRO_ORDENANZA")
     private String txtNroOrdenanza;    
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "defensoria", fetch = FetchType.LAZY)
-    @OrderBy(value="txtApellidoPaterno")
+    //@OneToMany(cascade = CascadeType.ALL, mappedBy = "defensoria", fetch = FetchType.LAZY)
+    @Transient
     private List<DefensoriaPersona> listaPersonaDna;
     
     public Defensoria() {

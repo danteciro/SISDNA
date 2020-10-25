@@ -20,11 +20,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.eclipse.persistence.annotations.AdditionalCriteria;
 
 @Entity
 @Table(name = "PERSONA_DNA")
-@AdditionalCriteria("this.flgActivo=1")
 public class PersonaDna implements Serializable , Cloneable{
 
     private static final long serialVersionUID = 1L;
@@ -32,22 +30,14 @@ public class PersonaDna implements Serializable , Cloneable{
     @Id
     @Basic(optional = false)
     @NotNull
-    @SequenceGenerator(name = "SQ_PERSONA_DNA", sequenceName = "SQ_PERSONA_DNA", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_PERSONA_DNA")
+    @SequenceGenerator(name = "SQ_DNA_PER", sequenceName = "SQ_DNA_PER", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_DNA_PER")
     @Column(name = "NID_PERSONA")
     private BigDecimal nidPersona;
-
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="NID_INSCRIPCION", nullable = false)
-    private Inscripcion inscripcion;
 
     @JoinColumn(name = "NID_FUNCION", referencedColumnName = "NID_CATALOGO")
     @ManyToOne(fetch = FetchType.LAZY)
     private Catalogo funcion;
-   
-    @JoinColumn(name = "NID_INSTRUCCION", referencedColumnName = "NID_CATALOGO")
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Catalogo instruccion;
     
     @JoinColumn(name = "NID_PROFESION", referencedColumnName = "NID_CATALOGO")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -89,10 +79,9 @@ public class PersonaDna implements Serializable , Cloneable{
     @Column(name = "TXT_CORREO")
     private String txtCorreo;
     
-    /*
     @Column(name = "NID_INSTRUCCION")
     private Integer nidInstruccion;
-    */
+    
     @Size(max = 150)
     @Column(name = "TXT_TELEFONO")
     private String txtTelefono;
@@ -168,14 +157,9 @@ public class PersonaDna implements Serializable , Cloneable{
     @Column(name = "NID_USUARIO_MOD")
     private BigDecimal nidUsuarioMod;
     
-     public PersonaDna() {
-        
-        this.funcion = new Catalogo();
-        this.instruccion = new Catalogo();
-        this.profesion = new Catalogo();
-        this.inscripcion = new Inscripcion();
-    }
-    
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="NID_INSCRIPCION", nullable = false)
+    private Inscripcion inscripcion;
     
     public Inscripcion getInscripcion() {
         return inscripcion;
@@ -282,7 +266,7 @@ public class PersonaDna implements Serializable , Cloneable{
     public void setTxtCorreo(String txtCorreo) {
         this.txtCorreo = txtCorreo;
     }
-/*
+
     public Integer getNidInstruccion() {
         return nidInstruccion;
     }
@@ -290,7 +274,7 @@ public class PersonaDna implements Serializable , Cloneable{
     public void setNidInstruccion(Integer nidInstruccion) {
         this.nidInstruccion = nidInstruccion;
     }
-*/
+
     
     public String getTxtTelefono() {
         return txtTelefono;
@@ -462,18 +446,10 @@ public class PersonaDna implements Serializable , Cloneable{
     public void setTxtDocDesignacion(String txtDocDesignacion) {
         this.txtDocDesignacion = txtDocDesignacion;
     }
-
-    public Catalogo getInstruccion() {
-        return instruccion;
-    }
-
-    public void setInstruccion(Catalogo instruccion) {
-        this.instruccion = instruccion;
-    }
     
     
     
-    public String getApellidosNombres() {
+    public String getTxtNombres() {
         String nombre = "";
 
             if (null != this.getTxtApellidoPaterno()) {
@@ -497,31 +473,7 @@ public class PersonaDna implements Serializable , Cloneable{
         return nombre;
     }
     
-     public String getNombresApellidos() {
-        String nombre = "";
-
-            if (null != this.getTxtNombre1()) {
-                nombre += this.getTxtNombre1();
-            }
-       
-            if (null != this.getTxtNombre2()) {
-                nombre += " " + this.getTxtNombre2();
-            }
-       
-            if (null != this.getTxtNombre3()) {
-                nombre += " " + this.getTxtNombre3();
-            }
-            
-            if (null != this.getTxtApellidoPaterno()) {
-                nombre += " " +  this.getTxtApellidoPaterno();
-            }
-            if (null != this.getTxtApellidoMaterno()) {
-                nombre += " " + this.getTxtApellidoMaterno();
-            }
-           
-       
-        return nombre;
-    }
+    
     
     @Override
     public int hashCode() {
@@ -565,7 +517,7 @@ public class PersonaDna implements Serializable , Cloneable{
         this.setNidDepartamento(persona.getNidDepartamento());
         this.setNidProvincia(persona.getNidProvincia());
         this.setNidDistrito(persona.getNidDistrito());
-        this.setInstruccion(persona.getInstruccion());
+        this.setNidInstruccion(persona.getNidInstruccion());
         this.setTxtApellidoMaterno(persona.getTxtApellidoMaterno());
         this.setTxtApellidoPaterno(persona.getTxtApellidoPaterno());
         this.setTxtNombre1(persona.getTxtNombre1());

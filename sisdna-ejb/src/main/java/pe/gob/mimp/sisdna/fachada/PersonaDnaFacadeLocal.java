@@ -27,8 +27,6 @@ public interface PersonaDnaFacadeLocal {
      
     List<PersonaDna> obtenerPorParametros(Object parametrosRecibidos);
     
-    List<PersonaDna> obtenerPorFiltro(Object parametrosRecibidos, boolean order, String orderFiled, boolean todos);
-
     PersonaDna findPorParametros(Object parametrosRecibidos);
     
  }

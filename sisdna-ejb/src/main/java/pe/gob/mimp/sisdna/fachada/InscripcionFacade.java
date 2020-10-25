@@ -63,37 +63,34 @@ public class InscripcionFacade extends AbstractFacade<Inscripcion> implements In
     }
     
     @Override
-    public List<Inscripcion> filtrarObservadasVencidos(BigInteger estadoPorEvaluar, Integer numDias) {
+    public List<Inscripcion> filtrarObservadasVencidos(BigInteger estadoPorEvaluar, BigInteger numDias) {
       TypedQuery<Inscripcion> query = em.createNamedQuery("Inscripcion.filtrarObservadasVencidos", Inscripcion.class);
       Calendar cal = Calendar.getInstance();
-      cal.add(Calendar.DAY_OF_YEAR, -numDias);
+      cal.add(Calendar.DAY_OF_YEAR, -numDias.intValue());
       query.setParameter("estadoPorEvaluar", estadoPorEvaluar);
      query.setParameter("hoy", cal.getTime());
       return  (List<Inscripcion>)query.getResultList();
     }
  
     @Override
-    public List<Object[]> filtrarPorEvaluarPorVencer(BigInteger estadoPorEvaluar, Integer numDias, Integer vence) {
-         String cad = "SELECT d.txt_constancia, d.txt_nombre, to_char(a.fec_registro + " + vence + ",'dd/MM/YYYY' ) FROM inscripcion a inner join defensoria d on a.nid_dna = d.nid_dna WHERE a.nid_estado = "
-                        + estadoPorEvaluar.intValue() 
-                        + " and trunc(sysdate) >= TRUNC(a.fec_registro + " + numDias + " )";
-
-         Query q = em.createNativeQuery(cad);
-         return q.getResultList();
+    public List<Inscripcion> filtrarPorEvaluarPorVencer(BigInteger estadoPorEvaluar, BigInteger numDias) {
+     TypedQuery<Inscripcion> query = em.createNamedQuery("Inscripcion.filtrarPorEvaluarPorVencer", Inscripcion.class);
+      Calendar cal = Calendar.getInstance();
+      cal.add(Calendar.DAY_OF_YEAR, -numDias.intValue());
+      query.setParameter("estadoPorEvaluar", estadoPorEvaluar);
+      query.setParameter("hoy", cal.getTime());
+      return  (List<Inscripcion>)query.getResultList();
     }
-   
-  
    
     @Override
-    public List<Object[]> filtrarSubsanadasPorVencer(BigInteger estadoPorEvaluar, Integer numDias, Integer vence) {
-        String cad = "SELECT d.txt_constancia, d.txt_nombre, to_char(a.fec_subsanado + " + vence + ",'dd/MM/YYYY' ) FROM inscripcion a inner join defensoria d on a.nid_dna = d.nid_dna WHERE a.nid_estado = "
-                        + estadoPorEvaluar.intValue() 
-                        + " and trunc(sysdate) >= TRUNC(a.fec_subsanado + " + numDias + " )";
-
-         Query q = em.createNativeQuery(cad);
-         return q.getResultList();
+    public List<Inscripcion> filtrarSubsanadasPorVencer(BigInteger estadoPorEvaluar, BigInteger numDias) {
+     TypedQuery<Inscripcion> query = em.createNamedQuery("Inscripcion.filtrarSubsanadasPorVencer", Inscripcion.class);
+      Calendar cal = Calendar.getInstance();
+      cal.add(Calendar.DAY_OF_YEAR, -numDias.intValue());
+      query.setParameter("estadoPorEvaluar", estadoPorEvaluar);
+      query.setParameter("hoy", cal.getTime());
+      return  (List<Inscripcion>)query.getResultList();
     }
-    
     @Override
     public List<Inscripcion> filtrarPorConstancia(String txtConstancia , BigInteger nidCatalgo) {
       TypedQuery<Inscripcion> query = em.createNamedQuery("Inscripcion.filtrarPorConstanciaEstado", Inscripcion.class);

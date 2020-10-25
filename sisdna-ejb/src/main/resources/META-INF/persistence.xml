@@ -36,9 +36,9 @@
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <shared-cache-mode>NONE</shared-cache-mode>
     <validation-mode>NONE</validation-mode>
-    <properties>
+    <!--<properties>
       <property name="eclipselink.logging.level.sql" value="FINE"/>
       <property name="eclipselink.logging.parameters" value="true"/>
-    </properties>
+    </properties>-->
   </persistence-unit>
 </persistence>

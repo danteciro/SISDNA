@@ -1,7 +1,6 @@
 package pe.gob.mimp.sisdna.fachada;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,8 +15,6 @@ import pe.gob.mimp.general.util.ParametroNodo;
 import pe.gob.mimp.sisdna.modelo.Catalogo;
 import pe.gob.mimp.sisdna.modelo.Defensoria;
 import java.text.SimpleDateFormat;  
-import javax.persistence.TypedQuery;
-
 /**
  * Clase: DefensoriaFacade.java<br>
  * Clase que implementa la interface de la defensoría.<br>
@@ -127,35 +124,4 @@ public class DefensoriaFacade extends AbstractFacade<Defensoria> implements Defe
         return q.getResultList();
     }
    
-    @Override
-    public List<Defensoria> filtrarPorConstancia(String txtConstancia , BigInteger nidCatalogo) {
-      TypedQuery<Defensoria> query = em.createNamedQuery("Defensoria.filtrarPorConstanciaEstado", Defensoria.class);
-      query.setParameter("txtConstancia", txtConstancia);
-      query.setParameter("nidCatalogo", nidCatalogo);
-      return  (List<Defensoria>)query.getResultList();
-    }
-    
-    @Override
-    public List<Defensoria> filtrarDepartamentos(BigDecimal nidDepartamento, BigInteger nidCatalogo){
-      TypedQuery<Defensoria> query = em.createNamedQuery("Defensoria.filtrarDepartamentosEstado", Defensoria.class);
-      query.setParameter("nidDepartamento", nidDepartamento);
-      query.setParameter("nidCatalogo", nidCatalogo);
-      return  (List<Defensoria>)query.getResultList();
-    }
-    
-    @Override
-    public List<Defensoria> filtrarProvincias(BigDecimal nidProvincia , BigInteger nidCatalogo){
-      TypedQuery<Defensoria> query = em.createNamedQuery("Defensoria.filtrarProvinciasEstado", Defensoria.class);
-      query.setParameter("nidProvincia", nidProvincia);
-      query.setParameter("nidCatalogo", nidCatalogo);
-      return  (List<Defensoria>)query.getResultList();
-    }
-    
-    @Override
-    public List<Defensoria> filtrarDistritos(BigDecimal nidDistrito , BigInteger nidCatalogo) {
-      TypedQuery<Defensoria> query = em.createNamedQuery("Defensoria.filtrarDistritosEstado", Defensoria.class);
-      query.setParameter("nidDistrito", nidDistrito);
-      query.setParameter("nidCatalogo", nidCatalogo);
-      return  (List<Defensoria>)query.getResultList();
-    }
 }

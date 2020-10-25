@@ -1,7 +1,6 @@
 package pe.gob.mimp.sisdna.fachada;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
@@ -101,11 +100,4 @@ public interface DefensoriaFacadeLocal {
     List<Object[]> obtenerDefensoriasNoSupervisadas(BigDecimal nidDepartamento, BigDecimal nidProvincia, BigDecimal nidDistrito, 
                                                     Date fechaDesde, Date fechaHasta, String codigo);
   
-    List<Defensoria> filtrarPorConstancia(String txtConstancia , BigInteger nidCatalogo);
-    
-    List<Defensoria> filtrarDepartamentos(BigDecimal nidDepartamento , BigInteger nidCatalogo);
-    
-    List<Defensoria> filtrarProvincias(BigDecimal nidProvincia , BigInteger nidCatalogo);
-    
-    List<Defensoria> filtrarDistritos(BigDecimal nidDistrito , BigInteger nidCatalogo);
 }

@@ -40,10 +40,10 @@ public interface AcreditacionFacadeLocal {
     
     List<Acreditacion> filtrarDistritos(BigDecimal nidDistrito);
     
-    List<Acreditacion> filtrarObservadasVencidos(BigInteger estadoPorEvaluar, Integer numDias);
+    List<Acreditacion> filtrarObservadasVencidos(BigInteger estadoPorEvaluar, BigInteger numDias);
   
-    List<Object[]> filtrarPorEvaluarPorVencer(BigInteger estadoPorEvaluar, Integer numDias, Integer vence);
+    List<Acreditacion> filtrarPorEvaluarPorVencer(BigInteger estadoPorEvaluar, BigInteger numDias);
   
-    List<Object[]>  filtrarSubsanadasPorVencer(BigInteger estadoPorEvaluar, Integer numDias, Integer vence);
+    List<Acreditacion> filtrarSubsanadasPorVencer(BigInteger estadoPorEvaluar, BigInteger numDias);
   
 }

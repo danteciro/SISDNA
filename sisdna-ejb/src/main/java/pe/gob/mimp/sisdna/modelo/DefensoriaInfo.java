@@ -40,7 +40,7 @@ public class DefensoriaInfo implements Serializable {
     @Column(name = "TXT_DOCUMENTO")
     private String txtDocumento;
 
-    @Size(max = 250)
+    @Size(max = 150)
     @Column(name = "TXT_DIRECCION")
     private String txtDireccion;
     
@@ -69,7 +69,7 @@ public class DefensoriaInfo implements Serializable {
     @Column(name = "DIAS")
     private String dias;
 
-    @Column(name = "FEC_INSCRIPCION")
+    @Column(name = "FEC_INSCRIPCION",nullable = true)
     @Temporal(TemporalType.DATE)
     private Date fecInscrito;
     
@@ -101,8 +101,8 @@ public class DefensoriaInfo implements Serializable {
     @Column(name = "TXT_ESTADO_CONS")
     private String txtEstadoCons;
     
-    @Column(name = "FEC_ORDENANZA")
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "FEC_ORDENANZA",nullable = true)
+    @Temporal(TemporalType.DATE)
     private Date fecOrdenanza; 
     
     @Size(max = 100)
@@ -110,20 +110,18 @@ public class DefensoriaInfo implements Serializable {
     private String txtNroOrdenanza;
     
     @Column(name = "FEC_RESOLUCION")
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     private Date fecResolucion; 
     
     @Size(max = 100)
     @Column(name = "TXT_NRO_RESOLUCION")
     private String txtNroResolucion;
     
-    @Column(name = "FEC_ACREDITACION")
+    @Column(name = "FEC_ACREDITACION",nullable = true)
     @Temporal(TemporalType.DATE)
     private Date fecAcreditacion;
     
-    @Column(name = "NID_USUARIO")
-    private BigDecimal nidUsuario;
-    
+  
     // Auditoría 
     
     @Column(name = "FLG_ACTIVO")
@@ -145,7 +143,7 @@ public class DefensoriaInfo implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fecRegistro;
     
-    @Column(name = "FEC_MODIFICACION")
+    @Column(name = "FEC_MODIFICACION",nullable = true)
     @Temporal(TemporalType.TIMESTAMP)
     private Date fecModificacion;
     
@@ -402,14 +400,6 @@ public class DefensoriaInfo implements Serializable {
 
     public void setNidUsuarioReg(BigDecimal nidUsuarioReg) {
         this.nidUsuarioReg = nidUsuarioReg;
-    }
-
-    public BigDecimal getNidUsuario() {
-        return nidUsuario;
-    }
-
-    public void setNidUsuario(BigDecimal nidUsuario) {
-        this.nidUsuario = nidUsuario;
     }
     
     

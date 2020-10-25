@@ -7,7 +7,6 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import pe.gob.mimp.sisdna.modelo.Acreditacion;
 import pe.gob.mimp.sisdna.modelo.Inscripcion;
@@ -57,35 +56,32 @@ public class AcreditacionFacade extends AbstractFacade<Acreditacion> implements 
     
     
     @Override
-    public List<Acreditacion>  filtrarObservadasVencidos(BigInteger estadoPorEvaluar, Integer numDias) {
-              
+    public List<Acreditacion> filtrarObservadasVencidos(BigInteger estadoPorEvaluar, BigInteger numDias) {
       TypedQuery<Acreditacion> query = em.createNamedQuery("Acreditacion.filtrarObservadasVencidos", Acreditacion.class);
       Calendar cal = Calendar.getInstance();
-      cal.add(Calendar.DAY_OF_YEAR, -numDias);
+      cal.add(Calendar.DAY_OF_YEAR, -numDias.intValue());
       query.setParameter("estadoPorEvaluar", estadoPorEvaluar);
-      query.setParameter("hoy", cal.getTime());
+     query.setParameter("hoy", cal.getTime());
       return  (List<Acreditacion>)query.getResultList();
     }
  
     @Override
-    public List<Object[]> filtrarPorEvaluarPorVencer(BigInteger estadoPorEvaluar, Integer numDias, Integer vence) {
-
-            
-         String cad = "SELECT a.txt_constancia, d.txt_nombre, to_char(a.fec_registro + " + vence + ",'dd/MM/YYYY' ) FROM acreditacion a inner join defensoria d on a.nid_dna = d.nid_dna WHERE a.nid_estado = "
-                        + estadoPorEvaluar.intValue() 
-                        + " and trunc(sysdate) >= TRUNC(a.fec_registro + " + numDias + " )";
-
-         Query q = em.createNativeQuery(cad);
-         return q.getResultList();
+    public List<Acreditacion> filtrarPorEvaluarPorVencer(BigInteger estadoPorEvaluar, BigInteger numDias) {
+     TypedQuery<Acreditacion> query = em.createNamedQuery("Acreditacion.filtrarPorEvaluarPorVencer", Acreditacion.class);
+      Calendar cal = Calendar.getInstance();
+      cal.add(Calendar.DAY_OF_YEAR, -numDias.intValue());
+      query.setParameter("estadoPorEvaluar", estadoPorEvaluar);
+      query.setParameter("hoy", cal.getTime());
+      return  (List<Acreditacion>)query.getResultList();
     }
    
     @Override
-    public List<Object[]> filtrarSubsanadasPorVencer(BigInteger estadoPorEvaluar, Integer numDias, Integer vence) {
-       String cad = "SELECT a.txt_constancia, d.txt_nombre, to_char(a.fec_subsanado + " + vence + ",'dd/MM/YYYY' ) FROM acreditacion a inner join defensoria d on a.nid_dna = d.nid_dna WHERE a.nid_estado = "
-                        + estadoPorEvaluar.intValue() 
-                        + " and trunc(sysdate) >= TRUNC(a.fec_subsanado + " + numDias + " )";
-
-         Query q = em.createNativeQuery(cad);
-         return q.getResultList();
+    public List<Acreditacion> filtrarSubsanadasPorVencer(BigInteger estadoPorEvaluar, BigInteger numDias) {
+     TypedQuery<Acreditacion> query = em.createNamedQuery("Acreditacion.filtrarSubsanadasPorVencer", Acreditacion.class);
+      Calendar cal = Calendar.getInstance();
+      cal.add(Calendar.DAY_OF_YEAR, -numDias.intValue());
+      query.setParameter("estadoPorEvaluar", estadoPorEvaluar);
+      query.setParameter("hoy", cal.getTime());
+      return  (List<Acreditacion>)query.getResultList();
     }
 }
