@@ -42,7 +42,6 @@ import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 import pe.gob.mimp.core.Archivo;
 import pe.gob.mimp.core.Internet;
-import pe.gob.mimp.core.PasswordUtil;
 import pe.gob.mimp.general.fachada.DepartamentoFacadeLocal;
 import pe.gob.mimp.general.fachada.DistritoFacadeLocal;
 import pe.gob.mimp.general.fachada.ProvinciaFacadeLocal;
@@ -69,7 +68,6 @@ import pe.gob.mimp.seguridad.modelo.Usuario;
 import pe.gob.mimp.sisdna.fachada.AcreditacionEvalFacadeLocal;
 import pe.gob.mimp.sisdna.fachada.AcreditacionFacadeLocal;
 import pe.gob.mimp.sisdna.fachada.CatalogoFacadeLocal;
-import pe.gob.mimp.sisdna.fachada.DefensoriaFacadeLocal;
 import pe.gob.mimp.sisdna.fachada.DocAcreditacionFacadeLocal;
 import pe.gob.mimp.sisdna.fachada.InscripcionFacadeLocal;
 import pe.gob.mimp.sisdna.fachada.ParametroDnaFacadeLocal;
@@ -79,8 +77,6 @@ import pe.gob.mimp.sisdna.modelo.Acreditacion;
 import pe.gob.mimp.sisdna.modelo.AcreditacionEval;
 import pe.gob.mimp.sisdna.modelo.Catalogo;
 import pe.gob.mimp.sisdna.modelo.Defensoria;
-import pe.gob.mimp.sisdna.modelo.DefensoriaInfo;
-import pe.gob.mimp.sisdna.modelo.DefensoriaPersona;
 import pe.gob.mimp.sisdna.modelo.DocAcreditacion;
 import pe.gob.mimp.sisdna.modelo.Inscripcion;
 import pe.gob.mimp.sisdna.modelo.ParametroDna;
@@ -107,9 +103,16 @@ import pe.gob.mimp.webservicemimp.auxiliar.IdentificacionReniec;
 @ViewScoped
 public class AcreditacionAdministrado extends AdministradorAbstracto implements Serializable {
     
-    private Logger LOG = Logger.getLogger(InscripcionAdministrado.class.getName());
- 
-    private List<Defensoria> listaDefensoria;
+
+    private AntecedentePolicial antecedentePolicial;
+
+    private AntecedentePenal antecedentePenal;
+
+    private AntecedenteJudicial antecedenteJudicial;
+
+    private IdentificacionReniec identificacionReniec;
+    
+    private PersonaDnaAcre personaDna;
     private List<Acreditacion> lista;
     private String busTipo;
     private String busCodigo;
@@ -118,39 +121,45 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
     private BigDecimal busDistrito;
     private BigInteger busEstado;
     private int indexTab = 0;
+    private Inscripcion inscripcionSeleccionada;
+    private boolean verMensajeOK;
+    private List<Inscripcion> inscripcionesEncontradas;
     private Acreditacion acreditacion;
     private List<DocAcreditacion> adjuntos;
     private String ruta;
     private List<PersonaDnaAcre> equipoExterno;
     private PersonaDnaAcre personaEquipoExterno;
     private PersonaDnaAcre responsableActualizar;
+    private PersonaDnaAcre personaExternoActualizar;
     private Boolean showBtnResponsable;
     private Boolean esPersonaExternaActualizar;
+    private Acreditacion acreditacionActualizar;
     private List<PersonaDnaAcre> equipoActualizar;
     private PersonaDnaAcre personaActualizar; 
     private PersonaDnaAcre bPersonaActualizar;
+    private Boolean soloVer;
     private boolean dniValido;
     private List<UploadedFile> archivos;
     private AcreditacionEval acreditacionEval;
     private PersonaDnaAcreEval clonePersonaEval;
     private PersonaDnaAcreEval personaEval;
     private List<PersonaDnaAcreEval> equipoEval;
+    private Acreditacion acreditacionAEvaluar;
+    private PersonaDnaAcre personaEvaluar;
     private List<PersonaDnaAcre> equipoAEvaluar; 
     private String txtObsPersonaEval;
-    private Boolean flgDocObs;
-    private Boolean flgCorreoObs;
-    private Boolean flgDireccionObs;
-    private Boolean flgGerenciaObs;
-    private Boolean flgDiasHoraObs;
-    private Boolean flgPresupuestoObs;
-    private Boolean flgNroAmbObs;
-    private Boolean flgNroAmbPrivObs;
-    private Boolean flgNorma;
-    private Boolean flgAdjuntosObs;
+    private List<Acreditacion> listaSubsanar;
+    private Acreditacion acreditacionSubsanar;
+    private List<PersonaDnaAcre> equipoSubsanar;
+    private List<PersonaDnaAcre> personasRemover;
+    private PersonaDnaAcre personaSubsanar;
+    private List<PersonaDnaAcre> equipoSubsanado;
+    private PersonaDnaAcre personaSubsanado;
     private Boolean flgFecOrdenanza;
     private Boolean flgNroOrdenanza;
     private Boolean flgDocs;
     private Boolean flgEstadoCons;
+    private Boolean flgAdjuntosObs;
     private String textoBtnEvaluar;
     private Boolean flgDenegarAcreditacion;
     private Boolean flgEdadPersonaObs;
@@ -172,12 +181,13 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
     private String rutaConstancias;
     private PersonaDnaAcre responsable;
     private PersonaDnaAcre personaRemover;
+    private Acreditacion acreditacionVer;
+    private List<PersonaDnaAcre> equipoVer;
+    private PersonaDnaAcre personaVer;
+    private PersonaDnaAcreEval personaEvalVer;
     private List<PersonaDnaAcre> equipoRemover;
     private PersonaDnaAcre personaCorreoValidar;
     private Boolean flgResponsable;
-    private int modo;
-    private Boolean verMensajeOK;
-    private List<Defensoria> resDefensorias;
     
     @EJB
     private AcreditacionFacadeLocal acreditacionFacade;
@@ -192,8 +202,8 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
     private AcreditacionEvalFacadeLocal acreditacionEvalFacade;
     
     @EJB
-    private DefensoriaFacadeLocal defensoriaFacade;
-
+    private InscripcionFacadeLocal inscripcionFacade;
+    
     @EJB
     private ParametroDnaFacadeLocal parametroFacade;
  
@@ -213,13 +223,13 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
     private EstadoUsuarioFacadeLocal fachadaEstadoUsuario;
 
     @EJB
-    private ProvinciaFacadeLocal provinciaFacade;
+    private ProvinciaFacadeLocal fachadaProvincia;
     
     @EJB
-    private DistritoFacadeLocal distritoFacade;
+    private DistritoFacadeLocal fachadaDistrito;
 
     @EJB
-    private DepartamentoFacadeLocal departamentoFacade;
+    private DepartamentoFacadeLocal fachadaDepartamento;
     
     @EJB
     private DocAcreditacionFacadeLocal docFacade;
@@ -232,10 +242,12 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
     
     public AcreditacionAdministrado(){
         this.acreditacion = new Acreditacion();
+        this.acreditacionActualizar = new Acreditacion();
         this.provincias = new ArrayList<>();
         this.distritos = new ArrayList<>();
         this.provinciasDna = new ArrayList<>();
         this.distritosDna = new ArrayList<>();
+        this.verMensajeOK = false;
         this.equipoExterno = new ArrayList<>();
         this.dniValido = false;
         this.showBtnResponsable = false;
@@ -243,20 +255,13 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
         this.lista = new ArrayList<>();
         this.acreditacionEval = new AcreditacionEval();
         this.equipoEval = new ArrayList<>();
+        this.acreditacionAEvaluar = new Acreditacion();
         this.equipoAEvaluar = new ArrayList<>();
         this.txtObsPersonaEval = "";
         this.flgFecOrdenanza = false;
         this.flgNroOrdenanza = false;
         this.flgDocs = false;
         this.flgEstadoCons = false;
-        this.flgDocObs = false;
-        this.flgCorreoObs = false;
-        this.flgDireccionObs = false;
-        this.flgGerenciaObs = false;
-        this.flgDiasHoraObs = false;
-        this.flgPresupuestoObs = false;
-        this.flgNroAmbObs = false;
-        this.flgNroAmbPrivObs = false;
         this.flgAdjuntosObs = false;
         this.textoBtnEvaluar = "";
         this.flgEdadPersonaObs = false;
@@ -269,12 +274,18 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
         this.flgFechaCursoObs = false;
         this.flgInstruccionObs = false;
         this.flgNroColegiaturaObs = false;
-        this.flgNorma = false;
         this.flgDenegarAcreditacion = false;
+        this.listaSubsanar = new ArrayList<>();
+        this.acreditacionSubsanar = new Acreditacion();
+        this.equipoSubsanar = new ArrayList<>();
+        this.equipoSubsanado = new ArrayList<>();
+        this.inscripcionSeleccionada = new Inscripcion();
+        this.inscripcionSeleccionada.setDna(new Defensoria());
+        this.acreditacionVer = new Acreditacion();
+        this.equipoVer = new ArrayList<>();
         this.equipoRemover = new ArrayList<>();
         
         this.flgResponsable = false;
-        this.verMensajeOK = false;
     }
     
      @PostConstruct
@@ -300,29 +311,6 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
         this.initPersona();
     }
     
-       /**
-     * Muestra el título del formulario según el modo
-     * @return el título del modo
-     */
-    public String titulo() {
-        switch(this.modo) {
-            case Constantes.MODO_NUEVO: return "Nueva Solicitud de Acreditación"; 
-            case Constantes.MODO_UPDATE: return "Actualización de Solicitud de Acreditación";
-            case Constantes.MODO_EVALUACION: return "Evaluación de Solicitud de Acreditación";
-            case Constantes.MODO_EVALUACION_SUBSANACION: return "Evaluación de Solicitud de Acreditación Subsanada";
-            case Constantes.MODO_SUBSANAR: return "Subsanar Observaciones";
-            case Constantes.MODO_VER: return "Ver Solicitud de Acreditación";
-        }
-        return "";
-    } 
-   
-    /**
-     * Regresa al modo listado
-     */
-    public void regresar(){this.titulo();
-       this.modo = Constantes.MODO_LISTADO;
-    }
-
       
     /**
      * Inicializar filtros para busqueda
@@ -367,7 +355,7 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
             listaNueva.add(docInscripcion);
             this.adjuntos = listaNueva;
             */
-            adicionarMensaje("","Carga de Archivo: " + event.getFile().getFileName() + " terminado");
+            adicionarMensaje("Carga de Archivo:",event.getFile().getFileName() + " terminado");
             
         } catch(Exception ex) {
             adicionarMensajeError("Error al subir archivo", ex.getMessage());
@@ -388,83 +376,89 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
               throw new ValidatorException(new FacesMessage("El DNI debe tener 8 dígitos"));
 
         if(!dni.equals(this.personaEquipoExterno.getTxtDocumento())) {
-                IdentificacionReniec identificacionReniec = new IdentificacionReniec();
+          
                 Catalogo profesionExterno = this.personaEquipoExterno.getProfesion();
-                
-                /*
                 if(this.personaEquipoExterno.getProfesion() == null || this.personaEquipoExterno.getProfesion().getNidCatalogo() == null){
-                    adicionarMensajeError("Debes escoger la profesión de la persona.","Error");
+                    adicionarMensajeError("Error","Debes escoger la profesión de la persona.");
                     this.initPersona();
                     return;
                 }
-           
+                /*
+                if((!this.personaEquipoExterno.getProfesion().getNidCatalogo().equals(Constantes.CATALOGO_OCUPACION_PSICOLOGO)  
+                        && !this.personaEquipoExterno.getProfesion().getNidCatalogo().equals(Constantes.CATALOGO_OCUPACION_ABOGADO))&& 
+                        this.obtenerResponsableActivoEquipo(this.equipoExterno).getTxtDocumento().equals(dni)){
+                    adicionarMensajeError("Error","El DNI del responsable solo puede ser usado para las profesiones de ABOGADO/A o PSICOLOGO/A.");
+                    this.initPersona();
+                    this.personaEquipoExterno.setProfesion(profesionExterno);
+                    return;
+                }
+                */
                 for(PersonaDnaAcre personal : this.equipoExterno){
                     if(personal.getTxtDocumento().equals(dni) 
-                            && personal.getProfesion().getNidCatalogo().compareTo(this.personaEquipoExterno.getProfesion().getNidCatalogo()) == 0) {
-                        adicionarMensajeError("Ya existe DNI que cumple con la profesión escogida.","Error");
+                            && personal.getProfesion().getNidCatalogo().equals(this.personaEquipoExterno.getProfesion().getNidCatalogo())) {
+                        adicionarMensajeError("Error","Ya existe DNI que cumple con la profesión escogida.");
                         this.initPersona();
                         this.personaEquipoExterno.setProfesion(profesionExterno);
                         return;
                     }
                 }
-             */
+                /*
+                for(PersonaDnaAcre personal : this.equipoExterno){
+                    if(personal.getTxtDocumento().equals(dni) && this.obtenerResponsableActivoEquipo(this.equipoExterno).getTxtDocumento().equals(dni)
+                            && (personal.getProfesion().getNidCatalogo().equals(Constantes.CATALOGO_OCUPACION_ABOGADO) || 
+                            personal.getProfesion().getNidCatalogo().equals(Constantes.CATALOGO_OCUPACION_PSICOLOGO))) {
+                        adicionarMensajeError("Error","El DNI del responsable ya tiene la profesión de ABOGADO/A O PSICOLOGO/A.");
+                        this.initPersona();
+                        this.personaEquipoExterno.setProfesion(profesionExterno);
+                        return;
+                   }
+                }
+                */
                 this.dniValido = false;
                 this.initPersona();
-                  
+              //  ReniecConsultaDniPortType port = service.getReniecConsultaDniHttpsSoap11Endpoint();
+              //  PeticionConsulta datosPersona = new PeticionConsulta();
+                
                 try {
                     
-                 identificacionReniec.obtenerConsultaReniec(dni);
+                 this.identificacionReniec.obtenerConsultaReniec(dni);
                
                 } catch (Exception ex) {
                     throw new ValidatorException(new FacesMessage("Error al consultar el DNI"));
                 }
                 
-                if (identificacionReniec.getNOMBRES() != null) {
+                if (this.identificacionReniec.getNOMBRES() != null) {
                   this.dniValido = true;
                     
                   this.personaEquipoExterno.setTxtDocumento(dni);
-                  this.personaEquipoExterno.setTxtApellidoPaterno(identificacionReniec.getAPPAT());
-                  this.personaEquipoExterno.setTxtApellidoMaterno(identificacionReniec.getAPMAT());
-                  this.separarNombres(identificacionReniec.getNOMBRES()); 
-                  this.personaEquipoExterno.setTxtDireccion(identificacionReniec.getDIRECCION());
-                  
-                  
-                     
-                String[] ubigeo = identificacionReniec.getUBIGEO().split("/");
-                List<Departamento> ldep = departamentoFacade.findAllByField("txtDescripcion", ubigeo[0]);
-                if(!ldep.isEmpty()) {
-
-                    this.personaEquipoExterno.setNidDepartamento(ldep.get(0).getNidDepartamento());
-                    this.obtenerProvinciasDna();
-
-                    if(this.personaEquipoExterno.getNidDepartamento().compareTo(BigDecimal.valueOf((long)7))==0) {
-                        this.personaEquipoExterno.setNidProvincia(BigDecimal.valueOf((long)67));
-                        this.obtenerDistritosDna();
-
-                        List<Distrito> ldist = distritoFacade.findAllByField("txtDescripcion", ubigeo[1]);
-                        if(!ldist.isEmpty())
-                            this.personaEquipoExterno.setNidDistrito(ldist.get(0).getNidDistrito());
-
-                    } else {
-
-                        List<Provincia> lprov = provinciaFacade.findAllByField("txtDescripcion", ubigeo[1]);
-                        if(!lprov.isEmpty()) {
-                            this.personaEquipoExterno.setNidProvincia(lprov.get(0).getNidProvincia());
-                            this.obtenerDistritosDna();
-                        }
-                        List<Distrito> ldist = distritoFacade.findAllByField("txtDescripcion", ubigeo[2]);
-                        if(!ldist.isEmpty())
-                            this.personaEquipoExterno.setNidDistrito(ldist.get(0).getNidDistrito());
-
-                   }
-                }
-                    
+                  this.personaEquipoExterno.setTxtApellidoPaterno(this.identificacionReniec.getAPPAT());
+                  this.personaEquipoExterno.setTxtApellidoMaterno(this.identificacionReniec.getAPMAT());
+                  this.separarNombres(this.identificacionReniec.getNOMBRES()); 
+                  this.personaEquipoExterno.setTxtDireccion(this.identificacionReniec.getDIRECCION());
                   
 
                 }  else {
                      throw new ValidatorException(new FacesMessage("El DNI ingresado no existe"));
                 }
-              
+                /*
+                datosPersona.setNuDniConsulta(dni);
+                datosPersona.setNuDniUsuario(Constantes.RENIEC_DNI);
+                datosPersona.setNuRucUsuario(Constantes.RENIEC_RUC);
+                datosPersona.setPassword(Constantes.RENIEC_PASSWORD); 
+                ResultadoConsulta result = port.consultar(datosPersona);
+                if(result.getCoResultado().equals(Constantes.RENIEC_OK)) {
+                  this.dniValido = true;
+                  this.personaEquipoExterno.setTxtDocumento(datosPersona.getNuDniConsulta());
+                  this.personaEquipoExterno.setTxtApellidoPaterno(result.getDatosPersona().getApPrimer());
+                  this.personaEquipoExterno.setTxtApellidoMaterno(result.getDatosPersona().getApSegundo());
+                  this.separarNombres(result.getDatosPersona().getPrenombres()); 
+                  this.personaEquipoExterno.setTxtDireccion(result.getDatosPersona().getDireccion());
+                }  else {
+                     throw new ValidatorException(new FacesMessage("El DNI ingresado no existe"));
+                }
+                */
+           
+            
         }
 
     }
@@ -511,13 +505,55 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
      * Inicializar personas
      */
     public void initPersona() {
+        this.personaDna = new PersonaDnaAcre();
+        this.personaDna.setFuncion(new Catalogo());
+        this.personaDna.setProfesion(new Catalogo());
         this.personaEquipoExterno = new PersonaDnaAcre();
+        this.personaEquipoExterno.setFuncion(new Catalogo());
+        this.personaEquipoExterno.setNidDepartamento(BigDecimal.ZERO);
+        this.personaEquipoExterno.setNidProvincia(BigDecimal.ZERO);
+        this.personaEquipoExterno.setNidDistrito(BigDecimal.ZERO);
+        this.personaEquipoExterno.setProfesion(new Catalogo());
+        this.personaExternoActualizar = new PersonaDnaAcre();
+        this.personaExternoActualizar.setFuncion(new Catalogo());
+        this.personaExternoActualizar.setNidDepartamento(BigDecimal.ZERO);
+        this.personaExternoActualizar.setNidProvincia(BigDecimal.ZERO);
+        this.personaExternoActualizar.setNidDistrito(BigDecimal.ZERO);
+        this.personaExternoActualizar.setProfesion(new Catalogo());
         this.showBtnResponsable = false;
         this.personaActualizar = new PersonaDnaAcre();
+        this.personaActualizar.setFuncion(new Catalogo());
+        this.personaActualizar.setNidDepartamento(BigDecimal.ZERO);
+        this.personaActualizar.setNidProvincia(BigDecimal.ZERO);
+        this.personaActualizar.setNidDistrito(BigDecimal.ZERO);
+        this.personaActualizar.setProfesion(new Catalogo());
         this.clonePersonaEval =  new PersonaDnaAcreEval();
+        this.clonePersonaEval.setFuncion(new Catalogo());
         this.personaEval =  new PersonaDnaAcreEval();
+        this.personaEval.setFuncion(new Catalogo());
+        this.personaEval.setNidDepartamento(BigDecimal.ZERO);
+        this.personaEval.setNidProvincia(BigDecimal.ZERO);
+        this.personaEval.setNidDistrito(BigDecimal.ZERO);
+        this.personaEvaluar = new PersonaDnaAcre();
+        this.personaEvaluar.setFuncion(new Catalogo());
+        this.personaEvaluar.setNidDepartamento(BigDecimal.ZERO);
+        this.personaEvaluar.setNidProvincia(BigDecimal.ZERO);
+        this.personaEvaluar.setNidDistrito(BigDecimal.ZERO);
+        this.personaSubsanar = new PersonaDnaAcre();
+        this.personaSubsanar.setFuncion(new Catalogo());
+        this.personaSubsanar.setNidDepartamento(BigDecimal.ZERO);
+        this.personaSubsanar.setNidProvincia(BigDecimal.ZERO);
+        this.personaSubsanar.setNidDistrito(BigDecimal.ZERO);
+        this.personaSubsanar.setProfesion(new Catalogo());
+        this.personaSubsanado =  new PersonaDnaAcre();
+        this.personaSubsanado.setFuncion(new Catalogo());
+        this.personaSubsanado.setNidDepartamento(BigDecimal.ZERO);
+        this.personaSubsanado.setNidProvincia(BigDecimal.ZERO);
+        this.personaSubsanado.setNidDistrito(BigDecimal.ZERO);
+        this.personaVer = new PersonaDnaAcre();
+        this.personaVer.setFuncion(new Catalogo());
         this.personaRemover =new PersonaDnaAcre();
-     
+        this.personaRemover.setFuncion(new Catalogo());
     } 
     
     
@@ -535,16 +571,59 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
         }
         return  listaFiltrada;
     }
-
+   
+    /**
+     * Obtener lista de grados de instrucción
+     * @return lista de Grados de instrucción
+     */
+    public List<Catalogo> obtenerGradoInstruccion() {
+        List<Catalogo> listaCatalogos = this.catalogoFacade.findAllByFieldOrder("nidPadre", Constantes.CATALOGO_GRADO_INSTRUCCION,true, "txtNombre", false); 
+        return  listaCatalogos;
+    }
+    
+    /**
+     * Obtener nombre departamento
+     * @return String
+     */
+    public String getNombreDepartamento() { 
+        try{
+            return (this.inscripcionSeleccionada.getDna().getNidDepartamento()!=null)?fachadaDepartamento.find(this.inscripcionSeleccionada.getDna().getNidDepartamento()).getTxtDescripcion():"";
+        }catch(Exception ex){
+            return "";
+        }
+    }
+    
+    /**
+     * Obtener nombre de provincia
+     * @return String
+     */
+    public String getNombreProvincia() {
+        try{
+            return (this.inscripcionSeleccionada.getDna().getNidProvincia()!=null)?fachadaProvincia.find(this.inscripcionSeleccionada.getDna().getNidProvincia()).getTxtDescripcion():"";
+        }catch(Exception ex){
+            return "";
+        }
+    }
+    
+    /**
+     * Obtener nombre usuario
+     * @return String
+     */
+    public String getNombreDistrito() {
+        try{
+            return (this.inscripcionSeleccionada.getDna().getNidDistrito()!=null)?fachadaDistrito.find(this.inscripcionSeleccionada.getDna().getNidDistrito()).getTxtDescripcion():"";
+        }catch(Exception ex){
+            return "";
+        }
+    }
     
     /**
      * Obtener nombre de departamento externo
-     * @param nid
-     * @return 
+     * @return String
      */
-    public String getNombreDepartamento(BigDecimal nid) { 
+    public String getNombreDepartamentoExterno() { 
         try{
-            return (nid!=null)?departamentoFacade.find(nid).getTxtDescripcion():"";
+            return (this.inscripcionSeleccionada.getDna().getNidDepartamento()!=null)?fachadaDepartamento.find(this.inscripcionSeleccionada.getDna().getNidDepartamento()).getTxtDescripcion():"";
         }catch(Exception ex){
             return "";
         }
@@ -552,12 +631,11 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
     
     /**
      * Obtener nombre de provincia Externo
-     * @param nid
      * @return String
      */
-    public String getNombreProvincia(BigDecimal nid) {
+    public String getNombreProvinciaExterno() {
         try{
-            return (nid!=null)?provinciaFacade.find(nid).getTxtDescripcion():"";
+            return (this.inscripcionSeleccionada.getDna().getNidProvincia()!=null)?fachadaProvincia.find(this.inscripcionSeleccionada.getDna().getNidProvincia()).getTxtDescripcion():"";
         }catch(Exception ex){
             return "";
         }
@@ -565,12 +643,11 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
     
     /**
      * Obtener nombre de distrito externo
-     * @param nid
      * @return String
      */
-    public String getNombreDistrito(BigDecimal nid) {
+    public String getNombreDistritoExterno() {
         try{
-            return (nid!=null)?distritoFacade.find(nid).getTxtDescripcion():"";
+            return (this.inscripcionSeleccionada.getDna().getNidDistrito()!=null)?fachadaDistrito.find(this.inscripcionSeleccionada.getDna().getNidDistrito()).getTxtDescripcion():"";
         }catch(Exception ex){
             return "";
         }
@@ -597,7 +674,7 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
      * @return lista de departamentos
      */
     public List<Departamento> obtenerDepartamentos() {
-        return  departamentoFacade.obtenerDepartamentos();
+        return  fachadaDepartamento.obtenerDepartamentos();
     }
     
     /**
@@ -605,8 +682,8 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
      */
     public void obtenerProvincias() {
         Departamento departamento = new Departamento();
-        departamento.setNidDepartamento(this.acreditacion.getDna().getNidDepartamento());
-        this.provincias = provinciaFacade.obtenerProvincias(departamento);
+        departamento.setNidDepartamento(this.inscripcionSeleccionada.getDna().getNidDepartamento());
+        this.provincias = fachadaProvincia.obtenerProvincias(departamento);
     }
     
     /**
@@ -614,8 +691,8 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
      */
     public void obtenerDistritos() {
         Provincia provincia = new Provincia();
-        provincia.setNidProvincia(this.acreditacion.getDna().getNidProvincia());
-        this.distritos = distritoFacade.obtenerDistritos(provincia);
+        provincia.setNidProvincia(this.inscripcionSeleccionada.getDna().getNidProvincia());
+        this.distritos = fachadaDistrito.obtenerDistritos(provincia);
     }
     
     /**
@@ -624,7 +701,7 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
     public void obtenerProvinciasBus() {
         Departamento departamento = new Departamento();
         departamento.setNidDepartamento(this.busDepartamento);
-        this.provinciasBus = provinciaFacade.obtenerProvincias(departamento);
+        this.provinciasBus = fachadaProvincia.obtenerProvincias(departamento);
     }
     
     /**
@@ -633,10 +710,26 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
     public void obtenerDistritosBus() {
         Provincia provincia = new Provincia();
         provincia.setNidProvincia(this.busProvincia);
-        this.distritosBus = distritoFacade.obtenerDistritos(provincia);
+        this.distritosBus = fachadaDistrito.obtenerDistritos(provincia);
     }
     
+    /**
+     * Obtener provincias
+     */
+    public void obtenerProvinciasDnaExterno() {
+        Departamento departamento = new Departamento();
+        departamento.setNidDepartamento(this.personaEquipoExterno.getNidDepartamento());
+        this.provinciasDna = fachadaProvincia.obtenerProvincias(departamento);
+    }
     
+    /**
+     * Obtener distritos
+     */
+    public void obtenerDistritosDnaExterno() {
+        Provincia provincia = new Provincia();
+        provincia.setNidProvincia(this.personaEquipoExterno.getNidProvincia());
+        this.distritosDna = fachadaDistrito.obtenerDistritos(provincia);
+    }
     
     /**
      * Verificar Inpe
@@ -646,14 +739,12 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
     public String verificarInpeJudiciales(PersonaDnaAcre personalDna) {
         String result = "";
         try { 
-
-            AntecedenteJudicial antecedenteJudicial = new AntecedenteJudicial();
             String apepat = personalDna.getTxtApellidoPaterno();
             String apemat = personalDna.getTxtApellidoMaterno();
-            String nombres = personalDna.getApellidosNombres();
+            String nombres = personalDna.getTxtNombres();
             
-            antecedenteJudicial.obtenerAntJudicial(apepat, apemat, nombres);
-            return antecedenteJudicial.getRESPUESTA();
+            this.antecedenteJudicial.obtenerAntJudicial(apepat, apemat, nombres);
+            return this.antecedenteJudicial.getRESPUESTA();
             
         } catch (Exception ex) {
             // TODO handle custom exceptions here
@@ -669,9 +760,7 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
     public String verificarPJPenales(PersonaDnaAcre personalDna){
         
         try { 
-                      
-             AntecedentePenal antecedentePenal = new AntecedentePenal();
-
+          
             String xApellidoPaterno = personalDna.getTxtApellidoPaterno();
             String xApellidoMaterno = personalDna.getTxtApellidoMaterno();
             String xNombre1 = personalDna.getTxtNombre1();
@@ -679,8 +768,8 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
             String xNombre3 = (personalDna.getTxtNombre3()!=null)?personalDna.getTxtNombre3():"";
             String xDni = personalDna.getTxtDocumento();
             
-            antecedentePenal.obtenerAntPenal(xApellidoPaterno, xApellidoMaterno, xNombre1, xNombre2, xNombre3, xDni);
-            return antecedentePenal.getRESPUESTA();
+            this.antecedentePenal.obtenerAntPenal(xApellidoPaterno, xApellidoMaterno, xNombre1, xNombre2, xNombre3, xDni);
+            return this.antecedentePenal.getRESPUESTA();
       
         } catch (Exception ex) {
             Logger.getLogger(Thread.currentThread().getStackTrace()[1].getMethodName()).log(Level.SEVERE, null, ex);
@@ -699,9 +788,9 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
         String vDNI = personalDna.getTxtDocumento();
         
         try {
-            AntecedentePolicial antecedentePolicial = new AntecedentePolicial();
-            antecedentePolicial.obtenerAntPolicial(vDNI);
-            return antecedentePolicial.getRESPUESTA();
+        
+            this.antecedentePolicial.obtenerAntPolicial(vDNI);
+            return this.antecedentePolicial.getRESPUESTA();
             
         } catch (Exception e) {
             return "ERROR";
@@ -726,28 +815,27 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
      * busca las DNA con estado NUEVO para la inscripción externa
      */
     public void buscarExterno() {   
-        
-        this.resDefensorias = null;
+        this.inscripcionSeleccionada = null;
         this.acreditacion = new Acreditacion();
         
         if(this.indexTab == 0 && this.busCodigo!=null ) {
-             this.resDefensorias = this.defensoriaFacade.filtrarPorConstancia( this.busCodigo, Constantes.CATALOGO_DNA_INSCRITA);
+             this.inscripcionesEncontradas = this.inscripcionFacade.filtrarPorConstancia( this.busCodigo, Constantes.CATALOGO_ESTADO_INSCRITA);
         }
 
         if(this.indexTab == 1) {
             if(this.busDepartamento!=null){
-                this.resDefensorias = this.defensoriaFacade.filtrarDepartamentos(this.busDepartamento , Constantes.CATALOGO_DNA_INSCRITA);
+                this.inscripcionesEncontradas = this.inscripcionFacade.filtrarDepartamentos(this.busDepartamento , Constantes.CATALOGO_ESTADO_INSCRITA);
                 return;
             }
             if(this.busProvincia!=null){
-                this.resDefensorias = this.defensoriaFacade.filtrarProvincias(this.busProvincia , Constantes.CATALOGO_DNA_INSCRITA);
+                this.inscripcionesEncontradas = this.inscripcionFacade.filtrarProvincias(this.busProvincia , Constantes.CATALOGO_ESTADO_INSCRITA);
                 return;
             }
             if(this.busDistrito!=null){
-                this.resDefensorias = this.defensoriaFacade.filtrarDistritos(this.busDistrito , Constantes.CATALOGO_DNA_INSCRITA);
+                this.inscripcionesEncontradas = this.inscripcionFacade.filtrarDistritos(this.busDistrito , Constantes.CATALOGO_ESTADO_INSCRITA);
             }
         }
-         
+          
     }
     
     /**
@@ -755,32 +843,41 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
      */
     public void buscar() {
         
+        this.inscripcionSeleccionada = null;
         this.acreditacion = new Acreditacion();
        
         ParametroNodoObject param = new ParametroNodoObject();
-
+                
         if(this.busTipo.equals("1")) {
-            Catalogo estadoBus = new Catalogo();
-            estadoBus.setNidCatalogo(Constantes.CATALOGO_DNA_INSCRITA);
-            param.adicionar("estado", estadoBus);
-            
+      
             if(this.indexTab == 0 && this.busCodigo!=null ) {
-                this.listaDefensoria = this.defensoriaFacade.findAllByField("txtConstancia", this.busCodigo);
-                return;
+                 this.inscripcionesEncontradas = this.inscripcionFacade.filtrarPorConstancia(this.busCodigo, Constantes.CATALOGO_ESTADO_INSCRITA);
+                 return;
             }
-            
+
             if(this.indexTab == 1) {
-                if(this.busDepartamento!=null) 
-                    param.adicionar("nidDepartamento", this.busDepartamento);
-                if(this.busProvincia!=null)
-                    param.adicionar("nidProvincia", this.busProvincia);
-                if(this.busDistrito!=null)
-                    param.adicionar("nidDistrito", this.busDistrito);
+                if(this.busDepartamento!=null){
+                    this.inscripcionesEncontradas = this.inscripcionFacade.filtrarDepartamentos(this.busDepartamento , Constantes.CATALOGO_ESTADO_INSCRITA);
+                    return;
+                }
+                if(this.busProvincia!=null){
+                    this.inscripcionesEncontradas = this.inscripcionFacade.filtrarProvincias(this.busProvincia , Constantes.CATALOGO_ESTADO_INSCRITA);
+                    return;
+                }
+                if(this.busDistrito!=null){
+                    this.inscripcionesEncontradas = this.inscripcionFacade.filtrarDistritos(this.busDistrito , Constantes.CATALOGO_ESTADO_INSCRITA);
+                    return;
+                }
             }
-           
-            if(param.getParametros().size()>0) 
-               this.listaDefensoria = this.defensoriaFacade.obtenerPorParametrosObject(param, true, "txtNombre", true);
-            
+
+            if(this.indexTab == 2 && this.busEstado!=null) {
+                Catalogo estadoBus = new Catalogo();
+                estadoBus.setNidCatalogo(this.busEstado);
+                param.adicionar("estado", estadoBus);
+            }
+            if(param.getParametros().size()>0)
+                this.lista = this.acreditacionFacade.obtenerPorParametrosObject(param, true, "fecRegistro", true);
+
         } else {
         
             if(this.indexTab == 0 && this.busCodigo!=null ) {
@@ -816,20 +913,16 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
     
     /**
      * Generar acreditacion
-     * @param dna
+     * @param inscripcion - Inscripcion
      */
-    public void generarAcreditacionExterna(Defensoria dna) {
-        this.modo = Constantes.MODO_NUEVO;
+    public void generarAcreditacionExterna(Inscripcion inscripcion) {
+        this.inscripcionSeleccionada = inscripcion;
         this.acreditacion = new Acreditacion();
-        this.acreditacion.setDna(dna);
-        this.acreditacion.setTxtConstancia(dna.getTxtConstancia());
-        this.acreditacion.setTxtDireccion(dna.getDefensoriaInfo().getTxtDireccion());
-        this.acreditacion.setDias(dna.getDefensoriaInfo().getDias());
-        this.acreditacion.setTxtCorreo(dna.getDefensoriaInfo().getTxtCorreo());
-        this.acreditacion.setTxtTelefono(dna.getDefensoriaInfo().getTxtTelefono());
-        this.acreditacion.setTxtGerencia(dna.getDefensoriaInfo().getTxtGerencia());
-        this.acreditacion.setAmbientes(dna.getDefensoriaInfo().getAmbientes());
-        this.acreditacion.setAmbientesPriv(dna.getDefensoriaInfo().getAmbientesPriv());
+        this.acreditacion.setPadre(this.inscripcionSeleccionada);
+        if(this.inscripcionSeleccionada.getDna().getTxtConstancia() != null)this.acreditacion.setTxtConstancia(this.inscripcionSeleccionada.getDna().getTxtConstancia());
+        this.acreditacion.setNidDepartamento(this.inscripcionSeleccionada.getDna().getNidDepartamento());
+        this.acreditacion.setNidProvincia(this.inscripcionSeleccionada.getDna().getNidProvincia());
+        this.acreditacion.setNidDistrito(this.inscripcionSeleccionada.getDna().getNidDistrito());
         this.equipoExterno =  new ArrayList<>();
         this.adjuntos = new ArrayList<>();
         List<Catalogo> listaDoc = this.catalogoFacade.findAllByFieldOrder("nidPadre", Constantes.CATALOGO_DOCUMENTO_ACREDITACION,true, "txtNombre", false);
@@ -838,7 +931,7 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
             docACre.setTipo(docAd);
             this.adjuntos.add(docACre);
         }
-        DefensoriaPersona responsableAux = this.obtenerResponsableActivoPersonal(dna.getListaPersonaDna());
+        PersonaDna responsableAux = this.obtenerResponsableActivoPersonal(this.inscripcionSeleccionada.getPersonal());
         if(responsableAux !=  null){
             PersonaDnaAcre responsableAcre = this.crearPersonaDnaAcre(responsableAux);
             this.equipoExterno.add(responsableAcre);
@@ -850,7 +943,7 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
      * @param persona - PersonaDna
      * @return PersonaDnaAcre
      */
-    private PersonaDnaAcre crearPersonaDnaAcre(DefensoriaPersona persona){
+    private PersonaDnaAcre crearPersonaDnaAcre(PersonaDna persona){
         PersonaDnaAcre personaDnaAcre = new PersonaDnaAcre();
         personaDnaAcre.setEdad(persona.getEdad());
         personaDnaAcre.setTxtDocumento(persona.getTxtDocumento());
@@ -858,7 +951,7 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
         personaDnaAcre.setNidDepartamento(persona.getNidDepartamento());
         personaDnaAcre.setNidProvincia(persona.getNidProvincia());
         personaDnaAcre.setNidDistrito(persona.getNidDistrito());
-        personaDnaAcre.setInstruccion(persona.getInstruccion());
+        personaDnaAcre.setNidInstruccion(persona.getNidInstruccion());
         personaDnaAcre.setTxtApellidoMaterno(persona.getTxtApellidoMaterno());
         personaDnaAcre.setTxtApellidoPaterno(persona.getTxtApellidoPaterno());
         personaDnaAcre.setTxtNombre1(persona.getTxtNombre1());
@@ -926,74 +1019,73 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
         
         if(acreditacion != null){
             
-        
-                Defensoria dna = acreditacion.getDna();
-                if(dna.getTxtNombre() != null)salida.setNombreDemuna(dna.getTxtNombre());
-                if(dna.getTxtEntidad() != null)salida.setMunicipalidad(dna.getTxtEntidad());
+            if(acreditacion.getPadre() != null){
+                Inscripcion padre = acreditacion.getPadre();
+                if(padre.getDna().getTxtNombre() != null)salida.setNombreDemuna(padre.getDna().getTxtNombre());
+                if(padre.getDna().getTxtEntidad() != null)salida.setMunicipalidad(padre.getDna().getTxtEntidad());
                 
                 String nroConstancia = "00000";
-                if(dna.getTxtConstancia() != null){
-                    nroConstancia = dna.getTxtConstancia();
+                if(padre.getDna().getTxtConstancia() != null){
+                    nroConstancia = padre.getDna().getTxtConstancia();
                 }
-                
-                salida.setNroInscripcion(nroConstancia);
-                if(acreditacion.getAmbientes() != null)salida.setNroAmbientes(acreditacion.getAmbientes().toString());
-                if(acreditacion.getAmbientesPriv()!= null)salida.setNroAmbientesPrivados(acreditacion.getAmbientesPriv().toString());
-                if(acreditacion.getTxtTelefono() != null)salida.setTelefono(acreditacion.getTxtTelefono());
-                if(acreditacion.getTxtDireccion()!= null)salida.setDireccion(acreditacion.getTxtDireccion());
-                if(acreditacion.getTxtCorreo()!= null)salida.setEmailContacto(acreditacion.getTxtCorreo());
-                if(acreditacion.getTxtGerencia() != null)salida.setOrganoPerteneceDemuna(acreditacion.getTxtGerencia());
-                if(acreditacion.getDias() != null)salida.setDiasHorasAtencion(acreditacion.getDias());
+                if(padre.getNidInscripcion() != null)salida.setNroInscripcion(nroConstancia);
+                if(padre.getAmbientes() != null)salida.setNroAmbientes(padre.getAmbientes().toString());
+                if(padre.getAmbientesPriv()!= null)salida.setNroAmbientesPrivados(padre.getAmbientesPriv().toString());
+                if(padre.getTxtTelefono() != null)salida.setTelefono(padre.getTxtTelefono());
+                if(padre.getTxtDireccion()!= null)salida.setDireccion(padre.getTxtDireccion());
+                if(padre.getTxtCorreo()!= null)salida.setEmailContacto(padre.getTxtCorreo());
+                if(padre.getTxtGerencia() != null)salida.setOrganoPerteneceDemuna(padre.getTxtGerencia());
+                if(padre.getDias() != null)salida.setDiasHorasAtencion(padre.getDias());
                
-                if(dna.getNidDepartamento() != null){
-                    salida.setDepartamento(this.departamentoFacade.find(dna.getNidDepartamento()).getTxtDescripcion());
+                if(padre.getDna().getNidDepartamento() != null){
+                    salida.setDepartamento(this.fachadaDepartamento.find(padre.getDna().getNidDepartamento()).getTxtDescripcion());
                 }
-                if(dna.getNidProvincia()!= null){
-                    salida.setProvincia(this.provinciaFacade.find(dna.getNidProvincia()).getTxtDescripcion());
+                if(padre.getDna().getNidProvincia()!= null){
+                    salida.setProvincia(this.fachadaProvincia.find(padre.getDna().getNidProvincia()).getTxtDescripcion());
                 }
-                if(dna.getNidDistrito()!= null){
-                    salida.setDistrito(this.distritoFacade.find(dna.getNidDistrito()).getTxtDescripcion());
+                if(padre.getDna().getNidDistrito()!= null){
+                    salida.setDistrito(this.fachadaDistrito.find(padre.getDna().getNidDistrito()).getTxtDescripcion());
                 }
+            }
+            String date = DnaUtil.obtenerFecha(acreditacion.getFecRegistro());
+            salida.setFecha("Fecha : " + date);
+            String txtFecNroOrdenanza = DnaUtil.obtenerFecha(acreditacion.getFecOrdenanza());
+            if(acreditacion.getTxtNroOrdenanza()!= null){
+                txtFecNroOrdenanza = txtFecNroOrdenanza + " " + acreditacion.getTxtNroOrdenanza();
+            }
+            salida.setFechaNroOrdenanza(txtFecNroOrdenanza);
+            if(acreditacion.getTxtNorma()!= null)salida.setNormaArtOrdenanza(acreditacion.getTxtNorma());
             
-                String date = DnaUtil.obtenerFecha(acreditacion.getFecRegistro());
-                salida.setFecha("Fecha : " + date);
-                String txtFecNroOrdenanza = DnaUtil.obtenerFecha(acreditacion.getFecOrdenanza());
-                if(acreditacion.getTxtDocumento()!= null){
-                    txtFecNroOrdenanza = txtFecNroOrdenanza + " " + acreditacion.getTxtDocumento();
-                }
-                salida.setFechaNroOrdenanza(txtFecNroOrdenanza);
-                if(acreditacion.getTxtNorma()!= null)salida.setNormaArtOrdenanza(acreditacion.getTxtNorma());
-
-                if(acreditacion.getFlgEquipoComputo())salida.setConEquipoDeComputo("X");
-                else salida.setSinEquipoDeComputo("X");
-
-                if(acreditacion.getFlgImpresora())salida.setConImpresora("X");
-                else salida.setSinImpresora("X");
-
-                if(acreditacion.getFlgInternet())salida.setConInternet("X");
-                else salida.setSinInternet("X");
-
-                if(acreditacion.getFlgArchivadores())salida.setConArchivadoresSeguros("X");
-                else salida.setSinArchivadoresSeguros("X");
-
-                if(acreditacion.getFlgAccesibilidad())salida.setConAccesibilidad("X");
-                else salida.setSinAccesibilidad("X");
-
-                if(acreditacion.getFlgAreaLudica())salida.setConAreaLudica("X");
-                else salida.setSinAreaLudica("X");
-
-                switch (acreditacion.getTxtEstadoCons()) {
-                    case Constantes.ESTADO_CONSERVACION_BUENO:
-                        salida.setConEstadoBueno("X");
-                        break;
-                    case Constantes.ESTADO_CONSERVACION_REGULAR:
-                        salida.setConEstadoRegular("X");
-                        break;
-                    default:
-                        salida.setConEstadoMalo("X");
-                        break;
-                }
-
+            if(acreditacion.getFlgEquipoComputo())salida.setConEquipoDeComputo("X");
+            else salida.setSinEquipoDeComputo("X");
+            
+            if(acreditacion.getFlgImpresora())salida.setConImpresora("X");
+            else salida.setSinImpresora("X");
+            
+            if(acreditacion.getFlgInternet())salida.setConInternet("X");
+            else salida.setSinInternet("X");
+            
+            if(acreditacion.getFlgArchivadores())salida.setConArchivadoresSeguros("X");
+            else salida.setSinArchivadoresSeguros("X");
+            
+            if(acreditacion.getFlgAccesibilidad())salida.setConAccesibilidad("X");
+            else salida.setSinAccesibilidad("X");
+            
+            if(acreditacion.getFlgAreaLudica())salida.setConAreaLudica("X");
+            else salida.setSinAreaLudica("X");
+            
+            switch (acreditacion.getTxtEstadoCons()) {
+                case Constantes.ESTADO_CONSERVACION_BUENO:
+                    salida.setConEstadoBueno("X");
+                    break;
+                case Constantes.ESTADO_CONSERVACION_REGULAR:
+                    salida.setConEstadoRegular("X");
+                    break;
+                default:
+                    salida.setConEstadoMalo("X");
+                    break;
+            }
+            
             if(acreditacion.getEquipo() != null){
                 for(PersonaDnaAcre persona : acreditacion.getEquipo()){
                     if(persona.getFlgActivo().equals(BigInteger.ONE)){
@@ -1091,9 +1183,9 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
         salida.setColegiatura(persona.getTxtColegiatura()!= null ? persona.getTxtColegiatura() : "");
         salida.setColegio(persona.getTxtColegio()!= null ? persona.getTxtColegio() : "");
         salida.setCorreo(persona.getTxtCorreo()!= null ? persona.getTxtCorreo() : "");
-        salida.setDepartamento(persona.getNidDepartamento()!= null ? this.departamentoFacade.find(persona.getNidDepartamento()).getTxtDescripcion() : "");
-        salida.setProvincia(persona.getNidProvincia()!= null ? this.provinciaFacade.find(persona.getNidProvincia()).getTxtDescripcion() : "");
-        salida.setDistrito(persona.getNidDistrito()!= null ? this.distritoFacade.find(persona.getNidDistrito()).getTxtDescripcion() : "");
+        salida.setDepartamento(persona.getNidDepartamento()!= null ? this.fachadaDepartamento.find(persona.getNidDepartamento()).getTxtDescripcion() : "");
+        salida.setProvincia(persona.getNidProvincia()!= null ? this.fachadaProvincia.find(persona.getNidProvincia()).getTxtDescripcion() : "");
+        salida.setDistrito(persona.getNidDistrito()!= null ? this.fachadaDistrito.find(persona.getNidDistrito()).getTxtDescripcion() : "");
         salida.setDireccion(persona.getTxtDireccion()!= null ? persona.getTxtDireccion() : "");
         salida.setDni(persona.getTxtDocumento()!= null ? persona.getTxtDocumento() : "");
         String date = "____";
@@ -1103,9 +1195,8 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
         salida.setFechaCurso(date);
         salida.setFuncion(persona.getFuncion() != null ? persona.getFuncion().getTxtNombre() : "");
         String gradoInstruccion = "";
-        if(persona.getInstruccion() != null){
-            //gradoInstruccion = this.catalogoFacade.find(BigInteger.valueOf(persona.getNidInstruccion())).getTxtNombre();
-            gradoInstruccion = persona.getInstruccion().getTxtNombre();
+        if(persona.getNidInstruccion() != null){
+            gradoInstruccion = this.catalogoFacade.find(BigInteger.valueOf(persona.getNidInstruccion())).getTxtNombre();
         }
         salida.setGradoInstruccion(gradoInstruccion);
         salida.setLugarCurso(persona.getTxtLugarCurso()!= null ? persona.getTxtLugarCurso() : "____");
@@ -1135,22 +1226,18 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
     private Boolean validarDocumentosAdjuntos(){
         try {
             Boolean salida = true;
+            UsuarioAdministrado usuarioAdministrado = (UsuarioAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{usuarioAdministrado}", UsuarioAdministrado.class);
             for(DocAcreditacion doc : this.adjuntos) {
                 if(doc.getTxtNombre()==null){
                      salida = false;
                      break;
                 }
-             
                 doc.setAcreditacion(this.acreditacion);
+                doc.setNidUsuarioReg(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
                 doc.setTxtPc(Internet.obtenerNombrePC());
                 doc.setTxtIp(Internet.obtenerIPPC());
                 doc.setFecRegistro(new Date());
                 doc.setFlgActivo(BigInteger.ONE);
-                
-                UsuarioAdministrado usuarioAdministrado = (UsuarioAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{usuarioAdministrado}", UsuarioAdministrado.class);
-                if(usuarioAdministrado!=null) 
-                    doc.setNidUsuarioReg(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
-             
             }
             return salida;
         }catch(Exception ex){
@@ -1158,15 +1245,6 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
         }
     }
     
-       /**
-      * Genera la contraseña del usuario
-      * @return la contraseña
-      */
-     public String generaPassword() {
-         return PasswordUtil.generatePassword(2, PasswordUtil.ALPHA_CAPS) + PasswordUtil.generatePassword(2, PasswordUtil.ALPHA) + PasswordUtil.generatePassword(2, PasswordUtil.SPECIAL_CHARS) + PasswordUtil.generatePassword(2, PasswordUtil.NUMERIC);
-            
-     }
-   
     /**
      * Crear acreditacion
      */
@@ -1198,40 +1276,21 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
             this.acreditacion.setFecRegistro(new Date());
             this.acreditacion.setFlgActivo(BigInteger.ONE);
             this.acreditacion.setEquipo(this.equipoExterno);
-            this.acreditacion.setNidUsuario(this.acreditacion.getDna().getDefensoriaInfo().getNidUsuario());
+            this.acreditacion.setNidUsuario(this.inscripcionSeleccionada.getNidUsuario());
             this.acreditacion.setDocumentos(this.adjuntos);
             Catalogo estado = new Catalogo();
             estado.setNidCatalogo(Constantes.CATALOGO_ESTADO_POR_EVALUAR);
             this.acreditacion.setEstado(estado);
-          
-            String pass = this.generaPassword();
-            this.responsable = this.obtenerResponsableActivoEquipo(acreditacion.getEquipo());
-           
-            boolean creaUsuarioResponsable = false;
-            
-            if(this.seDebeCambiarDeUsuario(this.acreditacion)) {
-                this.cambiarResponsable(this.acreditacion, pass);
-                creaUsuarioResponsable = true;
-            }
-            if(acreditacion.getNidUsuario() == null) {
-                 Usuario usuarioNuevo = this.crearUsuario(pass);
-                 acreditacion.setNidUsuario(usuarioNuevo.getNidUsuario());
-                 creaUsuarioResponsable = true;
-            }
-
+            this.inscripcionSeleccionada.setFlagAcredita(BigInteger.ONE);
+            if(this.seDebeCambiarDeUsuario(this.acreditacion, this.inscripcionSeleccionada)) this.cambiarResponsable(this.equipoExterno, this.acreditacion, this.inscripcionSeleccionada);
+            if(this.seDebeCrearUsuario(this.acreditacion))this.crearUsuario(this.equipoExterno, this.acreditacion, this.inscripcionSeleccionada);
+            this.inscripcionFacade.edit(this.inscripcionSeleccionada);
             this.acreditacionFacade.create(this.acreditacion);
-            this.modo = Constantes.MODO_LISTADO;
             this.verMensajeOK = true;
-            
-            adicionarMensaje("","La solicitud de acreditación ha sido registrada exitósamente");
-            if( creaUsuarioResponsable )
-                 this.enviarCorreo(this.responsable, pass);
-            
         } catch (Exception e) {
             adicionarMensajeError("Error al guardar la Acreditación", e.getMessage());
         }
-        
-  
+        this.enviarCorreo(this.obtenerResponsableActivoEquipo(this.acreditacion.getEquipo()));
     }
     
     /**
@@ -1339,10 +1398,11 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
      * @return Boolean
      */
     public Boolean esReponsable(PersonaDnaAcre persona){
-        return this.flgResponsable || (persona.getFuncion() != null && 
-                persona.getFuncion().getNidCatalogo()!= null && 
-                persona.getFuncion().getNidCatalogo().equals(Constantes.CATALOGO_FUNCION_RESPONSABLE));
-          
+        Boolean salida = false;
+        if(this.flgResponsable || (persona.getFuncion() != null && persona.getFuncion().getNidCatalogo()!= null && persona.getFuncion().getNidCatalogo().equals(Constantes.CATALOGO_FUNCION_RESPONSABLE))){
+            salida = true;
+        }
+        return salida;
     }
     
     /**
@@ -1366,6 +1426,8 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
      */
     public void initPersonaAdd(){
         this.personaEquipoExterno = new PersonaDnaAcre();
+        this.personaEquipoExterno.setFuncion(new Catalogo());
+        this.personaEquipoExterno.setProfesion(new Catalogo());
         this.personaCorreoValidar = this.personaEquipoExterno;
         this.showBtnResponsable = false;
         this.esPersonaExternaActualizar = false;
@@ -1382,9 +1444,10 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
         try {
             this.personaEquipoExterno = persona.clonar();
             this.personaActualizar = persona;
+            this.personaEvaluar = persona;
             this.personaCorreoValidar = personaEquipoExterno;
-            this.obtenerProvinciasDna();
-            this.obtenerDistritosDna();
+            this.obtenerProvinciasDnaExterno();
+            this.obtenerDistritosDnaExterno();
             this.esPersonaExternaActualizar = true;
             this.showBtnResponsable = false;
             if(!this.personaEquipoExterno.getFuncion().getNidCatalogo().equals(Constantes.CATALOGO_FUNCION_RESPONSABLE) && 
@@ -1392,9 +1455,6 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
                     || this.personaEquipoExterno.getProfesion().getNidCatalogo().equals(Constantes.CATALOGO_OCUPACION_PSICOLOGO)) ){
                 this.showBtnResponsable = this.responsableYaCumpleOtraProfesion(this.equipoExterno);
             }
-            if(persona.getInstruccion()==null)
-                this.personaEquipoExterno.setInstruccion(new Catalogo());
-            
         } catch (CloneNotSupportedException ex) {
             
         }
@@ -1462,17 +1522,87 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
         return auxEquipo;
     }
     
-  
- 
+    /**
+     * Obtener nombre departamento.
+     * @return String
+     */
+   public String getNombreDepartamentoVer() { 
+        if(this.personaVer == null) return "";
+        return (this.personaVer.getNidDepartamento()!=null)?fachadaDepartamento.find(this.personaVer.getNidDepartamento()).getTxtDescripcion():"";
+    }
+   
+   /**
+    * Obtener nombre provincia
+    * @return String
+    */
+    public String getNombreProvinciaVer() {
+        if(this.personaVer == null) return "";
+        return (this.personaVer.getNidProvincia()!=null)?fachadaProvincia.find(this.personaVer.getNidProvincia()).getTxtDescripcion():"";
+    }
+    
+    /**
+     * Obtener nombre distrito
+     * @return String
+     */
+    public String getNombreDistritoVer() {
+        if(this.personaVer == null) return "";
+        return (this.personaVer.getNidDistrito()!=null)?fachadaDistrito.find(this.personaVer.getNidDistrito()).getTxtDescripcion():"";
+    }
+    
+    /**
+     * Obtener nombre grado instruccion
+     * @return String
+     */
+    public String getNombreGradoDeInstruccionVer() {
+        if(this.personaVer == null) return "";
+        return (this.personaVer.getNidInstruccion()!=null)?catalogoFacade.find(BigInteger.valueOf(this.personaVer.getNidInstruccion())).getTxtNombre():"";
+    }
+    
+    /**
+     * Obtener nombre departamento.
+     * @return String
+     */
+   public String getNombreDepartamentoVerEval() { 
+        if(this.personaEvalVer == null) return "";
+        return (this.personaEvalVer.getNidDepartamento()!=null)?fachadaDepartamento.find(this.personaEvalVer.getNidDepartamento()).getTxtDescripcion():"";
+    }
+   
+   /**
+    * Obtener nombre provincia
+    * @return String
+    */
+    public String getNombreProvinciaVerEval() {
+        if(this.personaEvalVer == null) return "";
+        return (this.personaEvalVer.getNidProvincia()!=null)?fachadaProvincia.find(this.personaEvalVer.getNidProvincia()).getTxtDescripcion():"";
+    }
+    
+    /**
+     * Obtener nombre distrito
+     * @return String
+     */
+    public String getNombreDistritoVerEval() {
+        if(this.personaEvalVer == null) return "";
+        return (this.personaEvalVer.getNidDistrito()!=null)?fachadaDistrito.find(this.personaEvalVer.getNidDistrito()).getTxtDescripcion():"";
+    }
+    
+    /**
+     * Obtener nombre grado instruccion
+     * @return String
+     */
+    public String getNombreGradoDeInstruccionVerEval() {
+        if(this.personaEvalVer == null) return "";
+        return (this.personaEvalVer.getNidInstruccion()!=null)?catalogoFacade.find(BigInteger.valueOf(this.personaEvalVer.getNidInstruccion())).getTxtNombre():"";
+    }
+    
     /**
      * Obtener fecha curso texto
      * @return String
      */
     public String getFechaCursoTexto() {
-        if(this.personaEquipoExterno== null || this.personaEquipoExterno.getTxtFechaCurso() == null) return "";
+        if(this.personaVer == null || this.personaVer.getTxtFechaCurso() == null) return "";
         String pattern = "dd/MM/yyyy";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-        String date = simpleDateFormat.format(this.personaEquipoExterno.getTxtFechaCurso());
+        String date = simpleDateFormat.format(this.personaVer.getTxtFechaCurso());
         return date;
     }
     
@@ -1481,11 +1611,11 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
      * @param acreditacion - instancia de Acreditación
      */
     public void obtenerAcreditacionVer(Acreditacion acreditacion){
-        this.modo = Constantes.MODO_VER;
-        this.acreditacion = acreditacion;
-        this.equipoExterno = acreditacion.getEquipo();
-       // if(acreditacion.getEstado().getNidCatalogo()!= Constantes.CATALOGO_ESTADO_NUEVO)  
-           this.adjuntos = this.acreditacion.getDocumentos() != null ? this.acreditacion.getDocumentos(): new ArrayList<DocAcreditacion>();
+        this.acreditacionVer = acreditacion;
+        this.inscripcionSeleccionada = acreditacion.getPadre();
+        this.equipoVer = this.obtenerPersonalActivo(acreditacion.getEquipo());
+        if(acreditacion.getEstado().getNidCatalogo()!= Constantes.CATALOGO_ESTADO_NUEVO)  
+           this.adjuntos = this.acreditacionVer.getDocumentos() != null ? this.acreditacionVer.getDocumentos(): new ArrayList<DocAcreditacion>();
     } 
     
     /**
@@ -1493,24 +1623,89 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
      * @param persona - PersonaDnaAcre
      */
     public void obtenerPersonaVer(PersonaDnaAcre persona){
-            this.personaEquipoExterno = persona;
+            this.personaVer = persona;
     }
     
- 
+    /**
+     * Obtener persona a evaluar ver
+     * @param persona - PersonaDnaAcreEval
+     */
+    public void obtenerPersonaEvalVer(PersonaDnaAcreEval persona){
+            this.personaEvalVer = persona;
+    }
+    
+    /**
+     * Obtener nombre instruccion
+     * @return String
+     */
+    public String getNombreInstruccion(){
+        if(this.personaDna == null ||this.personaDna.getNidInstruccion() == null){return "";}
+        else{ return this.catalogoFacade.find(BigInteger.valueOf(this.personaDna.getNidInstruccion())).getTxtNombre();}
+    }
+   
+    /**
+     * Obtener nombre instruccion
+     * @return String
+     */
+   public String getNombreInstruccion2(){
+        if(this.personaEvaluar == null ||this.personaEvaluar.getNidInstruccion() == null){return "";}
+        else{ return this.catalogoFacade.find(BigInteger.valueOf(this.personaEvaluar.getNidInstruccion())).getTxtNombre();}
+    }
+    
+   /**
+    * Obtener nombre instruccion
+    * @return String
+    */
+    public String getNombreInstruccionEval(){
+        if(this.personaDna == null || this.personaDna.getPersonaEval().getNidInstruccion() == null){return "";}
+        else {return this.catalogoFacade.find(BigInteger.valueOf(this.personaDna.getPersonaEval().getNidInstruccion())).getTxtNombre();}
+    }
+    
+    /**
+     * Obtener nombre instruccion
+     * @return String
+     */
+    public String getNombreInstruccionEval2(){
+        if(this.personaEvaluar == null || this.personaEvaluar.getPersonaEval().getNidInstruccion() == null){return "";}
+        else {return this.catalogoFacade.find(BigInteger.valueOf(this.personaEvaluar.getPersonaEval().getNidInstruccion())).getTxtNombre();}
+    }
+    
+    /**
+     * Obtener nombre instruccion
+     * @return String
+     */
+    public String getNombreInstruccionCloneEval(){
+        if(this.clonePersonaEval == null || this.clonePersonaEval.getNidInstruccion() == null){return "";}
+        else{return this.catalogoFacade.find(BigInteger.valueOf(this.clonePersonaEval.getNidInstruccion())).getTxtNombre();}
+    }
+    
+    /**
+     * Obtener provincias
+     */
+    public void obtenerProvinciasSubsanar() {
+        Departamento departamento = new Departamento();
+        departamento.setNidDepartamento(this.acreditacionSubsanar.getPadre().getDna().getNidDepartamento());
+        this.provincias = fachadaProvincia.obtenerProvincias(departamento);
+    }
+    
+    /**
+     * Obtener distritos
+     */
+    public void obtenerDistritosSubsanar() {
+        Provincia provincia = new Provincia();
+        provincia.setNidProvincia(this.acreditacionSubsanar.getPadre().getDna().getNidProvincia());
+        this.distritos = fachadaDistrito.obtenerDistritos(provincia);
+    }
     
     /**
      * Obtener lista por responsable
-     * @return lista de Acreditación
+     * @return lista de Acredicación
      */
     public List<Acreditacion> obtenerListaPorResponsable() {
         try {
-            AuthAdministrado authAdministrado = (AuthAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{authAdministrado}", AuthAdministrado.class); 
-            if(authAdministrado.getDna()!=null)
-                return this.acreditacionFacade.findAllByFieldOrder("dna", authAdministrado.getDna(), true, "fecRegistro", false);
-            else
-                return this.acreditacionFacade.findAllByFieldOrder("nidUsuario", authAdministrado.getAuthResponsable(), true, "fecRegistro", false);
-    
-          
+            UsuarioAdministrado usuarioAdministrado = (UsuarioAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{usuarioAdministrado}", UsuarioAdministrado.class);
+            List<Acreditacion> acreditaciones = this.acreditacionFacade.findAllByFieldOrder("nidUsuario", usuarioAdministrado.getEntidadSeleccionada().getNidUsuario(), true, "fecRegistro", false);
+            return acreditaciones;
         }catch(ELException ex){
             Logger.getLogger(Thread.currentThread().getStackTrace()[1].getMethodName()).log(Level.SEVERE, null, ex);
         }
@@ -1530,6 +1725,17 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
    
     
     /**
+     * Subsanar persona
+     */
+    public void subsanarPersona(){
+        try{
+           
+        }catch (Exception e) {
+            adicionarMensajeError("Problemas al evaluar la inscripción.", e.getMessage());
+        }
+    }
+    
+    /**
      * Obtener adjuntos
      * @return lista de documentos de la acreditación
      */
@@ -1539,12 +1745,47 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
           i.setNidAcreditacion(this.acreditacionEval.getAcreditacion().getNidAcreditacion());
           return this.docFacade.findAllByField("acreditacion", i);
         }catch (Exception e) {
-            adicionarMensajeError("No se puede cargar los adjuntos","");
+            adicionarMensajeError("Error", "No se puede cargar los adjuntos");
         }
         return null;
     }
     
+    /**
+     * Obtener provincias
+     */
+    public void obtenerProvinciasDnaSubsanado() {
+        Departamento departamento = new Departamento();
+        departamento.setNidDepartamento(this.personaEvaluar.getNidDepartamento());
+        this.provinciasDna = fachadaProvincia.obtenerProvincias(departamento);
+    }
     
+    /**
+     * Obtener distritos
+     */
+    public void obtenerDistritosDnaSubsanado() {
+        Provincia provincia = new Provincia();
+        provincia.setNidProvincia(this.personaEvaluar.getNidProvincia());
+        this.distritosDna = fachadaDistrito.obtenerDistritos(provincia);
+    }
+    
+    /**
+     * Obtener provincias
+     */
+    public void obtenerProvinciasSubsanado() {
+        Departamento departamento = new Departamento();
+        departamento.setNidDepartamento(this.acreditacionAEvaluar.getPadre().getDna().getNidDepartamento());
+        this.provincias = fachadaProvincia.obtenerProvincias(departamento);
+    }
+    
+    /**
+     * Obtener distrito
+     */
+    public void obtenerDistritosSubsanado() {
+        Provincia provincia = new Provincia();
+        provincia.setNidProvincia(this.acreditacionAEvaluar.getPadre().getDna().getNidProvincia());
+        this.distritos = fachadaDistrito.obtenerDistritos(provincia);
+    }
+
     /**
      * Obtener acreditacion subasanado
      * @param item - Acreditacion
@@ -1554,8 +1795,8 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
         this.flgDenegarAcreditacion = false;
         this.equipoAEvaluar = this.obtenerEquipoActivo(this.acreditacion);
         for(DocAcreditacion doc : this.acreditacion.getDocumentos())this.adjuntos.add(doc);
-        this.obtenerProvinciasDna();
-        this.obtenerDistritosDna();
+        this.obtenerProvinciasSubsanado();
+        this.obtenerDistritosSubsanado();
     }
     
     /**
@@ -1566,7 +1807,15 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
         this.acreditacion = item;
     }
     
-    
+    /**
+     * Obtener perosna subsanado
+     * @param item - PersonaDnaAcre
+     */
+    public void obtenerPersonaSubsanado(PersonaDnaAcre item){
+        this.personaEvaluar = item;
+        this.obtenerProvinciasDnaSubsanado();
+        this.obtenerDistritosDnaSubsanado();
+    }
     
     /**
      * Obtener nombre conservacion
@@ -1613,7 +1862,33 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
         this.indexTab = tv.getActiveIndex();
     }
     
-   
+    /**
+     * Obtener nombre departamento.
+     * @param acreditacion - Acreditacion
+     * @return String
+     */
+    public String getNombreDepartamentoAcre(Acreditacion acreditacion) {
+        return (acreditacion.getNidDepartamento()!=null)?fachadaDepartamento.find(acreditacion.getNidDepartamento()).getTxtDescripcion():"";
+    }
+    
+    /**
+     * Obtener nombre provincia.
+     * @param acreditacion - Acreditacion
+     * @return String
+     */
+    public String getNombreProvinciaAcre(Acreditacion acreditacion) {
+        return (acreditacion.getNidProvincia()!=null)?fachadaProvincia.find(acreditacion.getNidProvincia()).getTxtDescripcion():"";
+    }
+    
+    /**
+     * Obtener nombre distrito
+     * @param acreditacion - Acreditacion
+     * @return String
+     */
+    public String getNombreDistritoAcre(Acreditacion acreditacion) {
+        return (acreditacion.getNidDistrito()!=null)?fachadaDistrito.find(acreditacion.getNidDistrito()).getTxtDescripcion():"";
+    }
+    
     /**
      * Descargar constancia
      * @param item - Acreditacion
@@ -1653,9 +1928,9 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
     private ConstanciaReport crearConstanciaPDF(Acreditacion item){
         ConstanciaReport salida = new ConstanciaReport();
         
-        String nombreDepartamento = this.getNombreDepartamento(item.getDna().getNidDepartamento());
-        String nombreProvincia = this.getNombreProvincia(item.getDna().getNidProvincia());
-        String nombreDistrito = this.getNombreDistrito(item.getDna().getNidDistrito());
+        String nombreDepartamento = this.getNombreDepartamentoAcre(item);
+        String nombreProvincia = this.getNombreProvinciaAcre(item);
+        String nombreDistrito = this.getNombreDistritoAcre(item);
         salida.setDepartamento(nombreDepartamento);
         salida.setProvincia(nombreProvincia);
         salida.setDistrito(nombreDistrito);
@@ -1750,21 +2025,10 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
             this.acreditacion.setFlagConstancia(1);
             this.acreditacionFacade.edit(this.acreditacion);
         }catch(Exception ex) {
-            adicionarMensajeError("Error al tratar de guardar la constancia","");
+            adicionarMensajeError("Error", "Error al tratar de guardar.");
         }
-         
-         String nroConstancia = this.acreditacion.getTxtConstancia() != null ? this.acreditacion.getTxtConstancia(): "";
-         String fileName = Constantes.PREFIX_ACREDITACION.
-                           concat(Constantes.PREFIX_FIRMADO).
-                           concat(StringUtils.leftPad(nroConstancia, 5, '0')).
-                           concat(".").concat(Constantes.EXTENSION_PDF);
-            
-        CorreoDnaAdministrado correoAdministrado = (CorreoDnaAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{correoDnaAdministrado}", CorreoDnaAdministrado.class);
-        this.correoService.enviarConstancia( Constantes.TPL_CONSTANCIA_ACREDITACION,
-                                             this.responsable.getNombresApellidos(), 
-                                             this.responsable.getTxtCorreo(),
-                                             this.acreditacion.getDna().getTxtNombre(), 
-                                             this.rutaConstancias + fileName, correoAdministrado);
+        CorreoDnaAdministrado correoAdministrado = (CorreoDnaAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{correoAdministrado}", CorreoDnaAdministrado.class);
+        this.correoService.enviarConstacia(this.responsable, this.acreditacion.getPadre(), correoAdministrado);
     }
     
     /**
@@ -1801,21 +2065,10 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
             this.acreditacion.setFlagOficio(1);
             this.acreditacionFacade.edit(this.acreditacion);
         }catch(Exception ex) {
-            adicionarMensajeError("Error al guardar el oficio","Error" );
+            adicionarMensajeError("Error", "Error al guardar");
         }
-        
-        String nroConstancia = this.acreditacion.getTxtConstancia() != null ? this.acreditacion.getTxtConstancia(): "";
-        String fileName = Constantes.PREFIX_OFICIO.
-                    concat(StringUtils.leftPad(nroConstancia, 5, '0')).
-                    concat(".").concat(Constantes.EXTENSION_PDF);
-        CorreoDnaAdministrado correoDnaAdministrado = (CorreoDnaAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{correoDnaAdministrado}", CorreoDnaAdministrado.class);
-        /*
-        this.correoService.enviarOficio(Constantes.TPL_OFICIO_DENEGACION_ACRE, 
-                                            this.responsable.getNombresApellidos(), 
-                                            this.responsable.getTxtCorreo(),
-                                            this.acreditacion.getDna().getTxtNombre(), this.rutaConstancias + fileName, correoDnaAdministrado);    
-        
-        */
+        CorreoDnaAdministrado correoAdministrado = (CorreoDnaAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{correoAdministrado}", CorreoDnaAdministrado.class);
+        this.correoService.enviarOficio(this.responsable, this.acreditacion.getPadre(), correoAdministrado);
     } 
     
     /**
@@ -1859,21 +2112,19 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
     
     /**
      * Remover persona del equipo
-     * @param item
      */
-    public void removerPersonaActualizar(PersonaDnaAcre item ){
-        this.equipoExterno.remove(item);
-        this.equipoRemover.add(item);
-        if(this.obtenerResponsableActivoEquipo(this.equipoExterno) == null) adicionarMensajeWarning("No existe responsable", "El equipo debe tener un responsable");
+    public void removerPersonaActualizar(){
+        this.equipoExterno.remove(this.personaRemover);
+        this.equipoRemover.add(this.personaRemover);
+        if(this.obtenerResponsableActivoEquipo(this.equipoExterno) == null)adicionarMensajeWarning("No existe responsble", "El equipo debe tener un responsable");
     }
     
     /**
      * Remover persona del equipo
-     * @param persona
      */
-    public void removerPersonaExterno(PersonaDnaAcre persona){
-        this.equipoExterno.remove(persona);
-        if(this.obtenerResponsableActivoEquipo(this.equipoExterno) == null) adicionarMensajeWarning("No existe responsble", "El equipo debe tener un responsable");
+    public void removerPersonaExterno(){
+        this.equipoExterno.remove(this.personaEquipoExterno);
+        if(this.obtenerResponsableActivoEquipo(this.equipoExterno) == null)adicionarMensajeWarning("No existe responsble", "El equipo debe tener un responsable");
     }
     
     /**
@@ -1882,7 +2133,7 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
     public void obtenerProvinciasDna() {
         Departamento departamento = new Departamento();
         departamento.setNidDepartamento(this.personaEquipoExterno.getNidDepartamento());
-        this.provinciasDna = provinciaFacade.obtenerProvincias(departamento);
+        this.provinciasDna = fachadaProvincia.obtenerProvincias(departamento);
     }
     
     /**
@@ -1891,7 +2142,7 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
     public void obtenerDistritosDna() {
         Provincia provincia = new Provincia();
         provincia.setNidProvincia(this.personaEquipoExterno.getNidProvincia());
-        this.distritosDna = distritoFacade.obtenerDistritos(provincia);
+        this.distritosDna = fachadaDistrito.obtenerDistritos(provincia);
     }
     
     /**
@@ -1930,20 +2181,20 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
         FacesContext fc = FacesContext.getCurrentInstance();
         
         if(!this.validarDocumentosAdjuntos()){     
-            adicionarMensajeError("Debe adjuntar los archivos solicitados","");
+            adicionarMensajeError("Debe adjuntar los archivos solicitados","Debe adjuntar los archivos solicitados");
             fc.validationFailed();
             fc.renderResponse(); 
         }
         String mensajeError = this.validarEquipo(this.equipoExterno);
         if(!mensajeError.equals("") ){
-            adicionarMensajeError(mensajeError, "");
+            adicionarMensajeError("Error", mensajeError);
             fc.validationFailed();
             fc.renderResponse(); 
         }
         
         mensajeError = this.validarReponsable(this.equipoExterno);
         if(!mensajeError.equals("")){
-            adicionarMensajeError(mensajeError, "");
+            adicionarMensajeError("Error", mensajeError);
             fc.validationFailed();
             fc.renderResponse(); 
         }
@@ -1961,16 +2212,64 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
             fc.validationFailed();
             fc.renderResponse(); 
         }
-        String mensajeError = this.validarEquipo(this.equipoExterno);
+        String mensajeError = this.validarEquipo(this.equipoSubsanar);
         if(!mensajeError.equals("") ){
-            adicionarMensajeError(mensajeError,"");
+            adicionarMensajeError("Error", mensajeError);
             fc.validationFailed();
             fc.renderResponse(); 
         }
     }
    
- 
+   /**
+    * Obtener nombre departamento.
+    * @return String
+    */
+   public String getNombreDepartamentoEvaluar() {
+        Inscripcion inscripcionAEvaluar =  this.acreditacionAEvaluar.getPadre();
+        return (inscripcionAEvaluar.getDna().getNidDepartamento()!=null)?fachadaDepartamento.find(inscripcionAEvaluar.getDna().getNidDepartamento()).getTxtDescripcion():"";
+    }
+   
+   /**
+    * Obtener nombre provincia.
+    * @return String
+    */
+    public String getNombreProvinciaEvaluar() {
+        Inscripcion inscripcionAEvaluar =  this.acreditacionAEvaluar.getPadre();
+        return (inscripcionAEvaluar.getDna().getNidProvincia()!=null)?fachadaProvincia.find(inscripcionAEvaluar.getDna().getNidProvincia()).getTxtDescripcion():"";
+    }
     
+    /**
+     * Obtener nombre distrito.
+     * @return String
+     */
+    public String getNombreDistritoEvaluar() {
+        Inscripcion inscripcionAEvaluar =  this.acreditacionAEvaluar.getPadre();
+        return (inscripcionAEvaluar.getDna().getNidDistrito()!=null)?fachadaDistrito.find(inscripcionAEvaluar.getDna().getNidDistrito()).getTxtDescripcion():"";
+    }
+    
+    /**
+     * Obtener nombre departamento.
+     * @return String
+     */
+    public String getNombreDepartamentoPersonaEvaluar() {
+        return (this.clonePersonaEval != null && this.clonePersonaEval.getNidDepartamento()!=null)?fachadaDepartamento.find(this.clonePersonaEval.getNidDepartamento()).getTxtDescripcion():"";
+    }
+    
+    /**
+     * Obtener nombre de la provincia. 
+     * @return String
+     */
+    public String getNombreProvinciaPersonaEvaluar() {
+        return (this.clonePersonaEval != null && this.clonePersonaEval.getNidProvincia()!=null)?fachadaProvincia.find(this.clonePersonaEval.getNidProvincia()).getTxtDescripcion():"";
+    }
+    
+    /**
+     * Obtener nombre del distrito
+     * @return String
+     */
+    public String getNombreDistritoPersonaEvaluar() {
+        return (this.clonePersonaEval != null &&  this.clonePersonaEval.getNidDistrito()!=null)?fachadaDistrito.find(this.clonePersonaEval.getNidDistrito()).getTxtDescripcion():"";
+    }
     
     /**
      * Obtener los documentos a adjuntar.
@@ -1982,7 +2281,7 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
           i.setNidAcreditacion(this.acreditacionEval.getAcreditacion().getNidAcreditacion());
           return this.docFacade.findAllByField("inscripcion", i);
         }catch (Exception e) {
-            adicionarMensajeError("No se puede cargar los adjuntos","Error" );
+            adicionarMensajeError("Error", "No se puede cargar los adjuntos");
         }
         return null;
     }
@@ -2019,9 +2318,9 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
      */
     public String obtenerNombreBtnEvaluar(){
         String value = "Acreditar";
-        if(this.acreditacion.getEstado().getNidCatalogo().equals(Constantes.CATALOGO_ESTADO_POR_EVALUAR)){
+        if(this.acreditacionAEvaluar.getEstado().getNidCatalogo().equals(Constantes.CATALOGO_ESTADO_POR_EVALUAR)){
             if(this.existeObservacionAcreditacion(this.acreditacionEval))value = "Observar";
-        }else if(this.acreditacion.getEstado().getNidCatalogo().equals(Constantes.CATALOGO_ESTADO_SUBSANADA)){
+        }else if(this.acreditacionAEvaluar.getEstado().getNidCatalogo().equals(Constantes.CATALOGO_ESTADO_SUBSANADA)){
             if(this.flgDenegarAcreditacion)value = "Denegar";
         }
         return value;
@@ -2057,27 +2356,17 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
      * @param item - Acreditacion
      */
     public void obtenerAcreditacionAEvaluar(Acreditacion item) {
-        this.modo = Constantes.MODO_EVALUACION;
         this.flgAdjuntosObs = false;
         this.flgEstadoCons = false;
-        this.flgDocObs = false;
-        this.flgCorreoObs = false;
-        this.flgDireccionObs = false;
-        this.flgGerenciaObs = false;
-        this.flgDiasHoraObs = false;
-        this.flgPresupuestoObs = false;
-        this.flgNroAmbObs = false;
-        this.flgNroAmbPrivObs = false;
         this.flgNroOrdenanza = false;
         this.flgFecOrdenanza = false;
-        this.flgNorma = false;
-        this.acreditacion = this.acreditacionFacade.find(item.getNidAcreditacion());
-        item.setEquipo(this.acreditacion.getEquipo());
-        item.setDocumentos(this.acreditacion.getDocumentos());
-      //  item.setPadre(this.acreditacion.getPadre());
-        this.acreditacion = item;
+        this.acreditacionAEvaluar = this.acreditacionFacade.find(item.getNidAcreditacion());
+        item.setEquipo(this.acreditacionAEvaluar.getEquipo());
+        item.setDocumentos(this.acreditacionAEvaluar.getDocumentos());
+        item.setPadre(this.acreditacionAEvaluar.getPadre());
+        this.acreditacionAEvaluar = item;
         this.flgDenegarAcreditacion = false;
-        this.acreditacionEval = this.generarAcreditacionEval(this.acreditacion);
+        this.acreditacionEval = this.generarAcreditacionEval(this.acreditacionAEvaluar);
         this.equipoEval = this.obtenerPersonalActivoEval(acreditacionEval.getEquipo());
     }
     
@@ -2090,14 +2379,6 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
         AcreditacionEval acreditacionEvalAux;
         acreditacionEvalAux = new AcreditacionEval();
         acreditacionEvalAux.setAcreditacion(acreditacion);
-        acreditacionEvalAux.setTxtDocumento(acreditacion.getTxtDocumento());
-        acreditacionEvalAux.setTxtDireccion(acreditacion.getTxtDireccion());
-        acreditacionEvalAux.setTxtCorreo(acreditacion.getTxtCorreo());
-        acreditacionEvalAux.setTxtTelefono(acreditacion.getTxtTelefono());
-        acreditacionEvalAux.setTxtGerencia(acreditacion.getTxtGerencia());
-        acreditacionEvalAux.setAmbientes(acreditacion.getAmbientes());
-        acreditacionEvalAux.setAmbientesPriv(acreditacion.getAmbientesPriv());
-        acreditacionEvalAux.setDias(acreditacion.getDias());        
         acreditacionEvalAux.setEstado(acreditacion.getEstado());
         acreditacionEvalAux.setFlgActivo(acreditacion.getFlgActivo());
         acreditacionEvalAux.setFlgAccesibilidad(acreditacion.getFlgAccesibilidad());
@@ -2107,6 +2388,7 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
         acreditacionEvalAux.setFlgImpresora(acreditacion.getFlgImpresora());
         acreditacionEvalAux.setFlgInternet(acreditacion.getFlgInternet());
         acreditacionEvalAux.setTxtEstadoCons(acreditacion.getTxtEstadoCons());
+        acreditacionEvalAux.setTxtNroOrdenanza(acreditacion.getTxtNroOrdenanza());
         acreditacionEvalAux.setFecOrdenanza(acreditacion.getFecOrdenanza());
         acreditacionEvalAux.setTxtNorma(acreditacion.getTxtNorma()); 
         
@@ -2125,7 +2407,7 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
              personaDnaEval.setTxtSexo(persona.getTxtSexo());
              personaDnaEval.setTxtDireccion(persona.getTxtDireccion());
              personaDnaEval.setTxtCorreo(persona.getTxtCorreo());
-             personaDnaEval.setInstruccion(persona.getInstruccion());
+             personaDnaEval.setNidInstruccion(persona.getNidInstruccion());
              personaDnaEval.setTxtTelefono(persona.getTxtTelefono());
              personaDnaEval.setProfesion(persona.getProfesion());
              personaDnaEval.setTxtColegiatura(persona.getTxtColegiatura());
@@ -2181,8 +2463,8 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
      */
     public void obtenerPersonaAEvaluar(PersonaDnaAcreEval personaDnaAcreEval){
         try {
-          
-            this.clonePersonaEval = (PersonaDnaAcreEval)personaDnaAcreEval.clonar();
+            PersonaDnaAcreEval clone =(PersonaDnaAcreEval)personaDnaAcreEval.clonar();
+            this.clonePersonaEval = clone;
             this.personaEval = personaDnaAcreEval;
             this.initPanelPersonaEvaluar(clonePersonaEval);
         } catch (CloneNotSupportedException ex) {
@@ -2190,139 +2472,47 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
         }
     }
     
-     public void actualizarDefensoria() {
-        UsuarioAdministrado usuarioAdministrado = (UsuarioAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{usuarioAdministrado}", UsuarioAdministrado.class); 
-        
-        Defensoria dna = this.acreditacion.getDna();
-        DefensoriaInfo info =  dna.getDefensoriaInfo();
-        if(info ==null) {
-            info = new DefensoriaInfo();
-            this.acreditacion.getDna().setDefensoriaInfo(info);
-        }
-        info.setFecAcreditacion(this.acreditacion.getFecAcreditacion());
-        info.setTxtDocumento(acreditacion.getTxtDocumento());
-        info.setTxtDireccion(acreditacion.getTxtDireccion());
-        info.setTxtCorreo(acreditacion.getTxtCorreo());
-        info.setTxtTelefono(acreditacion.getTxtTelefono());
-        info.setTxtGerencia(acreditacion.getTxtGerencia());
-        info.setAmbientes(acreditacion.getAmbientes());
-        info.setAmbientesPriv(acreditacion.getAmbientesPriv());
-        info.setDias(acreditacion.getDias());        
-        info.setTxtEstadoCons(this.acreditacion.getTxtEstadoCons());
-        info.setFecOrdenanza(this.acreditacion.getFecOrdenanza());
-        info.setNidUsuario(this.acreditacion.getNidUsuario());
-        info.setNidUsuarioMod(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
-        Catalogo estado = this.acreditacion.getDna().getEstado();
-        estado.setNidCatalogo(Constantes.CATALOGO_DNA_ACREDITADA);
-        dna.setEstado(estado);
-        
-        for(DefensoriaPersona p: dna.getListaPersonaDna()) {
-            p.setFlgActivo(BigInteger.ZERO);
-            p.setFecModificacion(new Date());
-            p.setNidUsuarioMod(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
-        }
-            
-        for(PersonaDnaAcre pd: this.acreditacion.getEquipo()) {
-            DefensoriaPersona p = new DefensoriaPersona();
-            p.setDefensoria(dna);
-            p.setNidDepartamento(pd.getNidDepartamento());
-            p.setNidProvincia(pd.getNidProvincia());
-            p.setNidDistrito(pd.getNidDistrito());
-            p.setTxtDocumento(pd.getTxtDocumento());
-            p.setTxtApellidoPaterno(pd.getTxtApellidoPaterno());
-            p.setTxtApellidoMaterno(pd.getTxtApellidoMaterno());
-            p.setTxtNombre1(pd.getTxtNombre1());
-            p.setTxtNombre2(pd.getTxtNombre2());
-            p.setTxtNombre3(pd.getTxtNombre3());
-            p.setTxtSexo(pd.getTxtSexo());
-            p.setTxtTelefono(pd.getTxtTelefono());
-            p.setTxtCorreo(pd.getTxtCorreo());
-            p.setTxtColegiatura(pd.getTxtColegiatura());
-            p.setTxtColegio(pd.getTxtColegio());
-            p.setTxtInpe(pd.getTxtInpe());
-            p.setTxtPnp(pd.getTxtPnp());
-            p.setTxtPj(pd.getTxtPj());
-            p.setFlgActivo(BigInteger.ONE);
-            p.setProfesion(pd.getProfesion());
-            p.setFuncion(pd.getFuncion());
-            p.setInstruccion(pd.getInstruccion());
-            p.setEdad(pd.getEdad());
-            p.setTxtIp(pd.getTxtIp());
-            p.setFecRegistro(new Date());
-            p.setNidUsuarioReg(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
-            
-            dna.getListaPersonaDna().add(p);
-        }
-        this.defensoriaFacade.edit(this.acreditacion.getDna());
-        
-    }
-     
     /**
      * Evaluar acreditacion.
      */
     public void evaluarAcreditacion(){
-        
-        UsuarioAdministrado usuarioAdministrado = (UsuarioAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{usuarioAdministrado}", UsuarioAdministrado.class); 
-        CorreoDnaAdministrado correoAdministrado = (CorreoDnaAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{correoDnaAdministrado}", CorreoDnaAdministrado.class);
-       
         try{
             if(this.flgDenegarAcreditacion){
-                this.acreditacion.setNidUsuarioMod(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
-                this.acreditacion.setFecDenegado(new Date());
-                this.acreditacion.setFecModificacion(new Date());
-                this.acreditacion.setEstado(this.catalogoFacade.find(Constantes.CATALOGO_ESTADO_DENEGADA));
-             //   this.acreditacion.getPadre().setFlagAcredita(BigInteger.ZERO);
-               // this.inscripcionFacade.edit(this.acreditacion.getPadre());
-                this.acreditacionFacade.edit(this.acreditacion);
-                adicionarMensaje("","La solicitud de acreditación ha sido denegada exitósamente");
-            }else if(this.acreditacion.getEstado().getNidCatalogo().equals(Constantes.CATALOGO_ESTADO_POR_EVALUAR)){
-                this.acreditacion.setObsDenegado(null);
+                this.acreditacionAEvaluar.setFecDenegado(new Date());
+                this.acreditacionAEvaluar.setFecModificacion(new Date());
+                this.acreditacionAEvaluar.setEstado(this.catalogoFacade.find(Constantes.CATALOGO_ESTADO_DENEGADA));
+                this.acreditacionAEvaluar.getPadre().setFlagAcredita(BigInteger.ZERO);
+                this.inscripcionFacade.edit(this.acreditacionAEvaluar.getPadre());
+                this.acreditacionFacade.edit(this.acreditacionAEvaluar);
+            }else if(this.acreditacionAEvaluar.getEstado().getNidCatalogo().equals(Constantes.CATALOGO_ESTADO_POR_EVALUAR)){
+                this.acreditacionAEvaluar.setObsDenegado(null);
                 if(this.existeObservacionAcreditacion(this.acreditacionEval)){
-                    this.acreditacionEval.setNidUsuarioReg(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
                     this.acreditacionEval.setTxtPc(Internet.obtenerNombrePC());
                     this.acreditacionEval.setTxtIp(Internet.obtenerIPPC());
                     this.acreditacionEval.setFecRegistro(new Date());
                     this.acreditacionEval.setFlgActivo(BigInteger.ONE);
                     this.acreditacionEvalFacade.create(this.acreditacionEval);  
 
-                    this.acreditacion.setNidUsuarioMod(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
-                    this.acreditacion.setFecObservado(new Date());
-                    this.acreditacion.setFecModificacion(new Date());
-                    this.acreditacion.setEstado(this.catalogoFacade.find(Constantes.CATALOGO_ESTADO_OBSERVADA));
-                    this.acreditacionFacade.edit(this.acreditacion);
-                    
-                    adicionarMensaje("","La solicitud de acreditación ha sido observada exitósamente");
-                    PersonaDnaAcre pr = this.obtenerResponsableActivoEquipo(this.acreditacion.getEquipo());
-                    this.correoService.enviarSolicitudObservada(Constantes.TPL_ACREDITACION_OBSERVADA, 
-                            pr.getNombresApellidos(), pr.getTxtCorreo(),
-                            this.acreditacion.getDna().getTxtNombre(),correoAdministrado);
+                    this.acreditacionAEvaluar.setFecObservado(new Date());
+                    this.acreditacionAEvaluar.setFecModificacion(new Date());
+                    this.acreditacionAEvaluar.setEstado(this.catalogoFacade.find(Constantes.CATALOGO_ESTADO_OBSERVADA));
+                    this.acreditacionFacade.edit(this.acreditacionAEvaluar);
                 }else{
-                    this.acreditacion.setNidUsuarioMod(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
-                    this.acreditacion.setFecAcreditacion(new Date());
-                    this.acreditacion.setFecModificacion(new Date());
-                    this.acreditacion.setEstado(this.catalogoFacade.find(Constantes.CATALOGO_ESTADO_ACREDITADA));
-                    this.acreditacionFacade.edit(this.acreditacion);
-                    this.actualizarDefensoria();
-                    
-                    adicionarMensaje("","La solicitud de acreditación ha sido aprobada ( acreditada ) exitósamente");
+                    this.acreditacionAEvaluar.setFecAcreditacion(new Date());
+                    this.acreditacionAEvaluar.setFecModificacion(new Date());
+                    this.acreditacionAEvaluar.setEstado(this.catalogoFacade.find(Constantes.CATALOGO_ESTADO_ACREDITADA));
+                    this.acreditacionFacade.edit(this.acreditacionAEvaluar);
                 }
-            }else if(this.acreditacion.getEstado().getNidCatalogo().equals(Constantes.CATALOGO_ESTADO_SUBSANADA)){
-                    this.acreditacion.setNidUsuarioMod(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
-                    this.acreditacion.setFecAcreditacion(new Date());
-                    this.acreditacion.setFecModificacion(new Date());
-                    this.acreditacion.setEstado(this.catalogoFacade.find(Constantes.CATALOGO_ESTADO_ACREDITADA));
-                    this.acreditacionFacade.edit(this.acreditacion);
-                    this.actualizarDefensoria();
-                    adicionarMensaje("","La solicitud de acreditación ha sido aprobada ( acreditada ) exitósamente");
-                    
+            }else if(this.acreditacionAEvaluar.getEstado().getNidCatalogo().equals(Constantes.CATALOGO_ESTADO_SUBSANADA)){
+                    this.acreditacionAEvaluar.setFecAcreditacion(new Date());
+                    this.acreditacionAEvaluar.setFecModificacion(new Date());
+                    this.acreditacionAEvaluar.setEstado(this.catalogoFacade.find(Constantes.CATALOGO_ESTADO_ACREDITADA));
+                    this.acreditacionFacade.edit(this.acreditacionAEvaluar);
             }
-            this.modo = Constantes.MODO_LISTADO;
-            this.buscar();
-            
         }catch (Exception e) {
             adicionarMensajeError("Problemas al evaluar la acreditación.", e.getMessage());
         }
-      //  this.enviarCorreo(this.obtenerResponsableActivoEquipo(this.acreditacion.getEquipo()));
+        this.enviarCorreo(this.obtenerResponsableActivoEquipo(this.acreditacionAEvaluar.getEquipo()));
     }
     
     /**
@@ -2352,18 +2542,19 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
      */
     public void obtenerAcreditacionActualizar(Acreditacion item){
         try {
-            this.modo = Constantes.MODO_UPDATE;
             this.equipoRemover = new ArrayList<>();
             this.acreditacion = this.acreditacionFacade.find(item.getNidAcreditacion());
             item.setEquipo(this.acreditacion.getEquipo());
             item.setDocumentos(this.acreditacion.getDocumentos());
             item.setAcreditacionEval(this.acreditacion.getAcreditacionEval());
-
+            item.setPadre(this.acreditacion.getPadre());
+            this.acreditacion = item;
+            this.acreditacionAEvaluar = this.acreditacion;
             this.acreditacionEval = this.acreditacion.getAcreditacionEval();
             this.adjuntos = new ArrayList<>();
             for(DocAcreditacion doc : this.acreditacion.getDocumentos())this.adjuntos.add(doc);
             this.equipoExterno = this.obtenerEquipoActivo(this.acreditacion);
-           // this.inscripcionSeleccionada = this.acreditacion.getPadre();
+            this.inscripcionSeleccionada = this.acreditacion.getPadre();
             this.responsableActualizar = this.obtenerResponsableActivoEquipo(this.equipoExterno).clonar();
             this.obtenerResponsableActivo(this.acreditacion);
             this.flgDenegarAcreditacion = false;
@@ -2371,22 +2562,6 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
             Logger.getLogger(AcreditacionAdministrado.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void obtenerAcreditacionEvSub(Acreditacion item){
-        this.obtenerAcreditacionActualizar(item);
-        this.modo = Constantes.MODO_EVALUACION_SUBSANACION;
-    }
-    
-     /**
-     * Se obtiene la Acreditacion a actualizar.
-     * @param item - Acreditacion
-     */
-    public void obtenerAcreditacionSubsanar(Acreditacion item){
-        this.obtenerAcreditacionActualizar(item);
-        this.modo = Constantes.MODO_SUBSANAR;
-    }
-    
-    
     /**
      * Actualizar acreditacion.
      */
@@ -2411,10 +2586,7 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
             }
             PersonaDnaAcre responsableAux = this.obtenerResponsableActivoEquipo(this.equipoExterno);
             Boolean cambiarReponsable = this.seDebeCambiarResponsable( this.equipoRemover) || this.seDebeCambiarUsuario2(this.responsableActualizar,responsableAux);
-            if(cambiarReponsable) {
-                String pass = this.generaPassword();
-                this.cambiarResponsable(this.acreditacion, pass);
-            }
+            if(cambiarReponsable)this.cambiarResponsable(this.equipoExterno, this.acreditacion, this.inscripcionSeleccionada);
             for(PersonaDnaAcre persona : this.equipoRemover){
                 persona.setFlgActivo(BigInteger.ZERO);
                 persona.setFecModificacion(new Date());
@@ -2427,14 +2599,12 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
             this.acreditacion.setFlgActivo(BigInteger.ONE);
             this.acreditacion.setNidUsuarioMod(usuarioAdministrado.getEntidadSeleccionada().getNidUsuario());
             this.acreditacionFacade.edit(this.acreditacion);
-         //   this.inscripcionFacade.edit(this.inscripcionSeleccionada);
+            this.inscripcionFacade.edit(this.inscripcionSeleccionada);
             this.obtenerResponsableActivo(this.acreditacion);
-            this.modo = Constantes.MODO_LISTADO;
-             adicionarMensaje("","La solicitud de acreditación ha sido actualizada exitósamente");
          } catch (Exception e) {
-            adicionarMensajeError("Error al guardar la Acreditación","Error");
+            adicionarMensajeError("Error", "Error al guardar la Acreditación");
         }
-    //    this.enviarCorreo(this.obtenerResponsableActivoEquipo(this.acreditacion.getEquipo()));
+        this.enviarCorreo(this.obtenerResponsableActivoEquipo(this.acreditacion.getEquipo()));
     }
     
     /**
@@ -2471,10 +2641,10 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
      * @param equipo - lista de personal de la DNA
      * @return PersonaDna
      */
-    private DefensoriaPersona obtenerResponsableActivoPersonal(List<DefensoriaPersona> personal){
-        DefensoriaPersona responsableAux = null;
+    private PersonaDna obtenerResponsableActivoPersonal(List<PersonaDna> personal){
+        PersonaDna responsableAux = null;
         if(personal != null){
-            for(DefensoriaPersona persona : personal){   
+            for(PersonaDna persona : personal){   
                 if(persona.getFuncion() != null && persona.getFuncion().getNidCatalogo().equals(Constantes.CATALOGO_FUNCION_RESPONSABLE) && persona.getFlgActivo().equals(BigInteger.ONE)){
                     responsableAux = persona;
                     break;
@@ -2487,11 +2657,10 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
     /**
      * Envio de correo al responsable
      * @param responsable - persona de la DNA
-     * @param pass
      */
-     public void enviarCorreo(PersonaDnaAcre responsable, String pass) {
-        CorreoDnaAdministrado correoAdministrado = (CorreoDnaAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{correoDnaAdministrado}", CorreoDnaAdministrado.class);
-        this.correoService.enviarCorreoCredenciales(responsable.getNombresApellidos(), responsable.getTxtCorreo(), pass, correoAdministrado);
+     public void enviarCorreo(PersonaDnaAcre responsable) {
+        CorreoDnaAdministrado correoAdministrado = (CorreoDnaAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{correoAdministrado}", CorreoDnaAdministrado.class);
+        this.correoService.enviarCorreo(responsable, correoAdministrado);
     }
     
      /**
@@ -2564,39 +2733,33 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
     
     /**
      * Cambiar al responsable de la Inscripcion
+     * @param equipo - lista de personal de acreditación
      * @param acreditacion - Acreditacion
      * @param inscripcion - Inscripcion
      */
-    private void cambiarResponsable(Acreditacion acreditacion, String pass){
-        if(acreditacion.getDna().getDefensoriaInfo().getNidUsuario() != null){
-            Usuario usuarioActual = this.usuarioFacade.find(acreditacion.getDna().getDefensoriaInfo().getNidUsuario());
+    private void cambiarResponsable(List<PersonaDnaAcre> equipo , Acreditacion acreditacion , Inscripcion inscripcion){
+        this.responsable = this.obtenerResponsableActivoEquipo(equipo);
+        if(inscripcion.getNidUsuario() != null){
+            Usuario usuarioActual = this.usuarioFacade.find(inscripcion.getNidUsuario());
             usuarioActual.setFlgActivo(BigInteger.ZERO);
             this.usuarioFacade.edit(usuarioActual);
         }
-        Usuario usuarioNuevo = this.crearUsuario(pass);
+        Usuario usuarioNuevo = this.crearUsuario();
         acreditacion.setNidUsuario(usuarioNuevo.getNidUsuario());
+        inscripcion.setNidUsuario(usuarioNuevo.getNidUsuario());
     }
     
- 
-    
-  
-    public void colocarFuncionResponsable(){
-        PersonaDna responsable = null;
-        /*
-        for(PersonaDna persona : this.inscripcionSeleccionada.getPersonal()){
-            if(persona.getFuncion().getNidCatalogo().equals(Constantes.CATALOGO_FUNCION_RESPONSABLE)){
-                responsable = persona;
-                break;
-            }
-        }
-        if(responsable !=  null){
-            PersonaDnaAcre responsableAcre = this.crearPersonaDnaAcre(responsable);
-            responsableAcre.setFuncion(this.personaEquipoExterno.getFuncion());
-            this.personaEquipoExterno = responsableAcre;
-            this.obtenerProvinciasDnaExterno();
-            this.obtenerDistritosDnaExterno();
-        }
-        */
+    /**
+     * Crear usuario 
+     * @param equipo - lista de personal de acreditación
+     * @param acreditacion - Acreditacion
+     * @param inscripcion - Inscripcion
+     */
+    private void crearUsuario(List<PersonaDnaAcre> equipo , Acreditacion acreditacion , Inscripcion inscripcion){
+        this.responsable = this.obtenerResponsableActivoEquipo(equipo);
+        Usuario usuarioNuevo = this.crearUsuario();
+        acreditacion.setNidUsuario(usuarioNuevo.getNidUsuario());
+        inscripcion.setNidUsuario(usuarioNuevo.getNidUsuario());
     }
     
     /**
@@ -2630,23 +2793,34 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
      * @param inscripcion - Inscripcion
      * @return Boolean
      */
-    private Boolean seDebeCambiarDeUsuario(Acreditacion acreditacion){
+    private Boolean seDebeCambiarDeUsuario(Acreditacion acreditacion , Inscripcion inscripcion){
         Boolean salida = false;
-        DefensoriaPersona responsableDna = this.obtenerResponsableActivoPersonal(acreditacion.getDna().getListaPersonaDna());
+        PersonaDna responsableInscripcion = this.obtenerResponsableActivoPersonal(inscripcion.getPersonal());
         PersonaDnaAcre responsableAcreditacion = this.obtenerResponsableActivoEquipo(acreditacion.getEquipo());
-        if(responsableDna == null || !responsableDna.getTxtCorreo().toUpperCase().equals(responsableAcreditacion.getTxtCorreo().toUpperCase())){
+        if(responsableInscripcion == null || !responsableInscripcion.getTxtCorreo().toUpperCase().equals(responsableAcreditacion.getTxtCorreo().toUpperCase())){
             salida = true;
-        } 
+        }
         return salida;
     }
     
+    /**
+     * Verifica si se debe crear el usuario
+     * @param acreditacion - Acreditacion
+     * @return Boolean
+     */
+    private Boolean seDebeCrearUsuario(Acreditacion acreditacion){
+        Boolean salida = false;
+        if(acreditacion.getNidUsuario() == null){
+            salida = true;
+        }
+        return salida;
+    }
     
     /**
       * Crear usuario ligado a la PersonaDna Responsable
-      * @param pass
       * @return Usuario
       */
-    public Usuario crearUsuario(String pass) {
+    public Usuario crearUsuario() {
         
         try {
             UsuarioAdministrado usuarioAdministrado = (UsuarioAdministrado) getFacesContext().getApplication().evaluateExpressionGet(getFacesContext(), "#{usuarioAdministrado}", UsuarioAdministrado.class);
@@ -2659,7 +2833,7 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
             persona.setTxtDocumento(this.responsable.getTxtDocumento());
             persona.setTxtApellidoPaterno(this.responsable.getTxtApellidoPaterno());
             persona.setTxtApellidoMaterno(this.responsable.getTxtApellidoMaterno());
-            persona.setTxtNombres(this.responsable.getApellidosNombres());
+            persona.setTxtNombres(this.responsable.getTxtNombres());
             persona.setFlgActivo(BigInteger.ONE);
             persona.setTxtPc(Internet.obtenerNombrePC());
             persona.setTxtIp(Internet.obtenerIPPC());
@@ -2676,9 +2850,8 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
             usuario.setTxtIp(Internet.obtenerIPPC());
             usuario.setFecEdicion(new Date());
           
-            String encriptado = usuarioAdministrado.encriptar(pass);
+            String encriptado = usuarioAdministrado.encriptar(Constantes.PASSWORD);
             usuario.setTxtPassword(encriptado);
-
 
             List<EstadoUsuario> estadousuario = this.fachadaEstadoUsuario.findAllByField("txtEstadoUsuario", "APROBADO");
             if (null != estadousuario) {
@@ -2712,8 +2885,7 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
             return usuario;
         
         }catch(Exception ex) {
-            adicionarMensajeError("No pudo generar el usuario","");   
-          
+            adicionarMensajeError("Error ","No pudo generar el usuario");
         }  
         return null;
     }
@@ -2777,6 +2949,22 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
         this.busEstado = busEstado;
     }
 
+    public Inscripcion getInscripcionSeleccionada() {
+        return inscripcionSeleccionada;
+    }
+
+    public void setInscripcionSeleccionada(Inscripcion inscripcionSeleccionada) {
+        this.inscripcionSeleccionada = inscripcionSeleccionada;
+    }
+
+    public List<Inscripcion> getInscripcionesEncontradas() {
+        return inscripcionesEncontradas;
+    }
+
+    public void setInscripcionesEncontradas(List<Inscripcion> inscripcionesEncontradas) {
+        this.inscripcionesEncontradas = inscripcionesEncontradas;
+    }
+
     public List<Provincia> getProvinciasBus() {
         return provinciasBus;
     }
@@ -2817,7 +3005,14 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
         this.distritos = distritos;
     }
     
-  
+    public boolean isVerMensajeOK() {
+        return verMensajeOK;
+    }
+
+    public void setVerMensajeOK(boolean verMensajeOK) {
+        this.verMensajeOK = verMensajeOK;
+    }
+
     public List<PersonaDnaAcre> getEquipoExterno() {
         return equipoExterno;
     }
@@ -2885,6 +3080,14 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
         this.lista = lista;
     }
 
+    public PersonaDnaAcre getPersonaExternoActualizar() {
+        return personaExternoActualizar;
+    }
+
+    public void setPersonaExternoActualizar(PersonaDnaAcre personaExternoActualizar) {
+        this.personaExternoActualizar = personaExternoActualizar;
+    }
+
     public Boolean getShowBtnResponsable() {
         return showBtnResponsable;
     }
@@ -2899,6 +3102,14 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
     
     public void setbPersonaActualizar(PersonaDnaAcre bPersonaActualizar) {
         this.bPersonaActualizar = bPersonaActualizar;
+    }
+
+    public Acreditacion getAcreditacionActualizar() {
+        return acreditacionActualizar;
+    }
+
+    public void setAcreditacionActualizar(Acreditacion acreditacionActualizar) {
+        this.acreditacionActualizar = acreditacionActualizar;
     }
 
     public List<PersonaDnaAcre> getEquipoActualizar() {
@@ -3030,11 +3241,19 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
     }
 
     public Acreditacion getAcreditacionAEvaluar() {
-        return acreditacion;
+        return acreditacionAEvaluar;
     }
 
-    public void setAcreditacionAEvaluar(Acreditacion acreditacion) {
-        this.acreditacion = acreditacion;
+    public void setAcreditacionAEvaluar(Acreditacion acreditacionAEvaluar) {
+        this.acreditacionAEvaluar = acreditacionAEvaluar;
+    }
+
+    public PersonaDnaAcre getPersonaEvaluar() {
+        return personaEvaluar;
+    }
+
+    public void setPersonaEvaluar(PersonaDnaAcre personaEvaluar) {
+        this.personaEvaluar = personaEvaluar;
     }
 
     public List<PersonaDnaAcre> getEquipoAEvaluar() {
@@ -3076,7 +3295,87 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
     public void setTextoBtnEvaluar(String textoBtnEvaluar) {
         this.textoBtnEvaluar = textoBtnEvaluar;
     }
-      
+    
+    public List<PersonaDnaAcre> getEquipoSubsanado() {
+        return equipoSubsanado;
+    }
+
+    public void setEquipoSubsanado(List<PersonaDnaAcre> equipoSubsanado) {
+        this.equipoSubsanado = equipoSubsanado;
+    }
+    
+    public List<Acreditacion> getListaSubsanar() {
+        return listaSubsanar;
+    }
+
+    public void setListaSubsanar(List<Acreditacion> listaSubsanar) {
+        this.listaSubsanar = listaSubsanar;
+    }
+
+    public Acreditacion getAcreditacionSubsanar() {
+        return acreditacionSubsanar;
+    }
+
+    public void setAcreditacionSubsanar(Acreditacion acreditacionSubsanar) {
+        this.acreditacionSubsanar = acreditacionSubsanar;
+    }
+
+    public List<PersonaDnaAcre> getEquipoSubsanar() {
+        return equipoSubsanar;
+    }
+
+    public void setEquipoSubsanar(List<PersonaDnaAcre> equipoSubsanar) {
+        this.equipoSubsanar = equipoSubsanar;
+    }
+
+    public PersonaDnaAcre getPersonaSubsanar() {
+        return personaSubsanar;
+    }
+
+    public void setPersonaSubsanar(PersonaDnaAcre personaSubsanar) {
+        this.personaSubsanar = personaSubsanar;
+    }
+
+    public List<PersonaDnaAcre> getPersonasRemover() {
+        return personasRemover;
+    }
+
+    public void setPersonasRemover(List<PersonaDnaAcre> personasRemover) {
+        this.personasRemover = personasRemover;
+    }
+    
+    public Acreditacion getAcreditacionVer() {
+        return acreditacionVer;
+    }
+
+    public void setAcreditacionVer(Acreditacion acreditacionVer) {
+        this.acreditacionVer = acreditacionVer;
+    }
+
+    public List<PersonaDnaAcre> getEquipoVer() {
+        return equipoVer;
+    }
+
+    public void setEquipoVer(List<PersonaDnaAcre> equipoVer) {
+        this.equipoVer = equipoVer;
+    }
+
+    public PersonaDnaAcreEval getPersonaEvalVer() {
+        return personaEvalVer;
+    }
+
+    public void setPersonaEvalVer(PersonaDnaAcreEval personaEvalVer) {
+        this.personaEvalVer = personaEvalVer;
+    }
+    
+    public PersonaDnaAcre getPersonaVer() {
+        return personaVer;
+    }
+
+    public void setPersonaVer(PersonaDnaAcre personaVer) {
+        this.personaVer = personaVer;
+    }
+    
     public PersonaDnaAcre getPersonaRemover() {
         return personaRemover;
     }
@@ -3139,110 +3438,6 @@ public class AcreditacionAdministrado extends AdministradorAbstracto implements 
 
     public void setFlgResponsable(Boolean flgResponsable) {
         this.flgResponsable = flgResponsable;
-    }
-
-    public List<Defensoria> getListaDefensoria() {
-        return listaDefensoria;
-    }
-
-    public void setListaDefensoria(List<Defensoria> listaDefensoria) {
-        this.listaDefensoria = listaDefensoria;
-    }
-
-    public int getModo() {
-        return modo;
-    }
-
-    public void setModo(int modo) {
-        this.modo = modo;
-    }
-
-    public Boolean getFlgDocObs() {
-        return flgDocObs;
-    }
-
-    public void setFlgDocObs(Boolean flgDocObs) {
-        this.flgDocObs = flgDocObs;
-    }
-
-    public Boolean getFlgCorreoObs() {
-        return flgCorreoObs;
-    }
-
-    public void setFlgCorreoObs(Boolean flgCorreoObs) {
-        this.flgCorreoObs = flgCorreoObs;
-    }
-
-    public Boolean getFlgDireccionObs() {
-        return flgDireccionObs;
-    }
-
-    public void setFlgDireccionObs(Boolean flgDireccionObs) {
-        this.flgDireccionObs = flgDireccionObs;
-    }
-
-    public Boolean getFlgGerenciaObs() {
-        return flgGerenciaObs;
-    }
-
-    public void setFlgGerenciaObs(Boolean flgGerenciaObs) {
-        this.flgGerenciaObs = flgGerenciaObs;
-    }
-
-    public Boolean getFlgDiasHoraObs() {
-        return flgDiasHoraObs;
-    }
-
-    public void setFlgDiasHoraObs(Boolean flgDiasHoraObs) {
-        this.flgDiasHoraObs = flgDiasHoraObs;
-    }
-
-    public Boolean getFlgPresupuestoObs() {
-        return flgPresupuestoObs;
-    }
-
-    public void setFlgPresupuestoObs(Boolean flgPresupuestoObs) {
-        this.flgPresupuestoObs = flgPresupuestoObs;
-    }
-
-    public Boolean getFlgNroAmbObs() {
-        return flgNroAmbObs;
-    }
-
-    public void setFlgNroAmbObs(Boolean flgNroAmbObs) {
-        this.flgNroAmbObs = flgNroAmbObs;
-    }
-
-    public Boolean getFlgNroAmbPrivObs() {
-        return flgNroAmbPrivObs;
-    }
-
-    public void setFlgNroAmbPrivObs(Boolean flgNroAmbPrivObs) {
-        this.flgNroAmbPrivObs = flgNroAmbPrivObs;
-    }
-
-    public Boolean getFlgNorma() {
-        return flgNorma;
-    }
-
-    public void setFlgNorma(Boolean flgNorma) {
-        this.flgNorma = flgNorma;
-    }
-
-    public Boolean getVerMensajeOK() {
-        return verMensajeOK;
-    }
-
-    public void setVerMensajeOK(Boolean verMensajeOK) {
-        this.verMensajeOK = verMensajeOK;
-    }
-
-    public List<Defensoria> getResDefensorias() {
-        return resDefensorias;
-    }
-
-    public void setResDefensorias(List<Defensoria> resDefensorias) {
-        this.resDefensorias = resDefensorias;
     }
     
 }

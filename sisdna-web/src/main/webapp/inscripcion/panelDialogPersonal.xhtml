@@ -8,8 +8,8 @@
         xmlns:pe="http://primefaces.org/ui/extensions">
     
     
-   <p:dialog  modal="true" id="dialogoPersonalDna" widgetVar="dialogoPersonalDna" width="90%" style="max-width: 800px"
-              header="Personal DNA" closeOnEscape="true" resizable="false" dynamic="true" class="dlgdna" position="center center" responsive="true" >
+   <p:dialog  modal="true" id="dialogoPersonalDna" widgetVar="dialogoPersonalDna" width="90%" height="500px" 
+              header="Personal DNA" closeOnEscape="true" resizable="false" dynamic="false" class="dlgdna" position="center center" responsive="true" >
             <h:form id="frmPersonalDna">
                <ui:include src="panelPersonal.xhtml"/>
                  <br></br>
@@ -20,7 +20,7 @@
                                          title="Guarda los datos de las persona" 
                                          actionListener="#{inscripcionAdministrado.agregarPersonal()}"
                                          oncomplete="if (!args.validationFailed) PF('dialogoPersonalDna').hide()"
-                                         update=":frmNuevo:tablaPersonal"/>	
+                                         update=":formularioPrincipal:pTabla"/>	
                     </div>
                     <div class="ui-g-12 ui-md-4"></div>
                     <div class="ui-g-12 ui-md-4">
@@ -33,15 +33,15 @@
             </h:form>    
         </p:dialog>
 
-       <p:dialog modal="true" id="dialogoActualizarPersonal" widgetVar="dialogoActualizarPersonal" width="90%" style="max-width: 800px"
-                 header="Personal DNA" closeOnEscape="true" resizable="false" dynamic="true" class="dlgdna" position="center center" responsive="true">
+       <p:dialog modal="true" id="dialogoActualizarPersonal" widgetVar="dialogoActualizarPersonal" width="90%" height="500px" 
+                 header="Personal DNA" closeOnEscape="true" resizable="false" dynamic="false" class="dlgdna" position="center center" responsive="true">
             <h:form id="frmActPersonalDna">
                 <ui:include src="panelPersonal.xhtml" />
                 <br></br>
                  <div class="ui-g">
                     <div class="ui-g-12 ui-md-4">
                         <p:commandButton value="Guardar" actionListener="#{inscripcionAdministrado.actualizarPersonal()}" 
-                                         update=":frmNuevo:tablaPersonal" 
+                                         update=":formularioPrincipal" 
                                          oncomplete="if (!args.validationFailed) PF('dialogoActualizarPersonal').hide()" icon="ui-icon-disk" title="Guarda los cambios"/>	
                     </div>
                     <div class="ui-g-12 ui-md-4"></div>

@@ -6,263 +6,137 @@
         xmlns:c="http://java.sun.com/jsp/jstl/core"
         xmlns:ui="http://java.sun.com/jsf/facelets"
         xmlns:pe="http://primefaces.org/ui/extensions">
-             
-     <p:fieldset legend="DATOS DE LA DEMUNA" style="width: 100%">
-     
-        <div class="ui-g">
-           <div class="ui-g-12 ui-md-3 ui-lg-2"><p:outputLabel value="Código de la DNA:"/>  </div>
-           <div class="ui-g-12 ui-md-9 ui-lg-10"><p:outputLabel class="pbold" value="#{acreditacionAdministrado.acreditacion.dna.txtConstancia}"/>  </div>
-       </div>
-        <div class="ui-g">
-           <div class="ui-g-12 ui-md-3 ui-lg-2"><p:outputLabel value="Municipalidad:"/>  </div>
-           <div class="ui-g-12 ui-md-9 ui-lg-10"><p:outputLabel  class="pbold" value="#{acreditacionAdministrado.acreditacion.dna.txtEntidad}"/>  </div>
-       </div>
-       <div class="ui-g">
-           <div class="ui-g-12 ui-md-3 ui-lg-2"><p:outputLabel value="Nombre de la DNA:"/></div>
-           <div class="ui-g-12 ui-md-9 ui-lg-10"><p:outputLabel class="pbold" value="#{acreditacionAdministrado.acreditacion.dna.txtNombre}"/></div>
-       </div>
-        <div class="ui-g">
-           <div class="ui-g-12 ui-md-3 ui-lg-2"><p:outputLabel value="Departamento:"/> </div>
-           <div class="ui-g-12 ui-md-2"><p:outputLabel class="pbold" value="#{acreditacionAdministrado.getNombreDepartamento(acreditacionAdministrado.acreditacion.dna.nidDepartamento)}" />  </div>
-           <div class="ui-g-12 ui-md-1"><p:outputLabel value="Provincia:"/></div>
-           <div class="ui-g-12 ui-md-2"><p:outputLabel class="pbold" value="#{acreditacionAdministrado.getNombreProvincia(acreditacionAdministrado.acreditacion.dna.nidProvincia)}" />  </div>
-           <div class="ui-g-12 ui-md-1"><p:outputLabel value="Distrito:"/></div>
-           <div class="ui-g-12 ui-md-2"><p:outputLabel class="pbold" value="#{acreditacionAdministrado.getNombreDistrito(acreditacionAdministrado.acreditacion.dna.nidDistrito)}" />  </div>
-       </div>
-
-
-
-        <p:separator />
-
-
-          <div class="ui-g #{acreditacionAdministrado.acreditacion.acreditacionEval.obsFecOrdenanza!=null?'panelObs':''}">
-
-            <div class="ui-g-12 ui-md-4">    
-                <p:outputLabel for="txtFecOrdenanzaSub" value="Fecha de ordenanza"/> 
+                
+              <div class="ui-g">
+                <div class="ui-g-12 ui-md-12">
+                    <h2>#{acreditacionAdministrado.acreditacion.padre.dna.txtEntidad}</h2>
+                    <h3>#{acreditacionAdministrado.acreditacionAEvaluar.padre.dna.txtConstancia} - 
+                        #{acreditacionAdministrado.acreditacion.padre.dna.txtNombre} - 
+                        #{acreditacionAdministrado.getNombreDepartamentoAcre(acreditacionAdministrado.acreditacion)} -
+                        #{acreditacionAdministrado.getNombreProvinciaAcre(acreditacionAdministrado.acreditacion)} -
+                        #{acreditacionAdministrado.getNombreDistritoAcre(acreditacionAdministrado.acreditacion)}
+                    </h3>
+                </div>
+                <div class="ui-g-12 ui-md-12">
+                    <p:outputLabel value="Teléfono:"/>#{acreditacionAdministrado.acreditacion.padre.txtTelefono}
+                </div>
             </div>
-            <div class="ui-g-12 ui-md-8">
-                <p:inputText id="txtFecOrdenanzaSub" readonly="true" style="width: 100px !important"
-                             value="#{acreditacionAdministrado.obtenerFechaConFormato(acreditacionAdministrado.acreditacion.fecOrdenanza)}">
-                </p:inputText>
+            <p:separator />
+                
+            <div class="ui-g #{acreditacionAdministrado.acreditacion.acreditacionEval.obsEstadoCons!=null?'panelObs':''}">
+       
+                <div class="ui-g-12 ui-md-5">    
+                    <p:outputLabel for="txtEstadoCons" value="Estado de Conservación"/> 
+                </div>
+                <div class="ui-g-12 ui-md-7">
+                    <p:selectOneRadio id="txtEstadoCons" value="#{acreditacionAdministrado.acreditacion.txtEstadoCons}"
+                                      disabled="true" >
+                        <f:selectItem itemLabel="BUENO" itemValue="1" />
+                        <f:selectItem itemLabel="REGULAR" itemValue="2" />
+                        <f:selectItem itemLabel="MALO" itemValue="3" />
+                    </p:selectOneRadio>
+                </div>
+                <p:outputPanel rendered="#{acreditacionAdministrado.acreditacion.acreditacionEval != null and 
+                                           acreditacionAdministrado.acreditacion.acreditacionEval.obsEstadoCons!=null}" >
+                    Original: #{acreditacionAdministrado.obtenerNombreEsConservacion()} <br />
+                    Observación: #{acreditacionAdministrado.acreditacion.acreditacionEval.obsEstadoCons}
+                </p:outputPanel>
+            </div>
+            <div class="ui-g #{acreditacionAdministrado.acreditacion.acreditacionEval.obsNroOrdenanza!=null?'panelObs':''}">
+       
+                <div class="ui-g-12 ui-md-4">    
+                    <p:outputLabel for="txtNroOrdenanza" value="Número de ordenanza"/> 
+                </div>
+                <div class="ui-g-12 ui-md-8">
+                    <p:inputText id="txtNroOrdenanza" value="#{acreditacionAdministrado.acreditacion.txtNroOrdenanza}" readonly="true">
+                    </p:inputText>
+                </div>
+                <p:outputPanel rendered="#{acreditacionAdministrado.acreditacion.acreditacionEval != null and 
+                                           acreditacionAdministrado.acreditacion.acreditacionEval.obsNroOrdenanza!=null}" >
+                    Original: #{acreditacionAdministrado.acreditacion.acreditacionEval.txtNroOrdenanza} <br />
+                    Observación: #{acreditacionAdministrado.acreditacion.acreditacionEval.obsNroOrdenanza}
+                </p:outputPanel>
+            </div>
             
+            <div class="ui-g #{acreditacionAdministrado.acreditacion.acreditacionEval.obsFecOrdenanza!=null?'panelObs':''}">
+       
+                <div class="ui-g-12 ui-md-4">    
+                    <p:outputLabel for="txtFecOrdenanza" value="Fecha de ordenanza"/> 
+                </div>
+                <div class="ui-g-12 ui-md-8">
+                    <p:inputText id="txtFecOrdenanza" readonly="true" 
+                                 value="#{acreditacionAdministrado.obtenerFechaConFormato(acreditacionAdministrado.acreditacion.fecOrdenanza)}">
+                    </p:inputText>
+                </div>
                 <p:outputPanel rendered="#{acreditacionAdministrado.acreditacion.acreditacionEval != null and 
                                            acreditacionAdministrado.acreditacion.acreditacionEval.obsFecOrdenanza!=null}" >
                     Original: #{acreditacionAdministrado.obtenerFechaConFormato(acreditacionAdministrado.acreditacion.acreditacionEval.fecOrdenanza)} <br />
                     Observación: #{acreditacionAdministrado.acreditacion.acreditacionEval.obsFecOrdenanza}
                 </p:outputPanel>
-             </div>
-        </div>
-
-        <div class="ui-g #{acreditacionAdministrado.acreditacion.acreditacionEval.obsDocCreacion!=null?'panelObs':''}">
-
-            <div class="ui-g-12 ui-md-4">    
-                <p:outputLabel value="Número de ordenanza"/> 
-            </div>
-            <div class="ui-g-12 ui-md-8">
-                <p:inputText value="#{acreditacionAdministrado.acreditacion.txtDocumento}" readonly="true">
-                </p:inputText>
-           
-                <p:outputPanel rendered="#{acreditacionAdministrado.acreditacion.acreditacionEval != null and 
-                                           acreditacionAdministrado.acreditacion.acreditacionEval.obsDocCreacion!=null}" >
-                    Original: #{acreditacionAdministrado.acreditacion.acreditacionEval.txtDocumento} <br />
-                    Observación: #{acreditacionAdministrado.acreditacion.acreditacionEval.obsDocCreacion}
-                </p:outputPanel>
-              </div>   
-        </div>
-
-        <div class="ui-g #{acreditacionAdministrado.acreditacion.acreditacionEval.obsNorma!=null?'panelObs':''}">
-            <div class="ui-g-12 ui-md-4">
-                 <p:outputLabel value="Norma y el artículo de la Ordenanza donde se consigna como función de la DEMUNA"/>  
-            </div>
-            <div class="ui-g-12 ui-md-8">
-                <p:inputText  readonly="true" value="#{acreditacionAdministrado.acreditacion.txtNorma}" />
-                <p:outputPanel rendered="#{acreditacionAdministrado.acreditacion.acreditacionEval != null and 
-                                   acreditacionAdministrado.acreditacion.acreditacionEval.obsNorma!=null}" >
-                Original: #{acreditacionAdministrado.acreditacion.acreditacionEval.txtNorma} <br />
-                Observación: #{acreditacionAdministrado.acreditacion.acreditacionEval.obsNorma}
-               </p:outputPanel>
-             </div>
-        </div>
-        <div class="ui-g #{acreditacionAdministrado.acreditacion.acreditacionEval.obsDireccion!=null?'panelObs':''}">
-            <div class="ui-g-12 ui-md-4">
-                   <p:outputLabel value="Dirección"/>  
-            </div>
-            <div class="ui-g-12 ui-md-8">
-                <p:inputText  readonly="true" value="#{acreditacionAdministrado.acreditacion.txtDireccion}" />
-                <p:outputPanel rendered="#{acreditacionAdministrado.acreditacion.acreditacionEval != null and 
-                                   acreditacionAdministrado.acreditacion.acreditacionEval.obsDireccion!=null}" >
-                Original: #{acreditacionAdministrado.acreditacion.acreditacionEval.txtDireccion} <br />
-                Observación: #{acreditacionAdministrado.acreditacion.acreditacionEval.obsDireccion}
-               </p:outputPanel>
-            </div>
-        </div>
-
-
-        <div class="ui-g #{acreditacionAdministrado.acreditacion.acreditacionEval.obsCorreo!=null?'panelObs':''}">
-            <div class="ui-g-12 ui-md-4">
-                   <p:outputLabel value="Correo electrónico de contacto"/>  
-            </div>
-            <div class="ui-g-12 ui-md-8">
-                <p:inputText  readonly="true" value="#{acreditacionAdministrado.acreditacion.txtCorreo}" />
-                <p:outputPanel rendered="#{acreditacionAdministrado.acreditacion.acreditacionEval != null and 
-                                   acreditacionAdministrado.acreditacion.acreditacionEval.obsCorreo!=null}" >
-                Original: #{acreditacionAdministrado.acreditacion.acreditacionEval.txtCorreo} <br />
-                Observación: #{acreditacionAdministrado.acreditacion.acreditacionEval.obsCorreo}
-               </p:outputPanel>
-           </div>
-
-        </div>
-
-         <div class="ui-g #{acreditacionAdministrado.acreditacion.acreditacionEval.obsDias!=null?'panelObs':''}">
-            <div class="ui-g-12 ui-md-4">
-                <p:outputLabel value="Días y horas de Atención"/>    
-            </div>
-            <div class="ui-g-12 ui-md-8">
-                 <p:inputText  readonly="true" value="#{acreditacionAdministrado.acreditacion.dias}" />
-                <p:outputPanel rendered="#{acreditacionAdministrado.acreditacion.acreditacionEval != null and 
-                                   acreditacionAdministrado.acreditacion.acreditacionEval.obsDias!=null}" >
-                Original: #{acreditacionAdministrado.acreditacion.acreditacionEval.dias} <br />
-                Observación: #{acreditacionAdministrado.acreditacion.acreditacionEval.obsDias}
-               </p:outputPanel>
-           </div>
-        </div>
-
-        <div class="ui-g #{acreditacionAdministrado.acreditacion.acreditacionEval.obsGerencia!=null?'panelObs':''}">
-             <div class="ui-g-12 ui-md-4">
-                 <p:outputLabel value="Órgano, oficina o área a la que pertenece la DEMUNA"/>    
-            </div>
-            <div class="ui-g-12 ui-md-8">
-                <p:inputText  readonly="true" value="#{acreditacionAdministrado.acreditacion.txtGerencia}" />
-                <p:outputPanel rendered="#{acreditacionAdministrado.acreditacion.acreditacionEval != null and 
-                                   acreditacionAdministrado.acreditacion.acreditacionEval.obsGerencia!=null}" >
-                Original: #{acreditacionAdministrado.acreditacion.acreditacionEval.txtGerencia} <br />
-                Observación: #{acreditacionAdministrado.acreditacion.acreditacionEval.obsGerencia}
-               </p:outputPanel>
-            </div>
-        </div>
-
-    </p:fieldset>
-    <p:fieldset legend="CONDICIONES DEL ESPACIO QUE OCUPA LA DEMUNA" style="width: 100%">
-
-            <div class="ui-g #{acreditacionAdministrado.acreditacion.acreditacionEval.obsAmbientes!=null?'panelObs':''}">
-              <div class="ui-g-12 ui-md-4">
-                    <p:outputLabel value="Número de ambientes con los que cuenta la DNA"/>    
-              </div>
-              <div class="ui-g-12 ui-md-8">
-                  <p:inputText readonly="true" value="#{acreditacionAdministrado.acreditacion.ambientes}" style="width: 80px !important" />
-                  <p:outputPanel rendered="#{acreditacionAdministrado.acreditacion.acreditacionEval != null and 
-                                             acreditacionAdministrado.acreditacion.acreditacionEval.obsAmbientes!=null}" >
-                    Original: #{acreditacionAdministrado.acreditacion.acreditacionEval.ambientes} <br />
-                    Observación: #{acreditacionAdministrado.acreditacion.acreditacionEval.obsAmbientes}
-                   </p:outputPanel>
-              </div>
-          </div>  
-
-
-         <div class="ui-g #{acreditacionAdministrado.acreditacion.acreditacionEval.obsAmbientesPriv!=null?'panelObs':''}">
-              <div class="ui-g-12 ui-md-4">
-                   <p:outputLabel value="Número de ambientes para audiencias privadas"/>    
-              </div>
-              <div class="ui-g-12 ui-md-8">
-                  <p:inputText readonly="true" value="#{acreditacionAdministrado.acreditacion.ambientesPriv}"  style="width: 80px !important" />
-                    <p:outputPanel rendered="#{acreditacionAdministrado.acreditacion.acreditacionEval != null and 
-                                            acreditacionAdministrado.acreditacion.acreditacionEval.obsAmbientesPriv!=null}" >
-                   Original: #{acreditacionAdministrado.acreditacion.acreditacionEval.ambientesPriv} <br />
-                   Observación: #{acreditacionAdministrado.acreditacion.acreditacionEval.obsAmbientesPriv}
-                  </p:outputPanel>
-               
-              </div>
-          </div>
-
-          
-        <div class="ui-g #{!acreditacionAdministrado.acreditacion.flgEquipoComputo ?'panelObs':''}">
-             <div class="ui-g-12 ui-md-8">
-                <p:outputLabel value="¿Cuenta con equipo de cómputo a disposición de cada personal de la DEMUNA?"/> 
-            </div>
-            <div class="ui-g-12 ui-md-1">    
-                <p:selectBooleanCheckbox  value="#{acreditacionAdministrado.acreditacion.flgEquipoComputo}" disabled="true">
-                </p:selectBooleanCheckbox>
-            </div>
-           
-        </div>
-        
-        <div class="ui-g #{!acreditacionAdministrado.acreditacion.flgImpresora  ?'panelObs':''}">
-             <div class="ui-g-12 ui-md-8">
-                <p:outputLabel value="¿Cuenta con impresora a disposición de la DEMUNA?"/> 
-            </div>
-            <div class="ui-g-12 ui-md-1">    
-                <p:selectBooleanCheckbox value="#{acreditacionAdministrado.acreditacion.flgImpresora}" disabled="true">
-                </p:selectBooleanCheckbox>
-            </div>
-           
-        </div>
-    
-        <div class="ui-g #{!acreditacionAdministrado.acreditacion.flgInternet ?'panelObs':''}">
-             <div class="ui-g-12 ui-md-8">
-                <p:outputLabel value="¿Cuenta con conexión a internet en la DEMUNA?"/> 
-            </div>
-            <div class="ui-g-12 ui-md-1">    
-                <p:selectBooleanCheckbox value="#{acreditacionAdministrado.acreditacion.flgInternet}" disabled="true">
-                </p:selectBooleanCheckbox>
-            </div>
-           
-        </div>
-    
-        <div class="ui-g #{!acreditacionAdministrado.acreditacion.flgArchivadores ?'panelObs':''}">
-             <div class="ui-g-12 ui-md-8">
-                <p:outputLabel value="¿Los archivadores y escritorios son seguros para el resguardo de los expedientes sobre riesgo de desprotección y otros de la DEMUNA?"/> 
-            </div>
-            <div class="ui-g-12 ui-md-1">    
-                <p:selectBooleanCheckbox value="#{acreditacionAdministrado.acreditacion.flgArchivadores}" disabled="true">
-                </p:selectBooleanCheckbox>
-            </div>
-           
-        </div>
-    
-        <div class="ui-g #{!acreditacionAdministrado.acreditacion.flgAccesibilidad ?'panelObs':''}">
-              <div class="ui-g-12 ui-md-8">
-                <p:outputLabel value="¿El Local garantiza la accesibilidad de niñas, niños, adolescentes, madres gestantes o personas con discapacidad?"/> 
-            </div>
-            <div class="ui-g-12 ui-md-1">    
-                <p:selectBooleanCheckbox value="#{acreditacionAdministrado.acreditacion.flgAccesibilidad}" disabled="true">
-                </p:selectBooleanCheckbox>
-            </div>
-          
-        </div>
-        
-        <div class="ui-g #{!acreditacionAdministrado.acreditacion.flgAreaLudica ?'panelObs':''}">
-            <div class="ui-g-12 ui-md-8">
-                <p:outputLabel value="¿Cuenta con un área lúdica para la atención de niñas, niños y adolescentes?"/> 
-            </div>
-            <div class="ui-g-12 ui-md-1">    
-                <p:selectBooleanCheckbox value="#{acreditacionAdministrado.acreditacion.flgAreaLudica}" disabled="true">
-                </p:selectBooleanCheckbox>
             </div>
             
-        </div>
-        <div class="ui-g #{acreditacionAdministrado.acreditacion.acreditacionEval != null and 
-                           acreditacionAdministrado.acreditacion.acreditacionEval.obsEstadoCons != null?'panelObs':''}">
-            <div class="ui-g-12 ui-md-8">    
-                <p:outputLabel for="txtEstadoConsSub" value="¿Cuál es el estado de conservación de la oficina de DEMUNA?"/> 
-            </div>
-            <div class="ui-g-12 ui-md-4">
-                   <p:selectOneRadio  disabled="true" id="txtEstadoConsSub" 
-                                      value="#{acreditacionAdministrado.acreditacion.txtEstadoCons}">
-                       <f:selectItem itemLabel="BUENO" itemValue="1" />
-                       <f:selectItem itemLabel="REGULAR" itemValue="2" />
-                       <f:selectItem itemLabel="MALO" itemValue="3" />
-                   </p:selectOneRadio>
-               
-                 <p:outputPanel rendered="#{acreditacionAdministrado.acreditacion.acreditacionEval != null and 
-                                           acreditacionAdministrado.acreditacion.acreditacionEval.obsEstadoCons!=null}" >
-                    Original: #{acreditacionAdministrado.obtenerNombreEsConservacion()} <br />
-                    Observación: #{acreditacionAdministrado.acreditacion.acreditacionEval.obsEstadoCons}
-                </p:outputPanel>
-                 </div>  
-         </div>
-       </p:fieldset>        
-            
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="boxshadowinside pnoborder">
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-1">
+                    <p:selectBooleanCheckbox disabled="true" value="#{acreditacionAdministrado.acreditacion.flgEquipoComputo}" >
+                   </p:selectBooleanCheckbox>
+               </div>
+               <div class="ui-g-12 ui-md-9">    
+                   <p:outputLabel value="¿Cuenta con equipo de cómputo a disposición de cada personal de la DEMUNA?"/> 
+               </div>
+           </div>
+
+           <div class="ui-g">
+                <div class="ui-g-12 ui-md-1">
+                    <p:selectBooleanCheckbox disabled="true" value="#{acreditacionAdministrado.acreditacion.flgImpresora}" >
+                   </p:selectBooleanCheckbox>
+               </div>
+               <div class="ui-g-12 ui-md-9">    
+                   <p:outputLabel value="¿Cuenta con impresora a disposición de la DEMUNA?"/> 
+               </div>
+           </div>
+
+           <div class="ui-g">
+                <div class="ui-g-12 ui-md-1">
+                    <p:selectBooleanCheckbox disabled="true" value="#{acreditacionAdministrado.acreditacion.flgInternet}" >
+                   </p:selectBooleanCheckbox>
+               </div>
+               <div class="ui-g-12 ui-md-9">    
+                   <p:outputLabel value="¿Cuenta con conexión a internet en la DEMUNA?"/> 
+               </div>
+           </div>
+
+           <div class="ui-g">
+                <div class="ui-g-12 ui-md-1">
+                    <p:selectBooleanCheckbox disabled="true" value="#{acreditacionAdministrado.acreditacion.flgArchivadores}" >
+                   </p:selectBooleanCheckbox>
+               </div>
+               <div class="ui-g-12 ui-md-9">    
+                   <p:outputLabel value="¿Los archivadores y escritorios son seguros para el resguardo de los expedientes sobre riesgo de desprotección y otros de la DEMUNA?"/> 
+               </div>
+           </div>
+
+           <div class="ui-g">
+                <div class="ui-g-12 ui-md-1">
+                    <p:selectBooleanCheckbox disabled="true" value="#{acreditacionAdministrado.acreditacion.flgAccesibilidad}" >
+                   </p:selectBooleanCheckbox>
+               </div>
+               <div class="ui-g-12 ui-md-9">    
+                   <p:outputLabel value="¿El Local garantiza la accesibilidad de niñas, niños, adolescentes, madres gestantes o personas con discapacidad?"/> 
+               </div>
+           </div>
+
+           <div class="ui-g">
+                <div class="ui-g-12 ui-md-1">
+                    <p:selectBooleanCheckbox disabled="true" value="#{acreditacionAdministrado.acreditacion.flgAreaLudica}" >
+                   </p:selectBooleanCheckbox>
+               </div>
+               <div class="ui-g-12 ui-md-9">    
+                   <p:outputLabel value="¿Cuenta con un área lúdica para la atención de niñas, niños y adolescentes?"/> 
+               </div>
+
+           </div>
+
+            <p:panelGrid id="pTabla" columns="1" columnClasses="ui-grid-col-12" layout="grid" class="boxshadowinside pnoborder">
 
                <p:dataTable 
                    id="tablaPersonasEvaluar"
@@ -306,16 +180,19 @@
                </p:dataTable>
 
            </p:panelGrid>
-            <p:dataList value="#{acreditacionAdministrado.adjuntos}" var="doc" type="definition" rowIndexVar="indexDoc" >
+            <p:dataList id="dlAdjuntos" value="#{acreditacionAdministrado.adjuntos}" var="doc" type="definition" rowIndexVar="indexDoc" >
                 <c:set var="nombreFile" value="inscripcionAdministrado.file${indexDoc}" />
-                    <div class="ui-g">
+                <f:facet name="header">
+                    Adjuntar Documentos
+                </f:facet>
+                <div class="ui-g">
                     <div class="ui-g-12 hidden-xs ui-md-6">
                        <p:outputPanel  id="dwArchivo" >
-                            <p:commandLink  ajax="false" process="@this" immediate="true" style="line-height: 20px; margin-left: 12px;"
-                                        value="Descargar  #{doc.tipo.txtNombre}: #{acreditacionAdministrado.getFileName(doc)}">
-                                   <p:fileDownload value="#{acreditacionAdministrado.obtenerNombreAdjunto(doc)}" />
-                               </p:commandLink>
-                         
+                          <p:commandButton value="Descargar #{acreditacionAdministrado.getFileName(doc)}"
+                                           rendered="#{acreditacionAdministrado.getFileName(doc)!=null}"
+                                           ajax="false" process="@this">
+                                <p:fileDownload value="#{acreditacionAdministrado.obtenerNombreAdjunto(doc)}" />
+                          </p:commandButton>
                        </p:outputPanel>    
                     </div>
                     
@@ -323,17 +200,17 @@
                     
             </p:dataList>
             <div class="ui-g">
-                <div class="ui-g-12 ui-md-12">
+                <div class="ui-g-12 ui-md-1">
                     <p:selectBooleanCheckbox value="#{acreditacionAdministrado.flgDenegarAcreditacion}" >
-                        <p:ajax event="change" update="obsDenegar , btnEvaluarSub" />
+                        <p:ajax update="obsDenegar , btnEvaluar" />
                     </p:selectBooleanCheckbox>
-               
-                    Denegar Acreditación  
                 </div>
+                <div class="ui-g-12 ui-md-4"> Denegar Acreditación  </div>
             </div>
             <p:outputPanel id="obsDenegar" style="width: 100%">
                 <div class="ui-g">
-                      <div class="ui-g-12 ui-md-12"> 
+                    <div class="ui-g-12 ui-md-1"> </div>   
+                    <div class="ui-g-12 ui-md-11"> 
                         <p:inputTextarea rendered="#{acreditacionAdministrado.flgDenegarAcreditacion}"
                                  required="#{acreditacionAdministrado.flgDenegarAcreditacion}"
                                  requiredMessage="Debe ingresar la la razón por la cual se denego la inscripción."

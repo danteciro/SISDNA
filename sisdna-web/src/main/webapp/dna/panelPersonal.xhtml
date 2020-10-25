@@ -42,7 +42,7 @@
                             validator="#{defensoriaAdministrado.verificarReniec}"
                             requiredMessage="Debe ingresar el DNI" >
                   <p:keyFilter regEx="/[\d\.]/"/> 
-                  <p:ajax event="blur" process="@this" update="apePaterno,apeMaterno,txtNombre1,txtNombre2,txtNombre3,sexo,txtDireccionDna,txtDepartamentoDna,txtProvinciaDna,txtDistritoDna"/>
+                  <p:ajax event="blur" process="@this" update="apePaterno,apeMaterno,txtNombre1,txtNombre2,txtNombre3,sexo,txtDireccionDna"/>
               </p:inputText>
            </div>   
            <div class="ui-g-12 ui-md-2"> 
@@ -121,7 +121,7 @@
                 <p:outputLabel for="txtDepartamentoDna" value="Departamento: "/>
                 <p:selectOneMenu id="txtDepartamentoDna" value="#{defensoriaAdministrado.defensoriaPersona.nidDepartamento}" autoWidth="false"
                                  effect="fade" required="true" requiredMessage="Debe seleccionar el departamento">
-                    <p:ajax listener="#{defensoriaAdministrado.obtenerProvinciasDna()}" update="txtProvinciaDna" />
+                    <p:ajax listener="#{inscripcionAdministrado.obtenerProvinciasDna()}" update="txtProvinciaDna" />
                     <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
                     <f:selectItems value="#{inscripcionAdministrado.obtenerDepartamentos()}" var="departamentoDna" 
                                   itemLabel="#{departamentoDna.txtDescripcion}" itemValue="#{departamentoDna.nidDepartamento}" />
@@ -131,9 +131,9 @@
                 <p:outputLabel for="txtProvinciaDna" value="Provincia "/>
                 <p:selectOneMenu id="txtProvinciaDna" value="#{defensoriaAdministrado.defensoriaPersona.nidProvincia}" autoWidth="false"
                                  effect="fade" required="true" requiredMessage="Debe selecccionar la provincia">
-                    <p:ajax listener="#{defensoriaAdministrado.obtenerDistritosDna()}" update="txtDistritoDna" />
+                    <p:ajax listener="#{inscripcionAdministrado.obtenerDistritosDna()}" update="txtDistritoDna" />
                     <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
-                    <f:selectItems value="#{defensoriaAdministrado.provinciasDna}" var="provinciaDna" 
+                    <f:selectItems value="#{inscripcionAdministrado.provinciasDna}" var="provinciaDna" 
                                   itemLabel="#{provinciaDna.txtDescripcion}" itemValue="#{provinciaDna.nidProvincia}" />
                 </p:selectOneMenu>
             </div> 
@@ -142,7 +142,7 @@
                 <p:selectOneMenu id="txtDistritoDna" value="#{defensoriaAdministrado.defensoriaPersona.nidDistrito}" autoWidth="false"
                                  effect="fade"  required="true" requiredMessage="Debe seleccionar el distrito" >
                          <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/> 
-                         <f:selectItems value="#{defensoriaAdministrado.distritosDna}" var="distritoDna" 
+                         <f:selectItems value="#{inscripcionAdministrado.distritosDna}" var="distritoDna" 
                                       itemLabel="#{distritoDna.txtDescripcion}" itemValue="#{distritoDna.nidDistrito}" />
                 </p:selectOneMenu>
             </div>
@@ -150,13 +150,12 @@
          <div class="ui-g">
             <div class="ui-g-12 ui-md-2">
                 <p:outputLabel for="txtInstruccion" value="Grado de Instrucción"/>
-                <p:selectOneMenu id="txtInstruccion" autoWidth="false" required="true"
-                                 requiredMessage="Debe seleccionar el grado de instrucción"
+                <p:selectOneMenu id="txtInstruccion" autoWidth="false"
                                  value="#{defensoriaAdministrado.defensoriaPersona.instruccion.nidCatalogo}"
                                  >
                      <p:ajax update="@this"/>
                      <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
-                     <f:selectItems value="#{catalogoAdministrado.obtenerGradoInstruccion()}" var="instruccion" 
+                     <f:selectItems value="#{inscripcionAdministrado.obtenerGradoInstruccion()}" var="instruccion" 
                                     itemLabel="#{instruccion.txtNombre}" itemValue="#{instruccion.nidCatalogo}" />
                 </p:selectOneMenu>
             </div>
@@ -167,7 +166,7 @@
                                  autoWidth="false" required="true" 
                                  requiredMessage="Debe seleccionar la profesión / oficio">
                      <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
-                     <f:selectItems value="#{catalogoAdministrado.obtenerOcupaciones()}" var="funcion" 
+                     <f:selectItems value="#{inscripcionAdministrado.obtenerOcupaciones()}" var="funcion" 
                                     itemLabel="#{funcion.txtNombre}" itemValue="#{funcion.nidCatalogo}" />
 
                 </p:selectOneMenu>

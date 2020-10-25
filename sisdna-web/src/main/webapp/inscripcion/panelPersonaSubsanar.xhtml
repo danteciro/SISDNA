@@ -9,169 +9,208 @@
     <div class="ui-fluid">
            <div class="ui-g">
             <div class="ui-g-12">
-                <h3>#{inscripcionAdministrado.personaDna.txtDocumento} - 
-                     #{inscripcionAdministrado.personaDna.txtApellidoPaterno}
-                     #{inscripcionAdministrado.personaDna.txtApellidoMaterno}
-                     #{inscripcionAdministrado.personaDna.txtNombre1}
-                     #{inscripcionAdministrado.personaDna.txtNombre2}
-                     #{inscripcionAdministrado.personaDna.txtNombre3}
+                <h3>#{inscripcionAdministrado.personaSubsanar.txtDocumento} - 
+                     #{inscripcionAdministrado.personaSubsanar.txtApellidoPaterno}
+                     #{inscripcionAdministrado.personaSubsanar.txtApellidoMaterno}
+                     #{inscripcionAdministrado.personaSubsanar.txtNombre1}
+                     #{inscripcionAdministrado.personaSubsanar.txtNombre2}
+                     #{inscripcionAdministrado.personaSubsanar.txtNombre3}
                  </h3>   
             </div>
         </div>
          <div class="ui-g">
             <div class="ui-g-12">
-                <p:outputLabel value="Sexo:"/>#{inscripcionAdministrado.personaDna.txtSexo} - 
-                <p:outputLabel value="Teléfono:"/>#{inscripcionAdministrado.personaDna.txtTelefono} 
+                <p:outputLabel value="Sexo:"/>#{inscripcionAdministrado.personaSubsanar.txtSexo} - 
+                <p:outputLabel value="Teléfono:"/>#{inscripcionAdministrado.personaSubsanar.txtTelefono} 
             </div>
         </div>    
         <div class="ui-g">
             <div class="ui-g-12">
-                #{inscripcionAdministrado.getNombreDepartamentoVer()} - 
-                #{inscripcionAdministrado.getNombreProvinciaVer()} - 
-                #{inscripcionAdministrado.getNombreDistritoVer()}
+                #{inscripcionAdministrado.getNombreDepartamento()} - 
+                #{inscripcionAdministrado.getNombreProvincia()} - 
+                #{inscripcionAdministrado.getNombreDistrito()}
             </div>
         </div>    
         <div class="ui-g">
             <div class="ui-g-12">
-                <p:outputLabel value="Función:"/> #{inscripcionAdministrado.personaDna.personaEval.funcion.txtNombre} 
+                <p:outputLabel value="Función:"/> #{inscripcionAdministrado.personaSubsanar.personaEval.funcion.txtNombre} 
             </div>
         </div>    
         <p:separator />
         
-        <div class="ui-g">
-            <div class="ui-g-12 ui-md-6  #{inscripcionAdministrado.personaDna.personaEval.obsDireccion!=null?'panelObs':''}">    
+        <div class="ui-g #{inscripcionAdministrado.personaSubsanar.personaEval.obsDireccion!=null?'panelObs':''}">
+            <div class="ui-g-12 ui-md-3">    
                 <p:outputLabel for="txtDireccionDna" value="Dirección Domiciliaria:"/> 
-                <p:inputText id="txtDireccionDna" value="#{inscripcionAdministrado.personaDna.txtDireccion}" 
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:inputText id="txtDireccionDna" value="#{inscripcionAdministrado.personaSubsanar.txtDireccion}" 
                              maxlength="150"  required="true"  
                              requiredMessage="Debe ingresar la dirección domiciliaria">
                 </p:inputText>
-                <p:outputPanel rendered="#{inscripcionAdministrado.personaDna.personaEval.obsDireccion!=null}">
-                   #{inscripcionAdministrado.personaDna.personaEval.obsDireccion}
-               </p:outputPanel>
             </div>
-            <div class="ui-g-12 ui-md-6 #{inscripcionAdministrado.personaDna.personaEval.obsCorreo!=null?'panelObs':''}">    
+            <p:outputPanel rendered="#{inscripcionAdministrado.personaSubsanar.personaEval.obsDireccion!=null}">
+                #{inscripcionAdministrado.personaSubsanar.personaEval.obsDireccion}
+            </p:outputPanel>
+        </div>
+        <div class="ui-g #{inscripcionAdministrado.personaSubsanar.personaEval.obsCorreo!=null?'panelObs':''}">
+            <div class="ui-g-12 ui-md-3">    
                 <p:outputLabel for="txtCorreoDna" value="Correo:"/> 
-                <p:inputText id="txtCorreoDna" value="#{inscripcionAdministrado.personaDna.txtCorreo}" 
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:inputText id="txtCorreoDna" value="#{inscripcionAdministrado.personaSubsanar.txtCorreo}" 
                              required="true" 
                              requiredMessage="Ingrese el correo electrónico" 
                              validator="#{inscripcionAdministrado.validarCorreo}" maxlength="150">
                     <p:ajax event="blur" update="@this"/>
                 </p:inputText>
-                <p:outputPanel rendered="#{inscripcionAdministrado.personaDna.personaEval.obsCorreo!=null}">
-                   #{inscripcionAdministrado.personaDna.personaEval.obsCorreo}
-               </p:outputPanel>
-        </div>
-       </div>
-                
-        <div class="ui-g">
-            <div class="ui-g-12 ui-md-3  #{inscripcionAdministrado.personaDna.personaEval.obsInstruccion!=null?'panelObs':''}">    
-                <p:outputLabel for="txtInstruccion" value="Grado de Instrucción"/> 
-                 <p:selectOneMenu id="txtInstruccion" autoWidth="false"
-                                  value="#{inscripcionAdministrado.personaDna.instruccion.nidCatalogo}">
-                     <p:ajax update="@this"/>
-                     <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
-                     <f:selectItems value="#{catalogoAdministrado.obtenerGradoInstruccion()}" var="instruccion" 
-                                    itemLabel="#{instruccion.txtNombre}" itemValue="#{instruccion.nidCatalogo}" />
-                </p:selectOneMenu>
-            <p:outputPanel rendered="#{inscripcionAdministrado.personaDna.personaEval.obsInstruccion!=null}">
-                #{inscripcionAdministrado.personaDna.personaEval.obsInstruccion}
+            </div>
+            <p:outputPanel rendered="#{inscripcionAdministrado.personaSubsanar.personaEval.obsCorreo!=null}">
+                #{inscripcionAdministrado.personaSubsanar.personaEval.obsCorreo}
             </p:outputPanel>
         </div>
         
-        <div class="ui-g-12 ui-md-3  #{inscripcionAdministrado.personaDna.personaEval.obsProfesion!=null?'panelObs':''}">    
+        <div class="ui-g #{inscripcionAdministrado.personaSubsanar.personaEval.obsProfesion!=null?'panelObs':''}">
+            <div class="ui-g-12 ui-md-3">    
                 <p:outputLabel for="txtProfesion" value="Profesión"/> 
-               <p:selectOneMenu id="txtProfesion" 
-                                   value="#{inscripcionAdministrado.personaDna.profesion.nidCatalogo}"
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:selectOneMenu id="txtProfesion" 
+                                   value="#{inscripcionAdministrado.personaSubsanar.profesion.nidCatalogo}"
                                  autoWidth="false" required="true" 
                                  requiredMessage="Debe seleccionar la profesión / oficio">
                      <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
-                     <f:selectItems value="#{catalogoAdministrado.obtenerOcupaciones()}" var="funcion" 
+                     <f:selectItems value="#{inscripcionAdministrado.obtenerOcupaciones()}" var="funcion" 
                                     itemLabel="#{funcion.txtNombre}" itemValue="#{funcion.nidCatalogo}" />
 
                 </p:selectOneMenu>
-            <p:outputPanel rendered="#{inscripcionAdministrado.personaDna.personaEval.obsProfesion!=null}" >
-                #{inscripcionAdministrado.personaDna.personaEval.obsProfesion}
+            </div>
+            <p:outputPanel rendered="#{inscripcionAdministrado.personaSubsanar.personaEval.obsProfesion!=null}" >
+                #{inscripcionAdministrado.personaSubsanar.personaEval.obsProfesion}
             </p:outputPanel>
         </div>
-            
-       <div class="ui-g-12 ui-md-3 #{inscripcionAdministrado.personaDna.personaEval.obsColegio!=null?'panelObs':''}">    
+                
+        <div class="ui-g #{inscripcionAdministrado.personaSubsanar.personaEval.obsInstruccion!=null?'panelObs':''}">
+            <div class="ui-g-12 ui-md-3">    
+                <p:outputLabel for="txtInstruccion" value="Grado de Instrucción"/> 
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:selectOneMenu id="txtInstruccion" autoWidth="false"
+                                 value="#{inscripcionAdministrado.personaSubsanar.nidInstruccion}">
+                     <p:ajax update="@this"/>
+                     <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                     <f:selectItems value="#{inscripcionAdministrado.obtenerGradoInstruccion()}" var="instruccion" 
+                                    itemLabel="#{instruccion.txtNombre}" itemValue="#{instruccion.nidCatalogo}" />
+                </p:selectOneMenu>
+            </div>
+            <p:outputPanel rendered="#{inscripcionAdministrado.personaSubsanar.personaEval.obsInstruccion!=null}">
+                #{inscripcionAdministrado.personaSubsanar.personaEval.obsInstruccion}
+            </p:outputPanel>
+        </div>
+        
+        
+        <div class="ui-g #{inscripcionAdministrado.personaSubsanar.personaEval.obsColegio!=null?'panelObs':''}">
+            <div class="ui-g-12 ui-md-3">    
                 <p:outputLabel for="txtColegio" value="Colegio Profesional:"/> 
-                 <p:inputText id="txtColegio" value="#{inscripcionAdministrado.personaDna.txtColegio}" 
-                             maxlength="150"  >
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:inputText id="txtColegio" value="#{inscripcionAdministrado.personaSubsanar.txtColegio}" 
+                             maxlength="150" title="Campo Obligatorio" >
                     <p:keyFilter regEx="/[a-z_ ñ]/i"/>
                 </p:inputText>
-             <p:outputPanel rendered="#{inscripcionAdministrado.personaDna.personaEval.obsColegio!=null}" >
-                #{inscripcionAdministrado.personaDna.personaEval.obsColegio}
+            </div>
+            <p:outputPanel rendered="#{inscripcionAdministrado.personaSubsanar.personaEval.obsColegio!=null}" >
+                #{inscripcionAdministrado.personaSubsanar.personaEval.obsColegio}
             </p:outputPanel>
         </div>
-        <div class="ui-g-12 ui-md-3  #{inscripcionAdministrado.personaDna.personaEval.obsColegiatura!=null?'panelObs':''}">    
+        <div class="ui-g #{inscripcionAdministrado.personaSubsanar.personaEval.obsColegiatura!=null?'panelObs':''}">
+            <div class="ui-g-12 ui-md-3">    
                 <p:outputLabel for="txtColegiatura" value="Colegiatura"/> 
-                <p:inputText id="txtColegiatura" value="#{inscripcionAdministrado.personaDna.txtColegiatura}" 
-                             maxlength="150"  >
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:inputText id="txtColegiatura" value="#{inscripcionAdministrado.personaSubsanar.txtColegiatura}" 
+                             maxlength="150" title="Campo Obligatorio" >
                 </p:inputText>
-             <p:outputPanel rendered="#{inscripcionAdministrado.personaDna.personaEval.obsColegiatura!=null}">
-                #{inscripcionAdministrado.personaDna.personaEval.obsColegiatura}
+            </div>
+            <p:outputPanel rendered="#{inscripcionAdministrado.personaSubsanar.personaEval.obsColegiatura!=null}">
+                #{inscripcionAdministrado.personaSubsanar.personaEval.obsColegiatura}
             </p:outputPanel>
         </div>
-        </div> 
-       
-        <div class="ui-g">
-             <p:outputPanel rendered="#{inscripcionAdministrado.personaDna.funcion.txtNombre eq 'RESPONSABLE'}" 
-                       class="ui-g-12 ui-md-3  #{inscripcionAdministrado.personaDna.personaEval.obsDocDesignacion!=null?'panelObs':''}">    
-                <p:outputLabel for="txtDocDesignacion" value="Doc. Designación"/> 
-                 <p:inputText id="txtDocDesignacion" value="#{inscripcionAdministrado.personaDna.txtDocDesignacion}" 
-                             rendered="#{inscripcionAdministrado.personaDna.funcion.nidCatalogo eq 120}"
-                            required="#{inscripcionAdministrado.personaDna.funcion.nidCatalogo eq 120}"
-                             maxlength="150" >
-                </p:inputText>
-                <p:outputPanel rendered="#{inscripcionAdministrado.personaDna.personaEval.obsDocDesignacion!=null}">
-                    #{inscripcionAdministrado.personaDna.personaEval.obsDocDesignacion}
+        <p:outputPanel rendered="#{inscripcionAdministrado.personaSubsanar.funcion.txtNombre eq 'RESPONSABLE'}">
+            <div class="ui-g #{inscripcionAdministrado.personaSubsanar.personaEval.obsDocDesignacion!=null?'panelObs':''}">
+                <div class="ui-g-12 ui-md-3">    
+                    <p:outputLabel for="txtDocDesignacion" value="Documento de Designación"/> 
+                </div>
+                <div class="ui-g-12 ui-md-9">
+                    <p:inputText id="txtDocDesignacion" value="#{inscripcionAdministrado.personaSubsanar.txtDocDesignacion}" 
+                                 rendered="#{inscripcionAdministrado.personaSubsanar.funcion.nidCatalogo eq 20}"
+                                required="#{inscripcionAdministrado.personaSubsanar.funcion.nidCatalogo eq 20}"
+                                 maxlength="150" title="Campo Obligatorio" >
+                    </p:inputText>
+                </div>
+                <p:outputPanel rendered="#{inscripcionAdministrado.personaSubsanar.personaEval.obsDocDesignacion!=null}">
+                    #{inscripcionAdministrado.personaSubsanar.personaEval.obsDocDesignacion}
                 </p:outputPanel>
-            </p:outputPanel>
-            <div class="ui-g-12 ui-md-3 #{inscripcionAdministrado.personaDna.personaEval.obsLugarDeCurso!=null?'panelObs':''}">    
+            </div>
+        </p:outputPanel>
+        
+        <div class="ui-g #{inscripcionAdministrado.personaSubsanar.personaEval.obsLugarDeCurso!=null?'panelObs':''}">
+            <div class="ui-g-12 ui-md-3">    
                 <p:outputLabel for="txtLugar" value="Lugar de curso:"/> 
-                 <p:inputText id="txtLugar" value="#{inscripcionAdministrado.personaDna.txtLugarCurso}" 
-                             maxlength="150"  
-                             required="#{inscripcionAdministrado.personaDna.funcion.nidCatalogo eq 20 or inscripcionAdministrado.personaDna.funcion.nidCatalogo eq 21}"
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:inputText id="txtLugar" value="#{inscripcionAdministrado.personaSubsanar.txtLugarCurso}" 
+                             maxlength="150" title="Campo Obligatorio" 
+                             required="#{inscripcionAdministrado.personaSubsanar.funcion.nidCatalogo eq 20 or inscripcionAdministrado.personaSubsanar.funcion.nidCatalogo eq 21}"
                             requiredMessage="El Responsable debe haber llevado el curso. Ingrese el Lugar del Curso.">
                 </p:inputText>
-                <p:outputPanel rendered="#{inscripcionAdministrado.personaDna.personaEval.obsLugarDeCurso!=null}">
-                    #{inscripcionAdministrado.personaDna.personaEval.obsLugarDeCurso}
-                </p:outputPanel>
             </div>
-            <div class="ui-g-12 ui-md-3  #{inscripcionAdministrado.personaDna.personaEval.obsFechaDeCurso!=null?'panelObs':''}">    
+            <p:outputPanel rendered="#{inscripcionAdministrado.personaSubsanar.personaEval.obsLugarDeCurso!=null}">
+                #{inscripcionAdministrado.personaSubsanar.personaEval.obsLugarDeCurso}
+            </p:outputPanel>
+        </div>
+        <div class="ui-g #{inscripcionAdministrado.personaSubsanar.personaEval.obsFechaDeCurso!=null?'panelObs':''}">
+            <div class="ui-g-12 ui-md-3">    
                 <p:outputLabel for="txtFechaCurso" value="Fecha de Curso"/> 
-                <p:calendar id="txtFechaCurso" value="#{inscripcionAdministrado.personaDna.txtFechaCurso}"  
-                            required="#{inscripcionAdministrado.personaDna.funcion.nidCatalogo eq 20 or inscripcionAdministrado.personaDna.funcion.nidCatalogo eq 21}"
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:calendar id="txtFechaCurso" value="#{inscripcionAdministrado.personaSubsanar.txtFechaCurso}"  
+                            required="#{inscripcionAdministrado.personaSubsanar.funcion.nidCatalogo eq 20 or inscripcionAdministrado.personaSubsanar.funcion.nidCatalogo eq 21}"
                             requiredMessage="El Responsable debe haber llevado el curso. Ingrese la Fecha del Curso." 
                             pattern="dd/MM/yyyy" navigator="true" mask="true" locale="es" />
-                <p:outputPanel rendered="#{inscripcionAdministrado.personaDna.personaEval.obsFechaDeCurso!=null}">
-                    #{inscripcionAdministrado.personaDna.personaEval.obsFechaDeCurso}
-                </p:outputPanel>
             </div>
-         </div> 
+            <p:outputPanel rendered="#{inscripcionAdministrado.personaSubsanar.personaEval.obsFechaDeCurso!=null}">
+                #{inscripcionAdministrado.personaSubsanar.personaEval.obsFechaDeCurso}
+            </p:outputPanel>
+        </div>
+        
       <p:fieldset legend="Plataforma de Interoperabilidad">
    
         <div class="ui-g">
-            <div class="ui-g-12 ui-md-4">    
-                <p:outputLabel for="txPj" value="Poder Judicial:"/>
-                <p:inputText id="txPj"  readonly="true" value="#{inscripcionAdministrado.personaDna.txtPj}" >
+            <div class="ui-g-12 ui-md-2">    
+                <p:outputLabel for="txPj" value="PJ:"/>
+            </div>
+            <div class="ui-g-12 ui-md-10">
+                <p:inputText id="txPj"  readonly="true" value="#{inscripcionAdministrado.personaSubsanar.txtPj}" >
                 </p:inputText>
             </div>
-            <div class="ui-g-12 ui-md-4">    
+            <div class="ui-g-12 ui-md-2">    
                 <p:outputLabel for="txtInpe" value="INPE:"/>
-                <p:inputText id="txtInpe"  readonly="true" value="#{inscripcionAdministrado.personaDna.txtInpe}" >
+            </div>
+            <div class="ui-g-12 ui-md-10">
+                <p:inputText id="txtInpe"  readonly="true" value="#{inscripcionAdministrado.personaSubsanar.txtInpe}" >
                 </p:inputText>
             </div>
-            <div class="ui-g-12 ui-md-4">    
+            <div class="ui-g-12 ui-md-2">    
                 <p:outputLabel for="txtPnp" value="PNP:"/>
-                <p:inputText id="txtPnp"  readonly="true" value="#{inscripcionAdministrado.personaDna.txtPnp}" >
+            </div>
+            <div class="ui-g-12 ui-md-10">
+                <p:inputText id="txtPnp"  readonly="true" value="#{inscripcionAdministrado.personaSubsanar.txtPnp}" >
                 </p:inputText>
             </div>
         </div>
           
-          <p:outputPanel rendered="#{inscripcionAdministrado.personaDna.personaEval.obsAntecedentes!=null}" class="panelObs">
-            #{inscripcionAdministrado.personaDna.personaEval.obsAntecedentes}
+          <p:outputPanel rendered="#{inscripcionAdministrado.personaSubsanar.personaEval.obsAntecedentes!=null}" class="panelObs">
+            #{inscripcionAdministrado.personaSubsanar.personaEval.obsAntecedentes}
         </p:outputPanel>
 
           

@@ -7,13 +7,14 @@
         xmlns:ui="http://java.sun.com/jsf/facelets"
         xmlns:pe="http://primefaces.org/ui/extensions">
 
+            <h:form id="formularioPrincipal" enctype="multipart/form-data">
                 
                 <p:fieldset legend="Datos Inscripción Seleccionada" style="width: 100%">
                     <div class="ui-g">
                         <div class="ui-g-12 ui-md-3"><p:outputLabel value="Código de la DNA:"/>  </div>
                         <div class="ui-g-9"><p:outputLabel  value="#{acreditacionAdministrado.inscripcionSeleccionada.dna.txtConstancia}"/>  </div>
                     </div>
-                     <div class="ui-g">
+                    <div class="ui-g">
                         <div class="ui-g-12 ui-md-3"><p:outputLabel value="Nombre de la entidad responsable:"/>  </div>
                         <div class="ui-g-9"><p:outputLabel  value="#{acreditacionAdministrado.inscripcionSeleccionada.dna.txtEntidad}"/>  </div>
                     </div>
@@ -72,12 +73,12 @@
                     </div>
                 </p:fieldset>
                 <p:fieldset legend="Datos Acreditación" style="width: 100%">
-                    <div class="ui-g"> 
+                   <div class="ui-g"> 
                         <div class="ui-g-12 ui-md-4"> 
                             <p:outputLabel for="txtNroOrdenanza" value="Número de Ordenanza que incorpora a la DEMUNA en la estructura orgánica municipal"/> </div>
                         <div class="ui-g-12 ui-md-8">
                             <p:inputText required="true" id="txtNroOrdenanza" requiredMessage="Debe ingresar el número de ordenanza"
-                                          value="#{acreditacionAdministrado.acreditacion.txtNroOrdenanza}" maxlength="150">
+                                         value="#{acreditacionAdministrado.acreditacion.txtNroOrdenanza}" maxlength="150">
                             </p:inputText>
                         </div>
                     </div>
@@ -97,7 +98,6 @@
                          </div>
                          <div class="ui-g-12 ui-md-1">
                             <p:selectBooleanCheckbox id="flgEquipoComputo" value="#{acreditacionAdministrado.acreditacion.flgEquipoComputo}" >
-                                <p:ajax update="@this"/>
                             </p:selectBooleanCheckbox>
                          </div>   
                      </div>
@@ -107,7 +107,6 @@
                          </div>
                          <div class="ui-g-12 ui-md-1">
                             <p:selectBooleanCheckbox id="flgImpresora" value="#{acreditacionAdministrado.acreditacion.flgImpresora}" >
-                                <p:ajax update="@this"/>
                             </p:selectBooleanCheckbox>
                          </div>   
                      </div>
@@ -117,7 +116,6 @@
                          </div>
                          <div class="ui-g-12 ui-md-1">
                              <p:selectBooleanCheckbox id="flgInternet" value="#{acreditacionAdministrado.acreditacion.flgInternet}" >
-                                 <p:ajax update="@this"/>
                              </p:selectBooleanCheckbox>
                          </div>   
                      </div>
@@ -127,7 +125,6 @@
                          </div>
                          <div class="ui-g-12 ui-md-1">
                              <p:selectBooleanCheckbox id="flgArchivadores" value="#{acreditacionAdministrado.acreditacion.flgArchivadores}" >
-                                <p:ajax update="@this"/>
                              </p:selectBooleanCheckbox>
                          </div>   
                      </div>
@@ -137,7 +134,6 @@
                          </div>
                          <div class="ui-g-12 ui-md-1">
                              <p:selectBooleanCheckbox  id="flgAccesibilidad" value="#{acreditacionAdministrado.acreditacion.flgAccesibilidad}" >
-                                 <p:ajax update="@this"/>
                              </p:selectBooleanCheckbox>
                          </div>   
                      </div>
@@ -147,7 +143,6 @@
                          </div>
                          <div class="ui-g-12 ui-md-1">
                              <p:selectBooleanCheckbox id="flgAreaLudica" value="#{acreditacionAdministrado.acreditacion.flgAreaLudica}" >
-                                 <p:ajax update="@this"/>
                              </p:selectBooleanCheckbox>
                          </div>   
                      </div>
@@ -162,7 +157,6 @@
                                <f:selectItem itemLabel="BUENO" itemValue="1" />
                                <f:selectItem itemLabel="REGULAR" itemValue="2" />
                                <f:selectItem itemLabel="MALO" itemValue="3" />
-                               <p:ajax update="@this"/>
                            </p:selectOneRadio>
                         </div>  
 
@@ -202,7 +196,7 @@
                                          process="@this"
                                          actionListener="#{acreditacionAdministrado.obtenerPersonaVer(itemEquipo)}"
                                          oncomplete="PF('dialogoVerPersonaEquipo').show();"  
-                                         title="Ver Responsable" icon="fa fa-eye">
+                                         title="Ver Responsable" icon="fa fa-eye" >
                         </p:commandButton>
                         <p:commandButton 
                                          update=":dialogoActualizarPersonaEquipo" 
@@ -211,7 +205,7 @@
                                          oncomplete="PF('dialogoActualizarPersonaEquipo').show();"  
                                          title="Editar Equipo" icon="fa fa-pencil">
                         </p:commandButton>
-                        <p:commandButton  
+                        <p:commandButton 
                                          process="@this"
                                          update=":dialogoAnularPersonaEquipo" 
                                          actionListener="#{acreditacionAdministrado.obtenerPersonaExternoEliminar(itemEquipo)}"
@@ -242,7 +236,7 @@
                 </p:dataTable>
 
             </p:panelGrid>
-                <p:dataList id="dlAdjuntos" value="#{acreditacionAdministrado.adjuntos}" var="doc" type="definition" rowIndexVar="indexDoc" emptyMessage="No hay tipo de archivos registrados">
+            <p:dataList id="dlAdjuntos" value="#{acreditacionAdministrado.adjuntos}" var="doc" type="definition" rowIndexVar="indexDoc" emptyMessage="No hay tipo de archivos registrados">
                 <c:set var="nombreFile" value="acreditacionAdministrado.file${indexDoc}" />
                 <f:facet name="header">
                     Adjuntar Documentos
@@ -260,7 +254,7 @@
                        <p:outputPanel  id="dwArchivo" >
                           <p:commandButton value="Descargar #{acreditacionAdministrado.getFileName(doc)}"
                                            rendered="#{acreditacionAdministrado.getFileName(doc)!=null}"
-                                           ajax="false" process="@this">
+                                           ajax="false" process="@this" immediate="true">
                                 <p:fileDownload value="#{acreditacionAdministrado.obtenerNombreAdjunto(doc)}" />
                           </p:commandButton>
                        </p:outputPanel>    
@@ -271,5 +265,13 @@
             </p:dataList>
              
            <br />
+            <p:commandButton value="Guardar" ajax="true"
+                                icon="ui-icon-disk" title="Guardar" action="#{acreditacionAdministrado.crearAcreditacionExterna()}" update="@this, :pTodo"/>  
+               
+            <f:event listener="#{acreditacionAdministrado.validarCreate}" type="postValidate" />
+            </h:form>
+            
+    <ui:include src="panelDialogExterno.xhtml" />
+    
     
 </f:view>

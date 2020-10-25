@@ -126,7 +126,7 @@
                             <p:selectOneMenu id="txtOrigen" value="#{reporteAdministrado.busOrigen}" autoWidth="false"  effect="fade" >
                                   <p:ajax event="change" process="@this" listener="#{reporteAdministrado.resetLista()}" update="formularioPrincipal1" />
                                   <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
-                                   <f:selectItems value="#{catalogoAdministrado.obtenerOrigen()}" var="origen" 
+                                   <f:selectItems value="#{inscripcionAdministrado.obtenerOrigen()}" var="origen" 
                                                  itemLabel="#{origen.txtNombre}" itemValue="#{origen.nidCatalogo}" />
                             </p:selectOneMenu>
                        </p:outputPanel>

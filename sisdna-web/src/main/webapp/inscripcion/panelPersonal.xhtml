@@ -9,46 +9,57 @@
  
     <div class="ui-fluid">
         <div class="ui-g">
+           <div class="ui-g-12 ui-md-2"><p:outputLabel for="documento" value="Nro. DNI"/></div>
            <div class="ui-g-12 ui-md-2">
-               <p:outputLabel for="documento" value="Nro. DNI"/>
                <p:inputText id="documento" disabled="#{inscripcionAdministrado.personaDna.funcion.txtNombre eq 'RESPONSABLE'}"  
                             value="#{inscripcionAdministrado.personaDna.txtDocumento}" maxlength="8" required="true"
                             validator="#{inscripcionAdministrado.verificarReniec}"
                             requiredMessage="Debe ingresar el DNI" >
                   <p:keyFilter regEx="/[\d\.]/"/> 
-                  <p:ajax event="blur" update="@this, apePaterno,apeMaterno,txtNombre1,txtNombre2,txtNombre3,txtDireccionDna,txtDepartamentoDna,txtProvinciaDna,txtDistritoDna"/>
+                  <p:ajax event="blur" update="@form"/>
               </p:inputText>
            </div>
-           <div class="ui-g-12 ui-md-2"> 
-              <p:outputLabel for="apePaterno" value="Apellido Paterno:"/>
+               
+        </div>  
+        <div class="ui-g">
+           <div class="ui-g-12 ui-md-2"> <p:outputLabel for="apePaterno" value="Apellido Paterno:"/></div>
+           <div class="ui-g-12 ui-md-2">
               <p:inputText id="apePaterno" disabled="true" value="#{inscripcionAdministrado.personaDna.txtApellidoPaterno}"  required="true" />
            </div>
            <div class="ui-g-12 ui-md-2">
               <p:outputLabel for="apeMaterno" value="Apellido Materno:"/>
-              <p:inputText id="apeMaterno" disabled="true" value="#{inscripcionAdministrado.personaDna.txtApellidoMaterno}"  required="true" />
            </div>
            <div class="ui-g-12 ui-md-2">
-               <p:outputLabel for="txtNombre1" value="Primer Nombre:"/>
+               <p:inputText id="apeMaterno" disabled="true" value="#{inscripcionAdministrado.personaDna.txtApellidoMaterno}"  required="true" />
+           </div>
+        </div>  
+        <div class="ui-g">
+            <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtNombre1" value="Primer Nombre:"/></div>
+            <div class="ui-g-12 ui-md-2">
                   <p:inputText id="txtNombre1" disabled="true"  value="#{inscripcionAdministrado.personaDna.txtNombre1}"  required="true" >
                     <p:keyFilter regEx="/[a-z_ ñ]/i"/>
                  </p:inputText>
               </div>
             <div class="ui-g-12 ui-md-2">
                <p:outputLabel for="txtNombre2" value="Segundo Nombre:"/>
+            </div>
+            <div class="ui-g-12 ui-md-2">
                <p:inputText id="txtNombre2" disabled="true"  value="#{inscripcionAdministrado.personaDna.txtNombre2}" >
                   <p:keyFilter regEx="/[a-z_ ñ]/i"/>
               </p:inputText>
             </div>
             <div class="ui-g-12 ui-md-2">
                <p:outputLabel for="txtNombre3" value="Tercer Nombre:"/>
+            </div>
+            <div class="ui-g-12 ui-md-2">
                <p:inputText id="txtNombre3" disabled="true"  value="#{inscripcionAdministrado.personaDna.txtNombre3}" >
                 <p:keyFilter regEx="/[a-z_ ñ]/i"/>
                </p:inputText>
             </div>
         </div>
         <div class="ui-g">
+            <div class="ui-g-12 ui-md-2"><p:outputLabel for="sexo" value="Sexo:"/></div>
             <div class="ui-g-12 ui-md-2">
-                <p:outputLabel for="sexo" value="Sexo:"/>
                 <p:selectOneMenu id="sexo" 
                                  value="#{inscripcionAdministrado.personaDna.txtSexo}" 
                                  autoWidth="false" required="true" requiredMessage="Debe seleccionar el sexo de la persona">
@@ -58,8 +69,8 @@
                 </p:selectOneMenu>
                 <p:message for="sexo" display="tooltip" />
             </div>   
+            <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtEdad" value="Edad:"/></div>
             <div class="ui-g-12 ui-md-2">
-                <p:outputLabel for="txtEdad" value="Edad:"/>
                 <p:inputNumber required="true" id="txtEdad" decimalPlaces="0" value="#{inscripcionAdministrado.personaDna.edad}" 
                                requiredMessage="Debe ingresar la edad de la persona."
                                validatorMessage="Debe tener al menos 18 años" maxlength="2">
@@ -67,31 +78,35 @@
                     <f:validateDoubleRange minimum="18" maximum="99" />
                 </p:inputNumber>
             </div>   
+            <div class="ui-g-12 ui-md-2"><p:outputLabel for="telefono" value="Teléfono:"/></div>
             <div class="ui-g-12 ui-md-2">
-               <p:outputLabel for="telefono" value="Teléfono:"/>
                <p:inputText id="telefono"  value="#{inscripcionAdministrado.personaDna.txtTelefono}" maxlength="150" >
                    <p:keyFilter regEx="/[\d\.]/"/> 
                </p:inputText>
             </div>
-            <div class="ui-g-12 ui-md-6"> 
-                <p:outputLabel for="correo" value="Correo:" />
+         </div> 
+         <div class="ui-g">
+            <div class="ui-g-12 ui-md-2"> <p:outputLabel for="correo" value="Correo:" /></div>
+            <div class="ui-g-12 ui-md-6">
                 <p:inputText id="correo"  value="#{inscripcionAdministrado.personaDna.txtCorreo}"  required="true" 
-                             requiredMessage="Debe ingresar el correo electrónico" 
+                             requiredMessage="Ingrese el correo electrónico" 
                              validator="#{inscripcionAdministrado.validarCorreo}" maxlength="150">   
                       <p:ajax event="blur" update="@this"/>
                  </p:inputText>
             </div>
          </div> 
          <div class="ui-g">
+            <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtDireccionDna" value="Dirección Domiciliaria: " /></div>
             <div class="ui-g-12 ui-md-6">
-                <p:outputLabel for="txtDireccionDna" value="Dirección Domiciliaria: " />
                 <p:inputText id="txtDireccionDna" 
                              value="#{inscripcionAdministrado.personaDna.txtDireccion}" maxlength="150"  required="true"
                              requiredMessage="Debe ingresar la dirección domiciliaria">
                 </p:inputText>
             </div>
+         </div> 
+         <div class="ui-g">
+            <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtDepartamentoDna" value="Departamento: "/></div>
             <div class="ui-g-12 ui-md-2">
-                <p:outputLabel for="txtDepartamentoDna" value="Departamento: "/>
                 <p:selectOneMenu id="txtDepartamentoDna" value="#{inscripcionAdministrado.personaDna.nidDepartamento}" autoWidth="false"
                                  effect="fade" required="true" requiredMessage="Debe seleccionar el departamento">
                     <p:ajax listener="#{inscripcionAdministrado.obtenerProvinciasDna()}" update="txtProvinciaDna" />
@@ -101,7 +116,9 @@
                 </p:selectOneMenu>
             </div>    
             <div class="ui-g-12 ui-md-2">
-                <p:outputLabel for="txtProvinciaDna" value="Provincia "/>
+                 <p:outputLabel for="txtProvinciaDna" value="Provincia "/>
+            </div>     
+            <div class="ui-g-12 ui-md-2">
                 <p:selectOneMenu id="txtProvinciaDna" value="#{inscripcionAdministrado.personaDna.nidProvincia}" autoWidth="false"
                                  effect="fade" required="true" requiredMessage="Debe selecccionar la provincia">
                     <p:ajax listener="#{inscripcionAdministrado.obtenerDistritosDna()}" update="txtDistritoDna" />
@@ -111,7 +128,9 @@
                 </p:selectOneMenu>
             </div> 
             <div class="ui-g-12 ui-md-2">
-                <p:outputLabel for="txtDistritoDna" value="Distrito "/>
+                  <p:outputLabel for="txtDistritoDna" value="Distrito "/>
+            </div>
+            <div class="ui-g-12 ui-md-2">
                 <p:selectOneMenu id="txtDistritoDna" value="#{inscripcionAdministrado.personaDna.nidDistrito}" autoWidth="false"
                                  effect="fade"  required="true" requiredMessage="Debe seleccionar el distrito" >
                          <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/> 
@@ -121,63 +140,77 @@
             </div>
          </div>
          <div class="ui-g">
-            <div class="ui-g-12 ui-md-2">
-                <p:outputLabel for="txtInstruccion" value="Grado de Instrucción"/>
+            <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtInstruccion" value="Grado de Instrucción"/></div>
+            <div class="ui-g-12 ui-md-4">
                 <p:selectOneMenu id="txtInstruccion" autoWidth="false"
-                                 value="#{inscripcionAdministrado.personaDna.instruccion.nidCatalogo}"
+                                 value="#{inscripcionAdministrado.personaDna.nidInstruccion}"
                                  >
                      <p:ajax update="@this"/>
                      <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
-                     <f:selectItems value="#{catalogoAdministrado.obtenerGradoInstruccion()}" var="instruccion" 
+                     <f:selectItems value="#{inscripcionAdministrado.obtenerGradoInstruccion()}" var="instruccion" 
                                     itemLabel="#{instruccion.txtNombre}" itemValue="#{instruccion.nidCatalogo}" />
                 </p:selectOneMenu>
             </div>
             <div class="ui-g-12 ui-md-2">
                 <p:outputLabel for="txtProfesion" value="Profesión/oficio:"/>
-                <p:selectOneMenu id="txtProfesion" 
+            </div>    
+            <div class="ui-g-12 ui-md-4">
+                  <p:selectOneMenu id="txtProfesion" 
                                    value="#{inscripcionAdministrado.personaDna.profesion.nidCatalogo}"
                                  autoWidth="false" required="true" 
                                  requiredMessage="Debe seleccionar la profesión / oficio">
                      <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
-                     <f:selectItems value="#{catalogoAdministrado.obtenerOcupaciones()}" var="funcion" 
+                     <f:selectItems value="#{inscripcionAdministrado.obtenerOcupaciones()}" var="funcion" 
                                     itemLabel="#{funcion.txtNombre}" itemValue="#{funcion.nidCatalogo}" />
 
                 </p:selectOneMenu>
             </div>    
-            <div class="ui-g-12 ui-md-2">
-                <p:outputLabel for="txtColegio" value="Colegio Profesional:"/>
+         </div>
+          <div class="ui-g">
+            <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtColegio" value="Colegio Profesional:"/></div>
+            <div class="ui-g-12 ui-md-4">
                 <p:inputText id="txtColegio"   value="#{inscripcionAdministrado.personaDna.txtColegio}" maxlength="150">
                      <p:keyFilter regEx="/[a-z_ ñ]/i"/>
                  </p:inputText>
             </div>
             <div class="ui-g-12 ui-md-2">
                 <p:outputLabel for="txtColegiatura" value="N° de Colegiatura:"/>
+            </div>    
+            <div class="ui-g-12 ui-md-4">
                 <p:inputText id="txtColegiatura"   value="#{inscripcionAdministrado.personaDna.txtColegiatura}" maxlength="150">
                  </p:inputText>
             </div>    
-            <div class="ui-g-12 ui-md-2">
-                <p:outputLabel for="nidFuncion" value="Cumple función de"/>
+         </div>  
+        
+         <div class="ui-g">
+            <div class="ui-g-12 ui-md-2"><p:outputLabel for="nidFuncion" value="Cumple función de"/></div>
+            <div class="ui-g-12 ui-md-4">
                 <p:selectOneMenu id="nidFuncion" 
                                  value="#{inscripcionAdministrado.personaDna.funcion.nidCatalogo}"
                                  autoWidth="false" required="true" 
                                  requiredMessage="Debe seleccionar la función que cumple"
-                                 >
-                    <p:ajax  update="@this,opDocDesignacion,txtCurso"/>
+                                 disabled="#{inscripcionAdministrado.personaDna.funcion.txtNombre eq 'RESPONSABLE'}">
+                    <p:ajax  update="@this,lblDesignacion,txtDesignacion,txtCurso"/>
                      <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
                      <f:selectItems value="#{inscripcionAdministrado.obtenerFunciones()}" var="funcion" 
                                     itemLabel="#{funcion.txtNombre}" itemValue="#{funcion.nidCatalogo}" />
 
                 </p:selectOneMenu>
-             </div> 
-              <p:outputPanel id="opDocDesignacion" class="ui-g-12 ui-md-2">
-                    <p:outputLabel for="txtDocDesignacion" value="Doc. Designación:" rendered="#{inscripcionAdministrado.personaDna.funcion.nidCatalogo eq 120}"/>
-                    <p:inputText id="txtDocDesignacion"   value="#{inscripcionAdministrado.personaDna.txtDocDesignacion}" maxlength="150"
-                                        rendered="#{inscripcionAdministrado.personaDna.funcion.nidCatalogo eq 120}"
-                                        required="#{inscripcionAdministrado.personaDna.funcion.nidCatalogo eq 120}"
+            </div> 
+                <div class="ui-g-12 ui-md-2">
+                       <p:outputPanel id="lblDesignacion">
+                          <p:outputLabel for="txtDocDesignacion" value="Documento de Designación:" rendered="#{inscripcionAdministrado.personaDna.funcion.nidCatalogo eq 20}"/>
+                       </p:outputPanel>  
+                </div>    
+                <div class="ui-g-12 ui-md-4">
+                    <p:outputPanel id="txtDesignacion">
+                        <p:inputText id="txtDocDesignacion"   value="#{inscripcionAdministrado.personaDna.txtDocDesignacion}" maxlength="150"
+                                        rendered="#{inscripcionAdministrado.personaDna.funcion.nidCatalogo eq 20}"
+                                        required="#{inscripcionAdministrado.personaDna.funcion.nidCatalogo eq 20}"
                                         requiredMessage="Debe ingresar el documento de designación">
-                     </p:inputText>
-              </p:outputPanel>  
-               
+                       </p:inputText>
+                    </p:outputPanel>    
+                </div>    
          </div>
         <p:outputPanel id="txtCurso">
             <h3>Curso de Formación de Defensores/as o conciliación en la DNA</h3>

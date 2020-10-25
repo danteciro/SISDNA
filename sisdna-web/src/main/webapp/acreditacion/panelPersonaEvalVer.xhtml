@@ -6,103 +6,133 @@
         xmlns:c="http://java.sun.com/jsp/jstl/core"
         xmlns:pe="http://primefaces.org/ui/extensions">
 
-   
+    <div class="ui-fluid">
+        <div class="ui-g">
+            <div class="ui-g-12 ui-md-2"><p:outputLabel for="nidFuncion" value="Cumple función de"/></div>
+            <div class="ui-g-12 ui-md-2">
+                <p:inputText id="nidFuncion" value="#{acreditacionAdministrado.personaEvalVer.funcion.txtNombre}" maxlength="8" readonly="true">
+                </p:inputText>
+            </div>    
+         </div>
         
         <p:outputPanel id="datosPersona">
             <div class="ui-g">
-               <div class="ui-g-12 ui-md-2">
-                    <p:outputLabel value="Nro. DNI"/>
-                    <p:inputText value="#{acreditacionAdministrado.personaEquipoExterno.txtDocumento}" maxlength="8" readonly="true">
+                <div class="ui-g-12 ui-md-2"><p:outputLabel for="documento" value="Nro. DNI"/></div>
+                <div class="ui-g-12 ui-md-2">
+                    <p:inputText id="documento" value="#{acreditacionAdministrado.personaEvalVer.txtDocumento}" maxlength="8" readonly="true">
                      </p:inputText>
-               </div>      
-               <div class="ui-g-12 ui-md-2"> 
-                  <p:outputLabel value="Apellido Paterno:"/>
-                  <p:inputText  readonly="true" value="#{acreditacionAdministrado.personaEquipoExterno.txtApellidoPaterno}" />
+                </div>      
+            </div>  
+            <div class="ui-g">
+               <div class="ui-g-12 ui-md-2"> <p:outputLabel for="apePaterno" value="Apellido Paterno:"/></div>
+               <div class="ui-g-12 ui-md-2">
+                  <p:inputText id="apePaterno" readonly="true" value="#{acreditacionAdministrado.personaEvalVer.txtApellidoPaterno}" />
                </div>
                <div class="ui-g-12 ui-md-2">
-                  <p:outputLabel  value="Apellido Materno:"/>
-                  <p:inputText id="apeMaterno" readonly="true" value="#{acreditacionAdministrado.personaEquipoExterno.txtApellidoMaterno}" />
+                  <p:outputLabel for="apeMaterno" value="Apellido Materno:"/>
                </div>
                <div class="ui-g-12 ui-md-2">
-                    <p:outputLabel for="txtNombre1" value="Primer Nombre:"/>
-                    <p:inputText id="txtNombre1" readonly="true" value="#{acreditacionAdministrado.personaEquipoExterno.txtNombre1}"/>
+                   <p:inputText id="apeMaterno" readonly="true" value="#{acreditacionAdministrado.personaEvalVer.txtApellidoMaterno}" />
+               </div>
+            </div>  
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtNombre1" value="Primer Nombre:"/></div>
+                <div class="ui-g-12 ui-md-2">
+                    <p:inputText id="txtNombre1" readonly="true" value="#{acreditacionAdministrado.personaEvalVer.txtNombre1}"/>
                 </div>
                 <div class="ui-g-12 ui-md-2">
                    <p:outputLabel for="txtNombre2" value="Segundo Nombre:"/>
-                   <p:inputText id="txtNombre2" readonly="true" value="#{acreditacionAdministrado.personaEquipoExterno.txtNombre2}"/>
+                </div>
+                <div class="ui-g-12 ui-md-2">
+                    <p:inputText id="txtNombre2" readonly="true" value="#{acreditacionAdministrado.personaEvalVer.txtNombre2}"/>
                 </div>
                 <div class="ui-g-12 ui-md-2">
                    <p:outputLabel for="txtNombre3" value="Tercer Nombre:"/>
-                    <p:inputText id="txtNombre3" readonly="true" value="#{acreditacionAdministrado.personaEquipoExterno.txtNombre3}"/>
+                </div>
+                <div class="ui-g-12 ui-md-2">
+                    <p:inputText id="txtNombre3" readonly="true" value="#{acreditacionAdministrado.personaEvalVer.txtNombre3}"/>
                 </div>
             </div>
             <div class="ui-g">
+                <div class="ui-g-12 ui-md-2"><p:outputLabel for="sexo" value="Sexo:"/></div>
                 <div class="ui-g-12 ui-md-2">
-                    <p:outputLabel value="Sexo:"/>
-                    <p:inputText id="sexo" readonly="true" value="#{acreditacionAdministrado.personaEquipoExterno.txtSexo}"/>
+                    <p:inputText id="sexo" readonly="true" value="#{acreditacionAdministrado.personaEvalVer.txtSexo}"/>
                 </div>   
+                <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtEdad" value="Edad:"/></div>
                 <div class="ui-g-12 ui-md-2">
-                    <p:outputLabel  value="Edad:"/>
-                    <p:inputText readonly="true" value="#{acreditacionAdministrado.personaEquipoExterno.edad}"/>
+                    <p:inputText id="txtEdad" readonly="true" value="#{acreditacionAdministrado.personaEvalVer.edad}"/>
                 </div>   
+                <div class="ui-g-12 ui-md-2"><p:outputLabel for="telefono" value="Teléfono:"/></div>
                 <div class="ui-g-12 ui-md-2">
-                    <p:outputLabel  value="Teléfono:"/>
-                    <p:inputText readonly="true" value="#{acreditacionAdministrado.personaEquipoExterno.txtTelefono}"/>
-                </div>
-                <div class="ui-g-12 ui-md-6"> 
-                    <p:outputLabel value="Correo:" />
-                    <p:inputText readonly="true" value="#{acreditacionAdministrado.personaEquipoExterno.txtCorreo}"/>
+                    <p:inputText id="telefono" readonly="true" value="#{acreditacionAdministrado.personaEvalVer.txtTelefono}"/>
                 </div>
              </div> 
              <div class="ui-g">
+                <div class="ui-g-12 ui-md-2"> <p:outputLabel for="correo" value="Correo:" /></div>
                 <div class="ui-g-12 ui-md-6">
-                    <p:outputLabel value="Dirección Domiciliaria: " />
-                    <p:inputText readonly="true" value="#{acreditacionAdministrado.personaEquipoExterno.txtDireccion}"/>
+                    <p:inputText id="correo" readonly="true" value="#{acreditacionAdministrado.personaEvalVer.txtCorreo}"/>
                 </div>
+             </div> 
+             <div class="ui-g">
+                <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtDireccionDna" value="Dirección Domiciliaria: " /></div>
+                <div class="ui-g-12 ui-md-6">
+                    <p:inputText id="txtDireccionDna" readonly="true" value="#{acreditacionAdministrado.personaEvalVer.txtDireccion}"/>
+                </div>
+             </div> 
+             <div class="ui-g">
+                <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtDepartamentoDna" value="Departamento: "/></div>
                 <div class="ui-g-12 ui-md-2">
-                    <p:outputLabel value="Departamento: "/>
-                    <p:inputText readonly="true" value="#{acreditacionAdministrado.getNombreDepartamento(acreditacionAdministrado.personaEquipoExterno.nidDepartamento)}"/>
+                    <p:inputText id="txtDepartamentoDna" readonly="true" value="#{acreditacionAdministrado.getNombreDepartamentoVerEval()}"/>
                 </div>    
                 <div class="ui-g-12 ui-md-2">
-                     <p:outputLabel value="Provincia "/>
-                    <p:inputText readonly="true" value="#{acreditacionAdministrado.getNombreProvincia(acreditacionAdministrado.personaEquipoExterno.nidProvincia)}"/>
+                     <p:outputLabel for="txtProvinciaDna" value="Provincia "/>
+                </div>     
+                <div class="ui-g-12 ui-md-2">
+                    <p:inputText id="txtProvinciaDna" readonly="true" value="#{acreditacionAdministrado.getNombreProvinciaVerEval()}"/>
                 </div> 
                 <div class="ui-g-12 ui-md-2">
-                      <p:outputLabel value="Distrito "/>
-                    <p:inputText readonly="true" value="#{acreditacionAdministrado.getNombreDistrito(acreditacionAdministrado.personaEquipoExterno.nidDistrito)}"/>
+                      <p:outputLabel for="txtDistritoDna" value="Distrito "/>
+                </div>
+                <div class="ui-g-12 ui-md-2">
+                    <p:inputText id="txtDistritoDna" readonly="true" value="#{acreditacionAdministrado.getNombreDistritoVerEval()}"/>
                 </div>
              </div>
              <div class="ui-g">
                 <div class="ui-g-12 ui-md-2">
-                    <p:outputLabel value="Grado de Instrucción"/>
-                    <p:inputText readonly="true" value="#{acreditacionAdministrado.personaEquipoExterno.instruccion.txtNombre}"/>
+                    <p:outputLabel for="txtInstruccion" value="Grado de Instrucción"/>
                 </div>
                 <div class="ui-g-12 ui-md-2">
-                    <p:outputLabel value="Profesión/oficio:"/>
-                    <p:inputText readonly="true" value="#{acreditacionAdministrado.personaEquipoExterno.profesion.txtNombre}"/>
-                </div>    
-                <div class="ui-g-12 ui-md-2">
-                    <p:outputLabel value="Colegio Profesional:"/>
-                    <p:inputText  readonly="true" value="#{acreditacionAdministrado.personaEquipoExterno.txtColegio}"/>
+                    <p:inputText id="txtInstruccion" readonly="true" value="#{acreditacionAdministrado.getNombreGradoDeInstruccionVerEval()}"/>
                 </div>
                 <div class="ui-g-12 ui-md-2">
-                    <p:outputLabel value="N° de Colegiatura:"/>
-                     <p:inputText readonly="true" value="#{acreditacionAdministrado.personaEquipoExterno.txtColegiatura}"/>
+                    <p:outputLabel for="txtProfesion" value="Profesión/oficio:"/>
                 </div>    
+                <div class="ui-g-12 ui-md-6">
+                    <p:inputText id="txtProfesion" readonly="true" value="#{acreditacionAdministrado.personaEvalVer.profesion.txtNombre}"/>
+                </div>    
+             </div>
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtColegio" value="Colegio Profesional:"/></div>
+                <div class="ui-g-12 ui-md-4">
+                    <p:inputText id="txtColegio" readonly="true" value="#{acreditacionAdministrado.personaEvalVer.txtColegio}"/>
+                </div>
                 <div class="ui-g-12 ui-md-2">
-                    <p:outputLabel value="Cumple función de"/>
-                    <p:inputText value="#{acreditacionAdministrado.personaEquipoExterno.funcion.txtNombre}" maxlength="8" readonly="true">
-                    </p:inputText>
-                </div>  
-             </div>    
+                    <p:outputLabel for="txtColegiatura" value="N° de Colegiatura:"/>
+                </div>    
+                <div class="ui-g-12 ui-md-4">
+                     <p:inputText id="txtColegiatura" readonly="true" value="#{acreditacionAdministrado.personaEvalVer.txtColegiatura}"/>
+                </div>    
+             </div>  
              <div class="ui-g">
+                <div class="ui-g-12 ui-md-2"><p:outputLabel for="txtLugarCurso" value="Lugar de curso:"/></div>
                 <div class="ui-g-12 ui-md-4">
-                    <p:outputLabel value="Lugar de curso:"/>
-                    <p:inputText readonly="true" value="#{acreditacionAdministrado.personaEquipoExterno.txtLugarCurso}"/>
+                    <p:inputText id="txtLugarCurso" readonly="true" value="#{acreditacionAdministrado.personaEvalVer.txtLugarCurso}"/>
                 </div>
-                <div class="ui-g-12 ui-md-4">
-                    <p:outputLabel value="Fecha de curso:"/>
-                    <p:inputText readonly="true" value="#{acreditacionAdministrado.getFechaCursoTexto()}"/>
+                <div class="ui-g-12 ui-md-2">
+                    <p:outputLabel for="txtFechaCurso" value="Fecha de curso:"/>
+                </div>    
+                <div class="ui-g-12 ui-md-2">
+                    <p:inputText id="txtFechaCurso" readonly="true" value="#{acreditacionAdministrado.getFechaCursoTexto()}"/>
                 </div>    
              </div>  
 
@@ -116,5 +146,8 @@
         </p:outputPanel>
         
      
+
+    </div>
+
 
 </f:view>

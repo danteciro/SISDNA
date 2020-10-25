@@ -8,20 +8,20 @@
     
         <div class="ui-g">
             <div class="ui-g-12">
-                 <h3>#{inscripcionAdministrado.personaDnaEval.txtDocumento} - 
-                     #{inscripcionAdministrado.personaDnaEval.txtApellidoPaterno}
-                     #{inscripcionAdministrado.personaDnaEval.txtApellidoMaterno}
-                     #{inscripcionAdministrado.personaDnaEval.txtNombre1}
-                     #{inscripcionAdministrado.personaDnaEval.txtNombre2}
-                     #{inscripcionAdministrado.personaDnaEval.txtNombre3}
+                 <h3>#{inscripcionAdministrado.clonePersonaDnaEval.txtDocumento} - 
+                     #{inscripcionAdministrado.clonePersonaDnaEval.txtApellidoPaterno}
+                     #{inscripcionAdministrado.clonePersonaDnaEval.txtApellidoMaterno}
+                     #{inscripcionAdministrado.clonePersonaDnaEval.txtNombre1}
+                     #{inscripcionAdministrado.clonePersonaDnaEval.txtNombre2}
+                     #{inscripcionAdministrado.clonePersonaDnaEval.txtNombre3}
                  </h3>   
             </div>
         </div>
        
         <div class="ui-g">
             <div class="ui-g-12">
-                <p:outputLabel value="Sexo:"/>#{inscripcionAdministrado.personaDnaEval.txtSexo} - 
-                <p:outputLabel value="Teléfono:"/>#{inscripcionAdministrado.personaDnaEval.txtTelefono} 
+                <p:outputLabel value="Sexo:"/>#{inscripcionAdministrado.clonePersonaDnaEval.txtSexo} - 
+                <p:outputLabel value="Teléfono:"/>#{inscripcionAdministrado.clonePersonaDnaEval.txtTelefono} 
             </div>
         </div>    
         <div class="ui-g">
@@ -33,221 +33,323 @@
         </div>    
         <div class="ui-g">
             <div class="ui-g-12">
-                <p:outputLabel value="Función:"/> #{inscripcionAdministrado.personaDnaEval.funcion.txtNombre} 
+                <p:outputLabel value="Función:"/> #{inscripcionAdministrado.clonePersonaDnaEval.funcion.txtNombre} 
             </div>
         </div>    
         <p:separator />
       
         <div class="ui-g">
-           
-         <div class="ui-g-12 ui-md-6">
-                <p:selectBooleanCheckbox id="flgDireccionPersonaObs" value="#{inscripcionAdministrado.flgDireccionPersonaObs}"   style="margin-right: 12px !important" >
-                    <p:ajax update="obsDireccion" />
-                </p:selectBooleanCheckbox>
-                <p:outputLabel for="txtDireccion" value="Dirección"/> 
-                 <p:inputText required="true" id="txtDireccion" readonly="true" value="#{inscripcionAdministrado.personaDnaEval.txtDireccion}">
-                </p:inputText>
-                <p:outputPanel id="obsDireccion" style="width: 100%">
-                        <p:inputText rendered="#{inscripcionAdministrado.flgDireccionPersonaObs}"
-                                required="#{inscripcionAdministrado.flgDireccionPersonaObs}"
-                                requiredMessage="Debe ingresar la observación de la dirección."
-                                value="#{inscripcionAdministrado.personaDnaEval.obsDireccion}"
-                                maxlength="850"   style="margin-top:12px !important">
-                          <p:ajax update="@this"/>
-                         </p:inputText>
-                </p:outputPanel>  
-           </div>
-            
-             <div class="ui-g-12 ui-md-6">
-                <p:selectBooleanCheckbox id="flgCorreoPersonaObs" value="#{inscripcionAdministrado.flgCorreoPersonaObs}"  style="margin-right: 12px !important" >
+            <div class="ui-g-12 ui-md-1">
+                <p:selectBooleanCheckbox id="flgCorreoPersonaObs" value="#{inscripcionAdministrado.flgCorreoPersonaObs}" >
                     <p:ajax update="obsCorreo" />
                 </p:selectBooleanCheckbox>
+            </div>
+            <div class="ui-g-12 ui-md-2">    
                 <p:outputLabel for="txtCorreo" value="Correo"/> 
-                <p:inputText required="true" id="txtCorreo" readonly="true" value="#{inscripcionAdministrado.personaDnaEval.txtCorreo}">
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:inputText required="true" id="txtCorreo" readonly="true" value="#{inscripcionAdministrado.clonePersonaDnaEval.txtCorreo}">
                 </p:inputText>
-                  <p:outputPanel id="obsCorreo" style="width: 100%">
-                           <p:inputText rendered="#{inscripcionAdministrado.flgCorreoPersonaObs}"
-                                     required="#{inscripcionAdministrado.flgCorreoPersonaObs}"
-                                     requiredMessage="Debe ingresar la observación de el correo."
-                                     value="#{inscripcionAdministrado.personaDnaEval.obsCorreo}"
-                                     maxlength="150"  style="margin-top:12px !important">
-                            <p:ajax update="@this"/>
-                        </p:inputText>
-                                      
-                 </p:outputPanel>  
             </div>
         </div>
-
+        <p:outputPanel id="obsCorreo" style="width: 100%">
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-1"> </div>   
+                <div class="ui-g-12 ui-md-11"> 
+                   <p:inputText rendered="#{inscripcionAdministrado.flgCorreoPersonaObs}"
+                             required="#{inscripcionAdministrado.flgCorreoPersonaObs}"
+                             requiredMessage="Debe ingresar la observación de el correo."
+                             value="#{inscripcionAdministrado.clonePersonaDnaEval.obsCorreo}"
+                             maxlength="850" >
+                    <p:ajax update="@this"/>
+                </p:inputText>
+                </div>
+            </div>                     
+         </p:outputPanel>  
+        
         <div class="ui-g">
-            <div class="ui-g-12 ui-md-3">
-                <p:selectBooleanCheckbox id="flgInstruccionObs" value="#{inscripcionAdministrado.flgInstruccionObs}"  style="margin-right: 12px !important" >
+            <div class="ui-g-12 ui-md-1">
+                <p:selectBooleanCheckbox id="flgDireccionPersonaObs" value="#{inscripcionAdministrado.flgDireccionPersonaObs}" >
+                    <p:ajax update="obsDireccion" />
+                </p:selectBooleanCheckbox>
+            </div>
+            <div class="ui-g-12 ui-md-2">    
+                <p:outputLabel for="txtDireccion" value="Dirección"/> 
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:inputText required="true" id="txtDireccion" readonly="true" value="#{inscripcionAdministrado.clonePersonaDnaEval.txtDireccion}">
+                </p:inputText>
+            </div>
+        </div>
+        <p:outputPanel id="obsDireccion" style="width: 100%">
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-1"> </div>   
+                <div class="ui-g-12 ui-md-11"> 
+                   <p:inputText rendered="#{inscripcionAdministrado.flgDireccionPersonaObs}"
+                             required="#{inscripcionAdministrado.flgDireccionPersonaObs}"
+                             requiredMessage="Debe ingresar la observación de la dirección."
+                             value="#{inscripcionAdministrado.clonePersonaDnaEval.obsDireccion}"
+                             maxlength="850"  >
+                    <p:ajax update="@this"/>
+                </p:inputText>
+                </div>
+            </div>                     
+         </p:outputPanel>  
+        
+        <div class="ui-g">
+            <div class="ui-g-12 ui-md-1">
+                <p:selectBooleanCheckbox id="flgInstruccionObs" value="#{inscripcionAdministrado.flgInstruccionObs}" >
                     <p:ajax update="obsInstruccion" />
                 </p:selectBooleanCheckbox>
-                <p:outputLabel value="Grado de Instrucción"/> 
-                <p:inputText readonly="true" value="#{inscripcionAdministrado.personaDnaEval.instruccion.txtNombre}">
-                </p:inputText>
-                 <p:outputPanel id="obsInstruccion" style="width: 100%">
-                         <p:inputText rendered="#{inscripcionAdministrado.flgInstruccionObs}"
-                                     required="#{inscripcionAdministrado.flgInstruccionObs}"
-                                     requiredMessage="Debe ingresar la observación de la instrucción."
-                                     value="#{inscripcionAdministrado.personaDnaEval.obsInstruccion}"
-                                     maxlength="850"   style="margin-top:12px !important">
-                            <p:ajax update="@this"/>
-                        </p:inputText>
-
-                 </p:outputPanel>  
             </div>
-            <div class="ui-g-12 ui-md-3">
-                <p:selectBooleanCheckbox id="flgProfesionPersonaObs" value="#{inscripcionAdministrado.flgProfesionPersonaObs}"   style="margin-right: 12px !important">
-                    <p:ajax update="obsProfesion" />
-                </p:selectBooleanCheckbox>
-                 <p:outputLabel for="txtProfesion" value="Profesión"/> 
-                 <p:inputText id="txtProfesion" readonly="true" value="#{inscripcionAdministrado.personaDnaEval.profesion.txtNombre}">
-                </p:inputText>
-                <p:outputPanel id="obsProfesion" style="width: 100%">
-                  <p:inputText rendered="#{inscripcionAdministrado.flgProfesionPersonaObs}"
-                             required="#{inscripcionAdministrado.flgProfesionPersonaObs}"
-                             requiredMessage="Debe ingresar la observación de la profesion."
-                             value="#{inscripcionAdministrado.personaDnaEval.obsProfesion}"
-                             maxlength="150"  style="margin-top:12px !important">
-                    <p:ajax update="@this"/>
-                </p:inputText>
-               </p:outputPanel>  
+            <div class="ui-g-12 ui-md-2">    
+                <p:outputLabel value="Instrucción"/> 
             </div>
-            <div class="ui-g-12 ui-md-3">
-                <p:selectBooleanCheckbox id="flgColegioPersonaObs" value="#{inscripcionAdministrado.flgColegioPersonaObs}"   style="margin-right: 12px !important">
-                    <p:ajax update="obsColegio" />
-                </p:selectBooleanCheckbox>
-                <p:outputLabel for="txtColegio" value="Colegio"/> 
-                <p:inputText id="txtColegio" readonly="true" value="#{inscripcionAdministrado.personaDnaEval.txtColegio}">
+            <div class="ui-g-12 ui-md-9">
+                <p:inputText readonly="true" value="#{inscripcionAdministrado.getNombreInstruccionCloneEval()}">
                 </p:inputText>
-                 <p:outputPanel id="obsColegio" style="width: 100%">
-                  <p:inputText rendered="#{inscripcionAdministrado.flgColegioPersonaObs}"
-                             required="#{inscripcionAdministrado.flgColegioPersonaObs}"
-                             requiredMessage="Debe ingresar la observación de el colegio."
-                             value="#{inscripcionAdministrado.personaDnaEval.obsColegio}"
-                             maxlength="850"  style="margin-top:12px !important">
-                    <p:ajax update="@this"/>
-                </p:inputText>
-                 </p:outputPanel>  
-            </div>
-            <div class="ui-g-12 ui-md-3">
-                <p:selectBooleanCheckbox id="flgNroColegiaturaObs" value="#{inscripcionAdministrado.flgNroColegiaturaObs}"   style="margin-right: 12px !important">
-                    <p:ajax update="obsColegiatura" />
-                </p:selectBooleanCheckbox>
-                <p:outputLabel value="Colegiatura"/> 
-                <p:inputText readonly="true" value="#{inscripcionAdministrado.personaDnaEval.txtColegiatura}">
-                </p:inputText>
-                 <p:outputPanel id="obsColegiatura" style="width: 100%">
-                            <p:inputText rendered="#{inscripcionAdministrado.flgNroColegiaturaObs}"
-                                     required="#{inscripcionAdministrado.flgNroColegiaturaObs}"
-                                     requiredMessage="Debe ingresar la observación de la colegiatura."
-                                     value="#{inscripcionAdministrado.personaDnaEval.obsColegiatura}"
-                                     maxlength="850"  style="margin-top:12px !important" >
-                            <p:ajax update="@this"/>
-                        </p:inputText>
-                                 
-                 </p:outputPanel>  
             </div>
         </div>
-       
+        <p:outputPanel id="obsInstruccion" style="width: 100%">
             <div class="ui-g">
-                <p:outputPanel  class="ui-g-12 ui-md-3" rendered="#{inscripcionAdministrado.personaDnaEval.funcion.txtNombre eq 'RESPONSABLE'}">
-                    <p:selectBooleanCheckbox id="flgDocDesignacionObs" value="#{inscripcionAdministrado.flgDocDesignacionObs}"   style="margin-right: 12px !important">
-                      <p:ajax update="obsDocDesignacion" />
-                  </p:selectBooleanCheckbox>
-                  <p:outputLabel value="Doc. Designación"/> 
-                   <p:inputText readonly="true" value="#{inscripcionAdministrado.personaDnaEval.txtDocDesignacion}">
-                  </p:inputText>
-                   <p:outputPanel id="obsDocDesignacion" style="width: 100%">
-                       <p:inputText rendered="#{inscripcionAdministrado.flgDocDesignacionObs}"
-                               required="#{inscripcionAdministrado.flgDocDesignacionObs}"
-                               requiredMessage="Debe ingresar la observación de el documento de asignación."
-                               value="#{inscripcionAdministrado.personaDnaEval.obsDocDesignacion}"
-                               maxlength="850"   style="margin-top:12px !important">
-                      <p:ajax update="@this"/>
-                  </p:inputText>
-
-                  </p:outputPanel>  
-                </p:outputPanel>  
-           
-            <div class="ui-g-12 ui-md-3">
-                <p:selectBooleanCheckbox id="flgLugarPersonaObs" value="#{inscripcionAdministrado.flgLugarPersonaObs}"   style="margin-right: 12px !important">
-                    <p:ajax update="obsLugarDeCurso" />
-                </p:selectBooleanCheckbox>
-                 <p:outputLabel for="txtLugar" value="Lugar de Curso"/> 
-                <p:inputText id="txtLugar" readonly="true" value="#{inscripcionAdministrado.personaDnaEval.txtLugarCurso}">
-                </p:inputText>
-                 <p:outputPanel id="obsLugarDeCurso" style="width: 100%">
-                    <p:inputText rendered="#{inscripcionAdministrado.flgLugarPersonaObs}"
-                             required="#{inscripcionAdministrado.flgLugarPersonaObs}"
-                             requiredMessage="Debe ingresar la observación de el lugar del curso."
-                             value="#{inscripcionAdministrado.personaDnaEval.obsLugarDeCurso}"
-                             maxlength="850"  style="margin-top:12px !important">
+                <div class="ui-g-12 ui-md-1"> </div>   
+                <div class="ui-g-12 ui-md-11"> 
+                   <p:inputText rendered="#{inscripcionAdministrado.flgInstruccionObs}"
+                             required="#{inscripcionAdministrado.flgInstruccionObs}"
+                             requiredMessage="Debe ingresar la observación de la instrucción."
+                             value="#{inscripcionAdministrado.clonePersonaDnaEval.obsInstruccion}"
+                             maxlength="850"  >
                     <p:ajax update="@this"/>
                 </p:inputText>
-                               
-                </p:outputPanel> 
+                </div>
+            </div>                     
+         </p:outputPanel>  
+        
+        <div class="ui-g">
+            <div class="ui-g-12 ui-md-1">
+                <p:selectBooleanCheckbox id="flgProfesionPersonaObs" value="#{inscripcionAdministrado.flgProfesionPersonaObs}" >
+                    <p:ajax update="obsProfesion" />
+                </p:selectBooleanCheckbox>
             </div>
-            <div class="ui-g-12 ui-md-3">
-                <p:selectBooleanCheckbox id="flgFechaCursoObs" value="#{inscripcionAdministrado.flgFechaCursoObs}"  style="margin-right: 12px !important" >
+            <div class="ui-g-12 ui-md-2">    
+                <p:outputLabel for="txtProfesion" value="Profesión"/> 
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:inputText id="txtProfesion" readonly="true" value="#{inscripcionAdministrado.clonePersonaDnaEval.profesion.txtNombre}">
+                </p:inputText>
+            </div>
+        </div>
+        <p:outputPanel id="obsProfesion" style="width: 100%">
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-1"> </div>   
+                <div class="ui-g-12 ui-md-11"> 
+                   <p:inputText rendered="#{inscripcionAdministrado.flgProfesionPersonaObs}"
+                             required="#{inscripcionAdministrado.flgProfesionPersonaObs}"
+                             requiredMessage="Debe ingresar la observación de la profesion."
+                             value="#{inscripcionAdministrado.clonePersonaDnaEval.obsProfesion}"
+                             maxlength="850" >
+                    <p:ajax update="@this"/>
+                </p:inputText>
+                </div>
+            </div>                     
+         </p:outputPanel>  
+        
+        <div class="ui-g">
+            <div class="ui-g-12 ui-md-1">
+                <p:selectBooleanCheckbox id="flgColegioPersonaObs" value="#{inscripcionAdministrado.flgColegioPersonaObs}" >
+                    <p:ajax update="obsColegio" />
+                </p:selectBooleanCheckbox>
+            </div>
+            <div class="ui-g-12 ui-md-2">    
+                <p:outputLabel for="txtColegio" value="Colegio"/> 
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:inputText id="txtColegio" readonly="true" value="#{inscripcionAdministrado.clonePersonaDnaEval.txtColegio}">
+                </p:inputText>
+            </div>
+        </div>
+        <p:outputPanel id="obsColegio" style="width: 100%">
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-1"> </div>   
+                <div class="ui-g-12 ui-md-11"> 
+                   <p:inputText rendered="#{inscripcionAdministrado.flgColegioPersonaObs}"
+                             required="#{inscripcionAdministrado.flgColegioPersonaObs}"
+                             requiredMessage="Debe ingresar la observación de el colegio."
+                             value="#{inscripcionAdministrado.clonePersonaDnaEval.obsColegio}"
+                             maxlength="850" >
+                    <p:ajax update="@this"/>
+                </p:inputText>
+                </div>
+            </div>                     
+         </p:outputPanel>  
+        
+        <div class="ui-g">
+            <div class="ui-g-12 ui-md-1">
+                <p:selectBooleanCheckbox id="flgNroColegiaturaObs" value="#{inscripcionAdministrado.flgNroColegiaturaObs}" >
+                    <p:ajax update="obsColegiatura" />
+                </p:selectBooleanCheckbox>
+            </div>
+            <div class="ui-g-12 ui-md-2">    
+                <p:outputLabel value="Colegiatura"/> 
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:inputText readonly="true" value="#{inscripcionAdministrado.clonePersonaDnaEval.txtColegiatura}">
+                </p:inputText>
+            </div>
+        </div>
+        <p:outputPanel id="obsColegiatura" style="width: 100%">
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-1"> </div>   
+                <div class="ui-g-12 ui-md-11"> 
+                   <p:inputText rendered="#{inscripcionAdministrado.flgNroColegiaturaObs}"
+                             required="#{inscripcionAdministrado.flgNroColegiaturaObs}"
+                             requiredMessage="Debe ingresar la observación de la colegiatura."
+                             value="#{inscripcionAdministrado.clonePersonaDnaEval.obsColegiatura}"
+                             maxlength="850"  >
+                    <p:ajax update="@this"/>
+                </p:inputText>
+                </div>
+            </div>                     
+         </p:outputPanel>  
+        <p:outputPanel rendered="#{inscripcionAdministrado.clonePersonaDnaEval.funcion.txtNombre eq 'RESPONSABLE'}">
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-1">
+                    <p:selectBooleanCheckbox id="flgDocDesignacionObs" value="#{inscripcionAdministrado.flgDocDesignacionObs}" >
+                        <p:ajax update="obsDocDesignacion" />
+                    </p:selectBooleanCheckbox>
+                </div>
+                <div class="ui-g-12 ui-md-2">    
+                    <p:outputLabel value="Documento de Designación"/> 
+                </div>
+                <div class="ui-g-12 ui-md-9">
+                    <p:inputText readonly="true" value="#{inscripcionAdministrado.clonePersonaDnaEval.txtDocDesignacion}">
+                    </p:inputText>
+                </div>
+            </div>
+            <p:outputPanel id="obsDocDesignacion" style="width: 100%">
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-1"> </div>   
+                    <div class="ui-g-12 ui-md-11"> 
+                        <p:inputText rendered="#{inscripcionAdministrado.flgDocDesignacionObs}"
+                                 required="#{inscripcionAdministrado.flgDocDesignacionObs}"
+                                 requiredMessage="Debe ingresar la observación de el documento de asignación."
+                                 value="#{inscripcionAdministrado.clonePersonaDnaEval.obsDocDesignacion}"
+                                 maxlength="850"  >
+                        <p:ajax update="@this"/>
+                    </p:inputText>
+                    </div>
+                </div>                     
+             </p:outputPanel>  
+        </p:outputPanel>
+        
+        <div class="ui-g">
+            <div class="ui-g-12 ui-md-1">
+                <p:selectBooleanCheckbox id="flgLugarPersonaObs" value="#{inscripcionAdministrado.flgLugarPersonaObs}" >
+                    <p:ajax update="obsLugarDeCurso" />
+                </p:selectBooleanCheckbox>
+            </div>
+            <div class="ui-g-12 ui-md-2">    
+                <p:outputLabel for="txtLugar" value="Lugar de Curso"/> 
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:inputText id="txtLugar" readonly="true" value="#{inscripcionAdministrado.clonePersonaDnaEval.txtLugarCurso}">
+                </p:inputText>
+            </div>
+        </div>
+        <p:outputPanel id="obsLugarDeCurso" style="width: 100%">
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-1"> </div>   
+                <div class="ui-g-12 ui-md-11"> 
+                   <p:inputText rendered="#{inscripcionAdministrado.flgLugarPersonaObs}"
+                             required="#{inscripcionAdministrado.flgLugarPersonaObs}"
+                             requiredMessage="Debe ingresar la observación de el lugar del curso."
+                             value="#{inscripcionAdministrado.clonePersonaDnaEval.obsLugarDeCurso}"
+                             maxlength="850" >
+                    <p:ajax update="@this"/>
+                </p:inputText>
+                </div>
+            </div>                     
+         </p:outputPanel> 
+        
+        <div class="ui-g">
+            <div class="ui-g-12 ui-md-1">
+                <p:selectBooleanCheckbox id="flgFechaCursoObs" value="#{inscripcionAdministrado.flgFechaCursoObs}" >
                     <p:ajax update="obsFechaDeCurso" />
                 </p:selectBooleanCheckbox>
-               <p:outputLabel value="Fecha de Curso"/> 
-                <p:inputText required="true" id="txtFechaCurso" readonly="true" value="#{inscripcionAdministrado.obtenerFechaConFormato(inscripcionAdministrado.personaDnaEval.txtFechaCurso)}">
+            </div>
+            <div class="ui-g-12 ui-md-2">    
+                <p:outputLabel value="Fecha de Curso"/> 
+            </div>
+            <div class="ui-g-12 ui-md-9">
+                <p:inputText required="true" id="txtFechaCurso" readonly="true" value="#{inscripcionAdministrado.obtenerFechaConFormato(inscripcionAdministrado.clonePersonaDnaEval.txtFechaCurso)}">
                 </p:inputText>
-               <p:outputPanel id="obsFechaDeCurso" style="width: 100%">
+            </div>
+        </div>
+        <p:outputPanel id="obsFechaDeCurso" style="width: 100%">
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-1"> </div>   
+                <div class="ui-g-12 ui-md-11"> 
                    <p:inputText rendered="#{inscripcionAdministrado.flgFechaCursoObs}"
                              required="#{inscripcionAdministrado.flgFechaCursoObs}"
                              requiredMessage="Debe ingresar la observación de la fecha del curso."
-                             value="#{inscripcionAdministrado.personaDnaEval.obsFechaDeCurso}"
-                             maxlength="850"  style="margin-top:12px !important" >
+                             value="#{inscripcionAdministrado.clonePersonaDnaEval.obsFechaDeCurso}"
+                             maxlength="850"  >
                     <p:ajax update="@this"/>
                 </p:inputText>
-                          
-                 </p:outputPanel> 
-            </div>
-        </div>
-         
+                </div>
+            </div>                     
+         </p:outputPanel>  
        
      <p:fieldset legend="Plataforma de Interoperabilidad">
         <div class="ui-g">
-            <div class="ui-g-12 ui-md-4">    
+            <div class="ui-g-12 ui-md-2">    
                 <p:outputLabel for="txPj" value="PJ:"/>
-                 <p:inputText id="txPj"  readonly="true" value="#{inscripcionAdministrado.personaDnaEval.txtPj}" >
+            </div>
+            <div class="ui-g-12 ui-md-10">
+                <p:inputText id="txPj"  readonly="true" value="#{inscripcionAdministrado.clonePersonaDnaEval.txtPj}" >
                 </p:inputText>
             </div>
-            <div class="ui-g-12 ui-md-4">    
-             <p:outputLabel for="txtInpe" value="INPE:"/>
-                <p:inputText id="txtInpe"  readonly="true" value="#{inscripcionAdministrado.personaDnaEval.txtInpe}" >
+            <div class="ui-g-12 ui-md-2">    
+
+                <p:outputLabel for="txtInpe" value="INPE:"/>
+            </div>
+            <div class="ui-g-12 ui-md-10">
+                <p:inputText id="txtInpe"  readonly="true" value="#{inscripcionAdministrado.clonePersonaDnaEval.txtInpe}" >
                 </p:inputText>
             </div>
-            <div class="ui-g-12 ui-md-4">    
+            <div class="ui-g-12 ui-md-2">    
                 <p:outputLabel for="txtPnp" value="PNP:"/>
-                <p:inputText id="txtPnp"  readonly="true" value="#{inscripcionAdministrado.personaDnaEval.txtPnp}" >
+            </div>
+            <div class="ui-g-12 ui-md-10">
+                <p:inputText id="txtPnp"  readonly="true" value="#{inscripcionAdministrado.clonePersonaDnaEval.txtPnp}" >
                 </p:inputText>
             </div>
          </div>   
          
         <div class="ui-g">
-            <div class="ui-g-12">
-                <p:selectBooleanCheckbox id="flgAntecedentePersonaObs" value="#{inscripcionAdministrado.flgAntecedentePersonaObs}"   style="margin-right: 12px !important" >
+            <div class="ui-g-12 ui-md-1">
+                <p:selectBooleanCheckbox id="flgAntecedentePersonaObs" value="#{inscripcionAdministrado.flgAntecedentePersonaObs}" >
                     <p:ajax update="obsAntecedentes" />
                 </p:selectBooleanCheckbox>
-                <p:outputLabel value="Observaciones"/>  
-                <p:outputPanel id="obsAntecedentes" style="width: 100%">
-                  <p:inputText rendered="#{inscripcionAdministrado.flgAntecedentePersonaObs}"
+            </div>
+            <div class="ui-g-12 ui-md-2">    
+                <p:outputLabel value="Observaciones"/> 
+            </div>
+        </div>
+        <p:outputPanel id="obsAntecedentes" style="width: 100%">
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-1"> </div>   
+                <div class="ui-g-12 ui-md-11"> 
+                   <p:inputText rendered="#{inscripcionAdministrado.flgAntecedentePersonaObs}"
                              required="#{inscripcionAdministrado.flgAntecedentePersonaObs}"
                              requiredMessage="Debe ingresar la observación de los antecedentes."
-                             value="#{inscripcionAdministrado.personaDnaEval.obsAntecedentes}"
+                             value="#{inscripcionAdministrado.clonePersonaDnaEval.obsAntecedentes}"
                              maxlength="850" >
                     <p:ajax update="@this"/>
                 </p:inputText>
-                                  
-                 </p:outputPanel> 
-            </div>
-        </div>
-
+                </div>
+            </div>                     
+         </p:outputPanel> 
         
      </p:fieldset>
 

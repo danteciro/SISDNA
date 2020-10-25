@@ -18,14 +18,11 @@
         <p:panelGrid id="pRespuesta" rendered="#{inscripcionAdministrado.verMensajeOK}" columns="1" layout="grid" columnClasses="ui-grid-col-12" class="pwhite" style="max-width: 1000px" >
              <ui:include src="respuesta.xhtml"/>
         </p:panelGrid>    
-        <p:messages id="mensajes" autoUpdate="true" showDetail="false" closable="true" severity="error"  />
-        <p:growl  widgetVar="mensajes" showDetail="true" showSummary="false" 
-               life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true" severity="warn, info"/>
-
-         
+        <p:growl id="mensajes" showSummary="false" widgetVar="mensajes" showDetail="true"  life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true"/>
+           
         <p:panelGrid id="pSolicitud" rendered="#{!inscripcionAdministrado.verMensajeOK}" columns="1" layout="grid" columnClasses="ui-grid-col-12" class="pnoborder" style="max-width: 1000px" >
      
-        <p:fieldset legend="Búsqueda de Defensoría">
+        <p:fieldset legend="Búsqueda de Defensoría" style="width: 100%">
           <h:form id="busInscripcion">
               <p:tabView activeIndex="#{inscripcionAdministrado.indexTab}" >
                  <p:ajax event="tabChange" listener="#{inscripcionAdministrado.cambiarBusqueda}" update="pSolicitud"></p:ajax>
@@ -33,7 +30,7 @@
                     <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4,ui-grid-col-2" class="pnoborder" >
                        <p:outputLabel for="txtCodigo" value="Ingrese el código de su defensoría: "/>
                        <p:inputText id="txtCodigo" value="#{inscripcionAdministrado.busCodigo}" maxlength="5" converter="maskConCero"
-                                    required="#{inscripcionAdministrado.indexTab==0}" requiredMessage="Debe ingresar el código de la defensoría"
+                                    required="#{inscripcionAdministrado.indexTab==0}"
                                     title="Campo Obligatorio" style="width: 150px">
                             <p:ajax event="blur" update="@this"/>
                        </p:inputText>
@@ -127,33 +124,21 @@
                 <br />
                 <p:panelGrid id="pForm" rendered="#{inscripcionAdministrado.inscripcion.dna.nidDna!=null}"
                      columns="1" layout="grid" columnClasses="ui-grid-col-12" class="pnoborder" style="max-width: 1000px" >
-           <h:form id="frmNuevo" enctype="multipart/form-data">
+           <h:form id="formularioPrincipal" enctype="multipart/form-data">
                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                 <div class="ui-g">
-                   <div class="ui-md-5 nopad">
-                       <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"  />
-                   </div>
-                   <div class="ui-md-2 nopad"></div>
-                   <div class="ui-md-5 nopad">
-                       <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"  />
-                   </div>
-               </div>
-              </p:confirmDialog>
+                  <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                  <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+               </p:confirmDialog>
                <ui:include src="inscripcion/panelForm.xhtml"/>
-                <div class="ui-g">
-                        <div class="ui-g-12 ui-md-3">
-                              <p:commandButton value="Guardar" ajax="true"
+               <p:commandButton value="Guardar" ajax="true"
                          icon="ui-icon-disk" title="Guardar" actionListener="#{inscripcionAdministrado.create()}" update="@this, :pTodo"/>  
-                        </div>
-                    </div>    
-            
            </h:form> 
         </p:panelGrid>     
     </p:panelGrid>    
         </p:outputPanel>     
         
          <ui:include src="inscripcion/panelDialogPersonal.xhtml" />
-             <h:form id="formularioPrincipal" ></h:form>    
+               
    </ui:define>
 </ui:composition> 
 

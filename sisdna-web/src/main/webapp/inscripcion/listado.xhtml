@@ -14,79 +14,23 @@
             <p:outputLabel class="ptextGradient pred pbold ptitle" value="INSCRIPCIÓN DE DNA"/>    
         </div>
         <br></br>
-        <p:messages id="mensajes" autoUpdate="true" showDetail="false" closable="true" severity="error"  />
-        <p:growl  widgetVar="mensajes" showDetail="true" showSummary="false" 
-               life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true" severity="warn, info"/>
-
-        <h:form id="frmNuevo" > 
-             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" >
-               <div class="ui-g">
-                   <div class="ui-md-5 nopad">
-                       <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"  />
-                   </div>
-                   <div class="ui-md-2 nopad"></div>
-                   <div class="ui-md-5 nopad">
-                       <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"  />
-                   </div>
-               </div>
-                
-            </p:confirmDialog> 
-          <p:outputPanel rendered="#{inscripcionAdministrado.modo > 0}">
-               <div class="ui-g">
-                    <div class="ui-g-12 ui-md-3">
-                        <p:commandLink ajax="true" actionListener="#{inscripcionAdministrado.regresar()}"  immediate="true" process="@this" class="sback"
-                                       update=":frmNuevo, :frmBuscar, :formularioPrincipal1" >
-                            
-                            <span>Regresar al Listado</span>
-                        </p:commandLink>
-
-                    </div>
-                </div>    
-                <h1>#{inscripcionAdministrado.titulo()}</h1>
-                
-                <p:outputPanel rendered="#{inscripcionAdministrado.modo eq 1}">
-                   <ui:include src="panelForm.xhtml" />
-                    <div class="ui-g">
-                        <div class="ui-g-12 ui-md-3">
-                            <p:commandButton value="Guardar" actionListener="#{inscripcionAdministrado.create()}" 
-                                      update=":frmNuevo, :frmBuscar, :formularioPrincipal1" 
-                                      process="@form"
-                                      icon="ui-icon-disk" title="Guarda los cambios"/>	
-                        </div>
-                    </div>    
-                </p:outputPanel>    
-                <p:outputPanel rendered="#{inscripcionAdministrado.modo eq 3}">
-                   <ui:include src="panelEvaluar.xhtml"  />
-                    <div class="ui-g">
-                        <div class="ui-g-12 ui-md-3">
-                            <p:commandButton icon="fa fa-check" id="btnEvaluar" value="#{inscripcionAdministrado.obtenerNombreBtnEvaluar()}" 
-                                         action="#{inscripcionAdministrado.evaluarInscripcion()}"  update=":frmNuevo, :frmBuscar, :formularioPrincipal1"  process="@form" >
-                                <p:confirm header="Confirmación" message="¿ Está seguro de guardar la evaluación de la inscripción ?" />
-                            </p:commandButton>
-                        </div>
-                    </div>    
-                </p:outputPanel>    
-      
-                <p:outputPanel rendered="#{inscripcionAdministrado.modo eq 5}">
-                   <ui:include src="panelESubsanar.xhtml"  />
-                    <div class="ui-g">
-                        <div class="ui-g-12 ui-md-3">
-                             <p:commandButton id="btnEvaluarSub" value="#{inscripcionAdministrado.obtenerNombreBtnEvaluar()}" 
-                                        actionListener="#{inscripcionAdministrado.evaluarInscripcion}" 
-                                        update=":frmNuevo, :frmBuscar, :formularioPrincipal1"  process="@form" >
-                                      <p:confirm header="Confirmación" message="¿ Está seguro de guardar la evaluación de la inscripción ?" />
-                            </p:commandButton>
-                        </div>
-                    </div>    
-                </p:outputPanel>    
-      
-                </p:outputPanel>
-        </h:form>    
-        
         <h:form id="frmBuscar" >
-           <p:outputPanel rendered="#{inscripcionAdministrado.modo eq 0}">
-        
-          
+            <div class="ui-g">
+               <div class="ui-g-6 ui-md-2">
+                    <p:commandButton value="Nueva DNA" oncomplete="PF('dialogoDocDna').show();" 
+                                    actionListener="#{inscripcionAdministrado.nuevaDna()}" 
+                                    icon="fa fa-user" title="Nueva DNA" class="sombra" update="dialogoDocDna">
+
+                    </p:commandButton>
+               </div>    
+               <div class="ui-g-6 ui-md-2">
+                  <p:commandButton value="Migrar MDB"  
+                               actionListener="#{migracionAdministrado.migrar()}" 
+                               icon="fa fa-user" title="Migrar" class="sombra">
+                  </p:commandButton>
+               </div>
+            </div>    
+        <br /><br />
          <p:fieldset id="fldBusqueda" legend="Búsqueda de Defensoría" style="max-width: 900px; width: 100%">
               <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2,ui-grid-col-7" class="pnoborder" >
                   <p:outputLabel  for="rbTipoFiltro" value="Filtrar:"  />
@@ -145,23 +89,10 @@
                    </p:selectOneMenu>
                     </p:panelGrid>    
                 </p:tab>    
-                 <p:tab title="Por Estado">
-                    <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4,ui-grid-col-4" class="pnoborder" 
-                                 rendered="#{inscripcionAdministrado.busTipo eq '1'}">
-                       <p:outputLabel value="Seleccione el estado de la DNA: "/>
-                       <p:selectOneMenu  widgetVar="txtEstadoBus" value="#{inscripcionAdministrado.busEstado}" autoWidth="false"
-                         effect="fade"   >
-                          <p:ajax listener="#{inscripcionAdministrado.buscar()}" update="formularioPrincipal1" />
-                          <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
-                          <f:selectItems value="#{catalogoAdministrado.obtenerEstadosDna()}" var="estado" 
-                                         itemLabel="#{estado.txtNombre}" itemValue="#{estado.nidCatalogo}" />
-                        </p:selectOneMenu>
-                    </p:panelGrid>
-                     
-                      <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4,ui-grid-col-4" class="pnoborder" 
-                                 rendered="#{inscripcionAdministrado.busTipo eq '2'}">
-                       <p:outputLabel value="Seleccione el estado de la solicitud de inscripción: "/>
-                       <p:selectOneMenu widgetVar="txtEstadoBus" value="#{inscripcionAdministrado.busEstado}" autoWidth="false"
+                <p:tab title="Por Estado"  >
+                    <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4,ui-grid-col-4" class="pnoborder" >
+                       <p:outputLabel for="txtEstadoBus" value="Seleccione el estado de la DNA: "/>
+                       <p:selectOneMenu id="txtEstadoBus" widgetVar="txtEstadoBus" value="#{inscripcionAdministrado.busEstado}" autoWidth="false"
                          effect="fade"   >
                           <p:ajax listener="#{inscripcionAdministrado.buscar()}" update="formularioPrincipal1" />
                           <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
@@ -175,13 +106,16 @@
          
          
         </p:fieldset>
-           </p:outputPanel>
          </h:form>
         <br />
         <h:form id="formularioPrincipal1">
-            
+            <p:growl id="mensajes" widgetVar="mensajes" showDetail="true" showSummary="false" life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true"/>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" >
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
 
-            <p:outputPanel rendered="#{inscripcionAdministrado.modo eq 0 and inscripcionAdministrado.busTipo eq '1'}">
+            <p:outputPanel rendered="#{inscripcionAdministrado.busTipo eq '1'}">
                 <p:dataTable 
                     id="tablaDefensoria"
                     widgetVar="tablaDefensoria" 
@@ -198,22 +132,34 @@
                     rowsPerPageTemplate="5,10,15"
                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                     currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}">
-                 
+                  >
                     <f:facet name="header">
                         Defensorías
                     </f:facet>
      
                     <p:column headerText="ACCIONES" width="15%">            
                         
-                         <p:commandButton  rendered="#{itemDefensoria.estado.txtNombre eq 'NUEVA'}"
-                                          update=":frmNuevo, :frmBuscar, :formularioPrincipal1"
-                                          process="@this"
-                                          actionListener="#{inscripcionAdministrado.nuevaSolicitud(itemDefensoria)}" 
-                                          title="Crear Solicitud" 
-                                          icon="fa fa-newspaper-o">
-                        </p:commandButton>  
-             
-                  
+                     
+                        <p:commandButton update=":dialogoActualizarDna"  
+                                         process="@this"
+                                         oncomplete="PF('dialogoActualizarDna').show();" 
+                                         actionListener="#{inscripcionAdministrado.obtenerDefensoria(itemDefensoria)}" 
+                                         title="Editar Datos del DNA" icon="fa fa-pencil">
+                       </p:commandButton>
+                          
+                        <p:commandButton update=":dialogoSolicitud" rendered="#{itemDefensoria.estado.txtNombre eq 'NUEVA'}"
+                                         oncomplete="PF('dialogoSolicitud').show();"  process="@this"
+                                         actionListener="#{inscripcionAdministrado.nuevaSolicitud(itemDefensoria)}" 
+                                         title="Crear Solicitud" 
+                                         icon="fa fa-newspaper-o">
+                        </p:commandButton>
+                        
+                        <p:commandButton update=":dialogoAnularDna" 
+                                         oncomplete="PF('dialogoAnularDna').show();"   process="@this"
+                                         title="Anular" icon="fa fa-trash">
+                            <f:setPropertyActionListener value="#{itemDefensoria}" target="#{inscripcionAdministrado.defensoria}"/>
+                        </p:commandButton>
+                        
                         
                     </p:column>
 
@@ -253,7 +199,7 @@
 
             
             </p:outputPanel>
-            <p:outputPanel rendered="#{inscripcionAdministrado.modo eq 0 and  inscripcionAdministrado.busTipo eq '2'}">
+            <p:outputPanel rendered="#{inscripcionAdministrado.busTipo eq '2'}">
 
                 <p:dataTable 
                     id="tablaDocs"
@@ -271,7 +217,7 @@
                     rowsPerPageTemplate="5,10,15"
                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                     currentPageReportTemplate="Mostrando {startRecord} - {endRecord} de {totalRecords}">
-                
+                  >
                     <f:facet name="header">
                         Solicitudes de Inscripción
                     </f:facet>
@@ -297,9 +243,9 @@
                                         title="Ver Inscripción" icon="fa fa-eye">
                         </p:commandButton>
                         
-                        <p:commandButton rendered="#{itemSolicitud.estado.txtNombre eq 'NUEVA'}" 
+                        <p:commandButton update="dialogoActualizarDna" rendered="#{itemSolicitud.estado.txtNombre eq 'NUEVA'}" 
                                          process="@this"
-                                         update=":frmNuevo, :frmBuscar, :formularioPrincipal1"
+                                         oncomplete="PF('dialogoActualizarDna').show();" 
                                          actionListener="#{inscripcionAdministrado.obtenerSolicitud(itemSolicitud)}" 
                                          title="Editar Datos del DNA" icon="fa fa-pencil">
                        </p:commandButton>
@@ -311,19 +257,26 @@
                                          icon="#{(itemSolicitud.estado.txtNombre eq 'NUEVA')?'fa fa-newspaper-o':'fa fa-pencil'}">
                         </p:commandButton>
                         
-                           
+                        <p:commandButton update="dialogoAnular" rendered="#{not itemSolicitud.estado.txtNombre eq 'DENEGADA'}"
+                                         oncomplete="PF('dialogoAnular').show();"   process="@this"
+                                         title="Anular" icon="fa fa-trash">
+                            <f:setPropertyActionListener value="#{itemSolicitud}" target="#{inscripcionAdministrado.inscripcion}"/>
+                        </p:commandButton>
+                        
                         <p:commandButton  rendered="#{itemSolicitud.estado.txtNombre eq 'POR EVALUAR'}"
-                                          update=":frmNuevo, :frmBuscar, :formularioPrincipal1"
-                                         process="@this"
-                                         actionListener="#{inscripcionAdministrado.obtenerInscripcionAEvaluar(itemSolicitud)}" 
-                                         title="Evaluar Inscripción" icon="fa fa-check">
+                                     process="@this"
+                                     update="dialogoEvaluar" 
+                                     oncomplete="PF('dialogoEvaluar').show();"  
+                                     actionListener="#{inscripcionAdministrado.obtenerInscripcionAEvaluar(itemSolicitud)}" 
+                                     title="Evaluar Inscripción" icon="fa fa-check">
                         </p:commandButton>
                         
                         <p:commandButton  rendered="#{itemSolicitud.estado.txtNombre eq 'SUBSANADA'}"
-                                          update=":frmNuevo, :frmBuscar, :formularioPrincipal1"
-                                          process="@this"
-                                          actionListener="#{inscripcionAdministrado.obtenerInscripcionAEvaluarSubsanacion(itemSolicitud)}" 
-                                          title="Evaluar Subsanación" icon="fa fa-check">
+                                     process="@this"
+                                     update="dialogoESubsanar" 
+                                     oncomplete="PF('dialogoESubsanar').show();"  
+                                     actionListener="#{inscripcionAdministrado.obtenerInscripcionAEvaluar(itemSolicitud)}" 
+                                     title="Evaluar Subsanación" icon="fa fa-check">
                         </p:commandButton>
                         
                         <p:commandButton   rendered="#{itemSolicitud.estado.txtNombre eq 'INSCRITA'}" 
@@ -394,10 +347,48 @@
 
             </p:outputPanel> 
         </h:form>
-     <p:outputPanel id="pTodo" />
+        <p:outputPanel id="pTodo" />
         
 
-       
+          
+        <p:dialog modal="true" id="dialogoDocDna" widgetVar="dialogoDocDna" header="Nuevo DNA" closeOnEscape="true" resizable="false"  width="90%" 
+                  class="dlgdna1" position="center center" responsive="true" dynamic="false">
+            <h:form >
+                <ui:include src="panelDna.xhtml" />
+                <br></br>
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pright">
+                    <p:column>
+                        <p:commandButton value="Guardar" actionListener="#{inscripcionAdministrado.createDna()}" 
+                                         update=":frmBuscar:fldBusqueda,:formularioPrincipal1" 
+                                         process="@form"
+                                         oncomplete="if (!args.validationFailed) PF('dialogoDocDna').hide()" icon="ui-icon-disk" title="Guarda los cambios"/>	
+                        <p:commandButton value="Cerrar" onclick="PF('dialogoDocDna').hide();"
+                                         immediate="true"  icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                    </p:column>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+
+         <p:dialog modal="true" id="dialogoActualizarDna" widgetVar="dialogoActualizarDna" header="Actualizar DNA" closeOnEscape="true" resizable="false" 
+                   width="90%" class="dlgdna1" position="center center" responsive="true" dynamic="false">
+            <h:form >
+                <ui:include src="panelDna.xhtml" />
+                <br></br>
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-4">
+                          <p:commandButton value="Guardar" actionListener="#{inscripcionAdministrado.updateDna()}" update=":formularioPrincipal1:tablaDefensoria" process="@form"
+                                         oncomplete="if (!args.validationFailed) PF('dialogoActualizarDna').hide()" icon="ui-icon-disk" title="Guarda los cambios"/>	
+                    </div>      
+                    <div class="ui-g-12 ui-md-4"></div>
+                    <div class="ui-g-12 ui-md-4">     
+                        <p:commandButton value="Cerrar" onclick="PF('dialogoActualizarDna').hide();" immediate="true" 
+                                         icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                    </div>    
+                </div> 
+                 
+            </h:form>
+        </p:dialog>
+        
        <p:dialog modal="true" id="dialogoSolicitud" widgetVar="dialogoSolicitud" header="Solicitud de Inscripción" 
                     closeOnEscape="true" resizable="false" width="90%" height="700px" dynamic="false"
                     class="dlgdna" position="center center" responsive="true">
@@ -443,58 +434,131 @@
                 </p:panelGrid> 
             </h:form>
         </p:dialog>
-     
-     
         
-        <p:dialog   width="90%" style="max-width: 800px" modal="true" id="dialogoPersonaEvaluar" widgetVar="dialogoPersonaEvaluar"
+         <p:dialog modal="true" dynamic="true" id="dialogoAnularDna" widgetVar="dialogoAnularDna" header="Anular Defensoría" draggable="true"
+                   resizable="false" closable="true" closeOnEscape="true" showEffect="puff" hideEffect="puff" width="280"
+                    class="dlgdna1" position="center center" responsive="true" >
+            <h:form>
+                <ui:include src="panelAnularDna.xhtml" />
+                <br></br>
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pright">
+                    <p:column>
+                        <p:commandButton value="Guardar" actionListener="#{inscripcionAdministrado.anularDna()}" update=":formularioPrincipal1:tablaDefensoria" 
+                                         oncomplete="PF('dialogoAnularDna').hide()" icon="ui-icon-disk" title="Guarda los cambios"/>	
+                        <p:commandButton value="Cerrar" onclick="PF('dialogoAnularDna').hide();"
+                                         process="@this" immediate="true" icon="ui-icon-cancel" title="Cierra el dialogo"/>
+                    </p:column>
+                </p:panelGrid> 
+            </h:form>
+        </p:dialog>
+        
+        
+        
+        <!-- Evaluar -->
+        
+        <p:dialog modal="true" dynamic="true" id="dialogoEvaluar" widgetVar="dialogoEvaluar" 
+                  header="Evaluar Inscripción" width="90%" height="760px"
+                  draggable="true" resizable="false" closable="true" closeOnEscape="true"  
+                  class="dlgdna" position="center center" responsive="true"  >
+            <h:form id="formularioEvaluarInscripcion" >
+                <ui:include src="panelEvaluar.xhtml" />
+                <br />
+               <div class="ui-g">
+                    <div class="ui-g-12 ui-md-4">
+                       <p:commandButton icon="fa fa-check" id="btnEvaluar" value="#{inscripcionAdministrado.obtenerNombreBtnEvaluar()}" 
+                                         action="#{inscripcionAdministrado.evaluarInscripcion()}" update=":formularioPrincipal1:tablaDocs"
+                                         oncomplete="if (!args.validationFailed) PF('dialogoEvaluar').hide()"  process="@form"
+                                         >
+                            <p:confirm header="Confirmación" message="¿ Está seguro de guardar la evaluación de la inscripción ?" />
+                        </p:commandButton>
+                    </div>
+                   <div class="ui-g-12 ui-md-4"></div>
+                   <div class="ui-g-12 ui-md-4">
+                        <p:commandButton value="Cancelar" process="@this"
+                                         onclick="PF('dialogoEvaluar').hide();" 
+                                         immediate="true" 
+                                         icon="ui-icon-cancel" 
+                                         title="Cierra el dialogo"/>
+                   </div>
+               </div> 
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog   width="90%" height="780px" style="max-width: 900px" modal="true" id="dialogoPersonaEvaluar" widgetVar="dialogoPersonaEvaluar"
                     header="Evaluar persona DNA" closeOnEscape="true" resizable="false" dynamic="false"
                     class="dlgdna" position="center center" responsive="true" >
             <h:form>
                <ui:include src="panelPersonaEvaluar.xhtml"/>
                  <br></br>
-                  <div class="ui-g">
-                   <div class="ui-g ui-g-12 ui-md-4">
-                       <p:commandButton value="Evaluar Persona" 
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pright">
+                    <p:column>
+                        <p:commandButton value="Evaluar Persona" 
                                          title="Guarda los cambios" 
                                          oncomplete="if (!args.validationFailed) PF('dialogoPersonaEvaluar').hide()" 
-                                         update=":frmNuevo:tablaPersonasEvaluar , :frmNuevo:btnEvaluar"
+                                         update=":formularioEvaluarInscripcion:tablaPersonasEvaluar , :formularioEvaluarInscripcion:btnEvaluar"
                                          actionListener="#{inscripcionAdministrado.evaluarPersona()}" 
                                          process="@form"
                                          id="btnPersonaObservada"
                                          icon="ui-icon-check"/>    
-                   </div>
-                   <div class="ui-g-12 ui-md-4"></div>
-                   <div class="ui-g ui-g-12 ui-md-4">
-                   
+
                         <p:commandButton value="Cerrar"  process="@this"
                                          onclick="PF('dialogoPersonaEvaluar').hide();" 
                                          immediate="true" 
                                          type="button" 
                                          icon="ui-icon-cancel" 
                                          title="Cierra el dialogo"/>
-                   </div>
-                </div>
+                    </p:column>
+                </p:panelGrid>
             </h:form>    
         </p:dialog>
         
-       
         
-        <p:dialog   width="90%" style="max-width: 800px" modal="true" id="dialogoEPersonaSubsanar" widgetVar="dialogoEPersonaSubsanar"
+        <!-- Subasanacion -->
+        <p:dialog modal="true" dynamic="true" id="dialogoESubsanar" widgetVar="dialogoESubsanar" 
+                  header="Evaluar Inscripciòn Subsanada" width="90%" height="760px"
+                  draggable="true" resizable="false" closable="true" 
+                  closeOnEscape="true" class="dlgdna" position="center center" responsive="true" >
+            <h:form id="formularioEInscripcionSubsanada" >
+                <ui:include src="panelESubsanar.xhtml" />
+                <br />
+                 <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pright">
+                    
+                    <p:column>
+                        <p:commandButton value="#{inscripcionAdministrado.obtenerNombreBtnEvaluar()}" 
+                                        actionListener="#{inscripcionAdministrado.evaluarInscripcion}" 
+                                        oncomplete="if (!args.validationFailed) PF('dialogoESubsanar').hide()" 
+                                        process="@form"
+                                        update="@form :formularioPrincipal1:tablaDocs"
+                                        icon="fa fa-check"  
+                                        id="btnEvaluar"
+                                        />  
+                         
+                        <p:commandButton value="Cancelar" process="@this"
+                                         onclick="PF('dialogoESubsanar').hide();" 
+                                         immediate="true" 
+                                         icon="ui-icon-cancel" 
+                                         title="Cierra el dialogo"/>
+                    </p:column>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog   width="90%" height="700px" modal="true" id="dialogoEPersonaSubsanar" widgetVar="dialogoEPersonaSubsanar"
                     header="Evaluar persona DNA" closeOnEscape="true" resizable="false" dynamic="false"
                     class="dlgdna" position="center center" responsive="true" >
             <h:form>
                <ui:include src="panelEpersonaSubsanar.xhtml"/>
                  <br></br>
-                 <div class="ui-g">
-                   <div class="ui-g ui-g-12 ui-md-4">
-                          <p:commandButton value="Regresar" 
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" class="pnoborder pright">
+                    <p:column>
+                        <p:commandButton value="Regresar" 
                                          onclick="PF('dialogoEPersonaSubsanar').hide();" 
                                          immediate="true" 
                                          type="button" 
                                          icon="ui-icon-cancel" 
                                          title="Cierra el dialogo"/>
-                   </div>
-                </div>
+                    </p:column>
+                </p:panelGrid>
             </h:form>    
         </p:dialog>
         
@@ -511,13 +575,11 @@
                 </div>    
                 <div class="ui-g-12 hidden-xs ui-md-4">
                        <p:outputPanel  id="dwConstancia" >
-                            <p:commandLink rendered="#{inscripcionAdministrado.inscripcion.flagConstancia==1}"
-                                              ajax="false" process="@this" immediate="true" style="line-height: 20px; margin-left: 12px;"
-                                              value="Descargar constancia">
-                                   <p:fileDownload value="#{inscripcionAdministrado.downloadConstanciaFirmada()}" />
-                               </p:commandLink>
-                     
-                      
+                          <p:commandButton value="Descargar Constancia"
+                                           rendered="#{inscripcionAdministrado.inscripcion.flagConstancia==1}"
+                                           ajax="false" process="@this">
+                                <p:fileDownload value="#{inscripcionAdministrado.downloadConstanciaFirmada()}" />
+                          </p:commandButton>
                        </p:outputPanel>    
                 </div>  
               </div>    

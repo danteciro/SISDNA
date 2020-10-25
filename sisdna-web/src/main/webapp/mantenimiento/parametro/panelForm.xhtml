@@ -15,7 +15,7 @@
             </p:inputText>
             
             <p:outputLabel  for="txtValor" value="Ingrese valor ( texto ): "/>
-            <p:inputText id="txtValor" value="#{parametroDnaAdministrado.entidadSeleccionada.txtValor}"
+            <p:inputText id="txtValor" converter="mayusculaConvertidor" value="#{parametroDnaAdministrado.entidadSeleccionada.txtValor}"
                            maxlength="4000" title="Campo Obligatorio">
             </p:inputText>
 

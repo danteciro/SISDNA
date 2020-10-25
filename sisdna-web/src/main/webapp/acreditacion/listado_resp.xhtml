@@ -14,73 +14,22 @@
             <p:outputLabel class="ptextGradient pred pbold ptitle" value="ACREDITACIÓN"/>    
         </div>
         <br></br>
-        <p:messages id="mensajes" autoUpdate="true" showDetail="false" closable="true" severity="error"  />
-        <p:growl  widgetVar="mensajes" showDetail="true" showSummary="false" 
-               life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true" severity="warn, info"/>
-
-         <h:form id="frmNuevo" > 
-           
-          <p:outputPanel rendered="#{acreditacionAdministrado.modo > 0}">
-               <div class="ui-g">
-                    <div class="ui-g-12 ui-md-3">
-                        <p:commandLink ajax="true" actionListener="#{acreditacionAdministrado.regresar()}"  immediate="true" process="@this" class="sback"
-                                       update=":frmNuevo, :formularioPrincipal" >
-                            
-                            <span>Regresar al Listado</span>
-                        </p:commandLink>
-
-                    </div>
-                </div>    
-                <h1>#{inscripcionAdministrado.titulo()}</h1>
-                
-                <p:outputPanel rendered="#{acreditacionAdministrado.modo eq 6}">
-                   <ui:include src="panelForm.xhtml"  />
-                  
-                </p:outputPanel>    
-      
-                <p:outputPanel rendered="#{acreditacionAdministrado.modo eq 4}">
-                   <ui:include src="panelSubsanar.xhtml"  />
-                   <f:event listener="#{acreditacionAdministrado.validarCreate}" type="postValidate" />
-                    <div class="ui-g">
-                        <div class="ui-g-12 ui-md-3">
-                            <p:commandButton value="Subsanar las observaciones" 
-                                         title="Subsanar las observaciones" 
-                                         update=":frmNuevo, :formularioPrincipal" 
-                                         actionListener="#{acreditacionAdministrado.subsanar()}" 
-                                         process="@form"
-                                         icon="ui-icon-check">
-                             <p:confirm header="Confirmación" message="¿ Está seguro de guardar la subsanación de las observaciones ?" />  
-                           </p:commandButton>
-                            
-                        </div>
-                    </div>    
-                </p:outputPanel>    
-      
-      
-          </p:outputPanel>
-        </h:form>    
-        
+     
         <h:form id="formularioPrincipal">
-               <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" >
-               <div class="ui-g">
-                   <div class="ui-md-5 nopad">
-                       <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"  />
-                   </div>
-                   <div class="ui-md-2 nopad"></div>
-                   <div class="ui-md-5 nopad">
-                       <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"  />
-                   </div>
-               </div>
-                
-            </p:confirmDialog> 
+            <p:growl id="mensajes" widgetVar="mensajes" showDetail="true" showSummary="false" life="#{parametroDnaAdministrado.tiempoAlertas()}" autoUpdate="true"/>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
 
-             <p:outputPanel rendered="#{acreditacionAdministrado.modo eq 0}">
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" style="width: 100%" class="boxshadowinside pnoborder">
 
                 <p:dataTable 
                     id="tablaDocs"
                     widgetVar="tablaDocs" 
                     var="item" 
                     value="#{acreditacionAdministrado.obtenerListaPorResponsable()}" 
+                    selection="#{acreditacionAdministrado.acreditacionSubsanar}"
                     rowIndexVar="index"
                     scrollable="true"
                     paginator="false"
@@ -88,7 +37,7 @@
                     emptyMessage="No se encontraron registros"
                   >
 
-                    <p:column headerText="ACCIONES" width="200">                 
+                    <p:column headerText="ACCIONES" width="20%">                 
                         <p:commandButton   rendered="#{!(item.estado.txtNombre eq 'NUEVA')}" 
                                            icon="fa fa-file-pdf-o"
                                            ajax="false" 
@@ -98,14 +47,16 @@
                         </p:commandButton>
                         
                         <p:commandButton 
-                                         process="@this" update=":frmNuevo, :formularioPrincipal" 
+                                        update=":dialogoVer" 
+                                        process="@this"
                                         actionListener="#{acreditacionAdministrado.obtenerAcreditacionVer(item)}"
+                                        oncomplete="PF('dialogoVer').show();"  
                                         title="Ver Acreditacion" icon="fa fa-eye">
                         </p:commandButton>
                         
-                        <p:commandButton rendered="#{item.estado.txtNombre eq 'OBSERVADA'}" process="@this"
-                                         actionListener="#{acreditacionAdministrado.obtenerAcreditacionSubsanar(item)}" 
-                                         update=":frmNuevo, :formularioPrincipal"  style="width: 120px !important"
+                        <p:commandButton update=":dialogoSubsanar" rendered="#{item.estado.txtNombre eq 'OBSERVADA'}"
+                                         actionListener="#{acreditacionAdministrado.obtenerAcreditacionActualizar(item)}" 
+                                         oncomplete="PF('dialogoSubsanar').show();" 
                                          title="Subsanar" icon="fa fa-check-circle-o" value="SUBSANAR">
                         </p:commandButton>
                         
@@ -116,13 +67,13 @@
                         
                     </p:column>
                    
-                    <p:column headerText="CÓDIGO" class="pcenter" width="80">
-                        <h:outputText value="#{item.dna.txtConstancia}"  converter="maskConCero" />
+                    <p:column headerText="CÓDIGO" class="left" width="10%">
+                        <h:outputText value="#{item.padre.dna.txtConstancia}"  converter="maskConCero" />
                     </p:column>
-                   <p:column headerText="ESTADO" class="pcenter" width="120">
+                   <p:column headerText="ESTADO" class="left" width="10%">
                         <h:outputText value="#{item.estado.txtNombre}" />
                     </p:column>
-                    <p:column headerText="FECHA" class="left" width="180">
+                    <p:column headerText="FECHA" class="left" width="15%">
                        REGISTRO:<h:outputText value="#{item.fecRegistro}"  ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText><br/>
                        <p:outputPanel rendered="#{item.fecObservado!=null}">
                             OBSERVACIÓN:<h:outputText value="#{item.fecObservado}" ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText><br/>
@@ -132,86 +83,39 @@
                        </p:outputPanel>
                     </p:column>
 
-                    <p:column headerText="NOMBRE" class="left" width="300">
-                        <h:outputText value="#{item.dna.txtNombre}" />
+                    <p:column headerText="NOMBRE" class="left" width="45%">
+                        <h:outputText value="#{item.padre.dna.txtNombre}" />
                     </p:column>
-                    <p:column headerText="NRO ORDENANZA" class="left" width="120">
-                        <h:outputText value="#{item.txtDocumento}" />
+                    <p:column headerText="NRO ORDENANZA" class="left" width="10%">
+                        <h:outputText value="#{item.txtNroOrdenanza}" />
                     </p:column>
                     
-                  
+                    <p:column headerText="ACTIVO" filterBy="#{item.flgActivo}" filterMatchMode="contains" class="pcenter" width="10%">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('tablaDocs').filter()">
+                                <f:selectItem itemLabel="Todos" itemValue="" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="Activo" itemValue="1" />
+                                <f:selectItem itemLabel="Inactivo" itemValue="0" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText value="#{item.flgActivo != 1? 'Inactivo':'Activo'}">
+                            <f:converter converterId="javax.faces.Character" />                                    
+                        </h:outputText>
+                    </p:column>
 
                 </p:dataTable>
 
-             </p:outputPanel>
+            </p:panelGrid>
         </h:form>
         <p:outputPanel id="pTodo" />
          
-     
-       
-   <p:dialog   modal="true" id="dialogoPersonaSubsanar" widgetVar="dialogoPersonaSubsanar" header="Subsanar Personal DNA" 
-               closeOnEscape="true" resizable="false" dynamic="true" width="90%" style="max-width: 800px">
-      <h:form>
-         <ui:include src="panelPersonaSubsanar.xhtml"/>
-           <br></br>
-            <div class="ui-g">
-                <div class="ui-g-12 ui-md-6">
-                    <p:commandButton value="Subsanar Observaciones de Persona" 
-                                   title="Guarda los cambios" 
-                                   oncomplete="if (!args.validationFailed) PF('dialogoPersonaSubsanar').hide()"
-                                   actionListener="#{acreditacionAdministrado.actualizarPersonaEquipoExterno()}" 
-                                   process="@form"
-                                   icon="ui-icon-check"/>    
-                </div>
-                <div class="ui-g-12 ui-md-2"></div>
-                <div class="ui-g-12 ui-md-4">
-                  <p:commandButton value="Cerrar" onclick="PF('dialogoPersonaSubsanar').hide();" immediate="true" process="@this" icon="ui-icon-cancel"/>
-               </div>
-           </div>
-          
-           <f:event listener="#{acreditacionAdministrado.validarPanelPersona}" type="postValidate" />
-      </h:form>    
-  </p:dialog>      
-  
-     <p:dialog  modal="true" id="dialogoPersonalDnaSub" widgetVar="dialogoPersonalDnaSub" width="90%" style="max-width: 800px"
-                header="Personal DNA" closeOnEscape="true" resizable="false" dynamic="false">
-            <h:form id="frmPersonalDnaSub">
-            <ui:include src="panelPersonalExterno.xhtml"/>
-             <br></br>
-              <div class="ui-g">
-                    <div class="ui-g-12 ui-md-4">
-                        <p:commandButton value="Guardar"
-                                     icon="ui-icon-disk" 
-                                     title="Guarda los cambios" 
-                                     process="@form"
-                                     actionListener="#{acreditacionAdministrado.agregarAEquipo()}" 
-                                     oncomplete="if (!args.validationFailed) PF('dialogoPersonalDnaSub').hide()"
-                                     update=":frmNuevo:tablaPersonasSubsanar"/>	
-                     
-                    </div>
-                    <div class="ui-g-12 ui-md-4"></div>
-                    <div class="ui-g-12 ui-md-4">
-                           <p:commandButton value="Cerrar" onclick="PF('dialogoPersonalDnaSub').hide();" immediate="true" process="@this" icon="ui-icon-cancel"/>
-                      
-                
-                    </div>    
-                </div>    
-             
-             <f:event listener="#{acreditacionAdministrado.validarPanelPersona}" type="postValidate" />
-        </h:form>    
-      </p:dialog> 
-       <p:dialog modal="true" id="dialogoVerPersonaEquipo" widgetVar="dialogoVerPersonaEquipo" header="Persona" closeOnEscape="true" resizable="false" dynamic="false"
-                  class="dlgdna" position="center center" responsive="true">
-            <h:form>
-                <ui:include src="panelPersonaVer.xhtml" />
-                <br></br>
-                <div class="ui-g">
-                    <div class="ui-g-12 ui-md-3">
-                          <p:commandButton value="Cerrar" onclick="PF('dialogoVerPersonaEquipo').hide();" immediate="true" process="@this" icon="ui-icon-cancel" title="Cierra el dialogo"/>
-                    </div>
-                </div>    
-            </h:form>
-        </p:dialog>   
+        <!-- Ver -->
+        <ui:include src="panelDialogVer.xhtml" />
+        <!-- Modals Subsanar -->
+        <ui:include src="panelDialogSubsanar.xhtml" />
+        
+        
+        
 
     </ui:define>           
 </ui:composition>
